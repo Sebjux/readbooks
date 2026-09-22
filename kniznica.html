@@ -935,40 +935,41 @@ const GENRE_ICONS = {
   daily: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h13v8H9l-4 3.5V13H3z"/><path d="M21 9v6.5h-3V19l-3.5-3.5H11"/></svg>'
 };
 
-const BOOKS = [
-  { id:'scifi-7', genre:'scifi', title:'Quantum Singularity', author:'Dr. Evelyn Cross', level:'C2', minutes:280, vocab:5, dateAdded:'2026-09-22', c1:'#BE123C', c2:'#31040D' },
-  { id:'scifi-3', genre:'scifi', title:'Echoes Beyond Jupiter', author:'Aiden Cole', level:'B2', minutes:100, vocab:3, dateAdded:'2026-09-20', c1:'#5B3FE0', c2:'#170F3D' },
-  { id:'scifi-1', genre:'scifi', title:'Neon Horizon', author:'Kaya Ilyanova', level:'B2', minutes:195, vocab:4, dateAdded:'2026-09-18', c1:'#4C3AFF', c2:'#150E38' },
-  { id:'scifi-5', genre:'scifi', title:'The Last Signal', author:'Priya Nataraj', level:'C1', minutes:210, vocab:4, dateAdded:'2026-09-15', c1:'#3A2E8C', c2:'#100B29' },
-  { id:'scifi-2', genre:'scifi', title:'The Clockwork Sea', author:'Devon Marsh', level:'C1', minutes:240, vocab:5, dateAdded:'2026-09-10', c1:'#2E2470', c2:'#0B081E' },
-  { id:'scifi-4', genre:'scifi', title:'Synthetic Dawn', author:'R. J. Okafor', level:'B1', minutes:150, vocab:3, dateAdded:'2026-09-05', c1:'#6C4CF0', c2:'#1A1140' },
-  { id:'scifi-6', genre:'scifi', title:'First Star in Space', author:'Leo Vance', level:'A1', minutes:30, vocab:1, dateAdded:'2026-09-01', c1:'#059669', c2:'#022C22' },
+let BOOKS = [];
+let STORY = {};
 
-  { id:'biz-7', genre:'business', title:'Macroeconomic Paradigms', author:'Prof. Victor Sterling', level:'C2', minutes:310, vocab:5, dateAdded:'2026-09-22', c1:'#E11D48', c2:'#4C0519' },
-  { id:'biz-1', genre:'business', title:'The Focused Founder', author:'Mark Ellison', level:'B2', minutes:165, vocab:3, dateAdded:'2026-09-18', c1:'#D6A34A', c2:'#2E2008' },
-  { id:'biz-4', genre:'business', title:'The Art of the Pitch', author:'Sophie Lindqvist', level:'B2', minutes:110, vocab:3, dateAdded:'2026-09-14', c1:'#8C6A2E', c2:'#221806' },
-  { id:'biz-2', genre:'business', title:'Negotiate Like a Pro', author:'Laura Bennett', level:'B1', minutes:120, vocab:2, dateAdded:'2026-09-10', c1:'#B8863B', c2:'#2A1C0A' },
-  { id:'biz-5', genre:'business', title:'Leading Remote Teams', author:'Daniel Kwan', level:'B1', minutes:100, vocab:2, dateAdded:'2026-09-08', c1:'#A67A2E', c2:'#241A08' },
-  { id:'biz-3', genre:'business', title:'Small Habits, Big Wins', author:'Tom Reyes', level:'A2', minutes:80, vocab:2, dateAdded:'2026-09-04', c1:'#E0B563', c2:'#2F2410' },
-  { id:'biz-6', genre:'business', title:'My First Job', author:'Sarah Jenkins', level:'A1', minutes:25, vocab:1, dateAdded:'2026-09-01', c1:'#10B981', c2:'#064E3B' },
+async function loadAllBooks() {
+  try {
+    const res = await fetch('books/index.json');
+    const bookIds = await res.json();
+    const books = [];
 
-  { id:'classic-8', genre:'classic', title:'Moby Dick (Unabridged)', author:'Herman Melville', level:'C2', minutes:520, vocab:5, dateAdded:'2026-09-22', c1:'#9F1239', c2:'#280511' },
-  { id:'classic-1', genre:'classic', title:'Pride and Prejudice', author:'Jane Austen', level:'C1', minutes:480, vocab:5, dateAdded:'2026-09-19', c1:'#B08D5E', c2:'#2A2013' },
-  { id:'classic-6', genre:'classic', title:'The Picture of Dorian Gray', author:'Oscar Wilde', level:'C1', minutes:330, vocab:5, dateAdded:'2026-09-15', c1:'#A88A5C', c2:'#2B2214' },
-  { id:'classic-2', genre:'classic', title:'Frankenstein', author:'Mary Shelley', level:'C1', minutes:360, vocab:5, dateAdded:'2026-09-12', c1:'#6E5A3E', c2:'#1C1710' },
-  { id:'classic-4', genre:'classic', title:'The Adventures of Sherlock Holmes', author:'Arthur Conan Doyle', level:'B2', minutes:300, vocab:4, dateAdded:'2026-09-09', c1:'#8C6F4E', c2:'#241C12' },
-  { id:'classic-3', genre:'classic', title:"Alice's Adventures in Wonderland", author:'Lewis Carroll', level:'B1', minutes:150, vocab:3, dateAdded:'2026-09-06', c1:'#9C7B4A', c2:'#261E10' },
-  { id:'classic-5', genre:'classic', title:'A Christmas Carol', author:'Charles Dickens', level:'B1', minutes:120, vocab:3, dateAdded:'2026-09-03', c1:'#7A6244', c2:'#1F1810' },
-  { id:'classic-7', genre:'classic', title:'Simple Tales for Beginners', author:'Hans Christian Andersen', level:'A1', minutes:35, vocab:1, dateAdded:'2026-09-01', c1:'#047857', c2:'#022C22' },
+    for (const id of bookIds) {
+      try {
+        const bRes = await fetch(`books/${encodeURIComponent(id)}.json`);
+        const bData = await bRes.json();
+        books.push(bData);
+      } catch (err) {
+        console.warn(`Could not load book file books/${id}.json`, err);
+      }
+    }
 
-  { id:'daily-7', genre:'daily', title:'Socio-Linguistic Nuances', author:'Dr. Marcus Thorne', level:'C2', minutes:250, vocab:5, dateAdded:'2026-09-22', c1:'#881337', c2:'#280511' },
-  { id:'daily-4', genre:'daily', title:'Everyday English in Action', author:'Nora Fischer', level:'B1', minutes:90, vocab:2, dateAdded:'2026-09-17', c1:'#4BD8BE', c2:'#10312B' },
-  { id:'daily-3', genre:'daily', title:'Small Talk, Big Confidence', author:'Chris Adeyemi', level:'B1', minutes:70, vocab:2, dateAdded:'2026-09-12', c1:'#3FCDB0', c2:'#0E2D28' },
-  { id:'daily-1', genre:'daily', title:'Coffee Shop Chats', author:'Emma Wallace', level:'A2', minutes:45, vocab:1, dateAdded:'2026-09-08', c1:'#2DBEA6', c2:'#0C2A26' },
-  { id:'daily-2', genre:'daily', title:'At the Airport', author:'Julia Novak', level:'A2', minutes:40, vocab:1, dateAdded:'2026-09-05', c1:'#22A896', c2:'#0A2622' },
-  { id:'daily-5', genre:'daily', title:'Ordering Without Fear', author:'Liam Torres', level:'A2', minutes:35, vocab:1, dateAdded:'2026-09-03', c1:'#1F9C8B', c2:'#092220' },
-  { id:'daily-6', genre:'daily', title:'Hello World', author:'Anna Miller', level:'A1', minutes:20, vocab:1, dateAdded:'2026-09-01', c1:'#059669', c2:'#064E3B' }
-];
+    BOOKS = books;
+  } catch (err) {
+    console.error('Failed to load books/index.json', err);
+  }
+}
+
+function getBookPages(book, variant) {
+  if (book && book.story && book.story[variant]) {
+    return book.story[variant];
+  }
+  if (book && book.story) {
+    const firstAvailable = Object.keys(book.story)[0];
+    if (firstAvailable && book.story[firstAvailable]) return book.story[firstAvailable];
+  }
+  return STORY[variant] || STORY['C1'] || [];
+}
 
 function getSortedBooks(list) {
   return list.slice().sort((a, b) => {
@@ -987,45 +988,6 @@ function formatDateAdded(dateStr) {
 }
 
 const HERO_BOOK_ID = 'scifi-3';
-
-const STORY = {
-  C2: [
-    ["The nocturnal transmission materialized at precisely 03:14 hours, abruptly shattering the pervasive stillness engulfing the observation deck. Mira had virtually relinquished all expectation regarding the extraterrestrial telemetry — three protracted years characterized by inscrutable static and tenuous hope drifting aimlessly across the cosmic vacuum. Pressing her palm against the frost-delineated viewport, she observed Jupiter's tempestuous atmospheric vortexes churning like crimson ink suspended in fluid, meticulously evaluating the emerging frequency: a cadence far too deliberate to be ascribed to stochastic phenomenon."],
-    ["Her digits quivered imperceptibly while initiating the diagnostic recording apparatus, anticipating that the signal might ephemeralize like its precursors — transient anomalies habitually dismissed by the scientific directorate as mere background cosmic radiation. Yet this phenomenon persisted with unwavering coherence. It fluctuated in rhythm, modulating with an unmistakable teleological impulse. Somewhere in the dark periphery beyond the Jovian moons, an intellect was echoing her presence."],
-    ["By dawn, the mathematical decipherment had rendered the telemetry into a quasi-intelligible paradigm — an abstract lexicon imbued with undeniable imperative. Mira diligently transcribed each resonant pulse, disregarding physical exhaustion and thermal attrition. Should the committee remain entrenched in skepticism, she was determined to construct an incontrovertible empirical thesis, brick by brick."],
-    ["Upon broadcasting the empirical synthesis to global arrays, she anticipated institutional inertia or skepticism. Paradoxically, three autonomous observatories confirmed the identical spatial anomaly within minutes. What transpired beyond the icy satellite orbits was indisputably intentional: a monumental herald of first contact, causing Mira to experience an unprecedented sense of profound awe."]
-  ],
-  C1: [
-    ["The transmission arrived at 3:14 a.m., fracturing the silence of the observation deck. Mira had almost stopped believing in the signal — three years of static, three years of hollow hope drifting through the void. She pressed her palm against the cold viewport, watching Jupiter's storms churn like ink dropped into water, and listened as the message unspooled: not words, not yet, but a rhythm too deliberate to be chance."],
-    ["Mira's fingers trembled as she reached for the recorder, half-expecting the signal to vanish the way all the others had — fleeting anomalies dismissed by the committee as cosmic noise. But this one held. It pulsed, faded, pulsed again, each interval shortening with what could only be described as intention. Somewhere beyond the ice moons, something was listening back."],
-    ["By dawn, the pattern had resolved into something almost legible — not language exactly, but the shadow of one, mathematical in its bones yet carrying what felt unmistakably like urgency. Mira transcribed every pulse into her notebook, hands cramping, coffee cold, refusing the sleep her body kept demanding. If the committee wouldn't listen, she would build the case herself, piece by piece."],
-    ["When she finally broadcast her findings, she expected silence, or worse, ridicule. Instead, three observatories replied within the hour, each confirming the same anomaly from a different angle of the sky. Whatever was out there beyond the ice moons was not an accident of physics. It was, unmistakably, a greeting — and for the first time in three years, Mira let herself smile."]
-  ],
-  B2: [
-    ["The transmission arrived at 3:14 a.m., breaking the quiet of the observation deck. Mira had almost given up on the signal after three years of static and empty hope drifting through space. She pressed her hand against the cold window, watching Jupiter's storms move like ink in water, and listened as the message unfolded: not words yet, but a rhythm far too clear to be random."],
-    ["Mira's hands shook as she reached for the recorder, half-expecting the signal to vanish like previous ones — short glitches dismissed by the committee as cosmic noise. But this signal held. It pulsed, faded, and pulsed again, each interval getting shorter with clear intent. Somewhere beyond the ice moons, something was responding."],
-    ["By morning, the pattern had formed into something almost readable — not quite language, but structured like math and carrying real urgency. Mira wrote down every pulse in her notebook, her hands sore and coffee cold, ignoring her tiredness. If the committee wouldn't listen, she would gather the proof herself, step by step."],
-    ["When she finally broadcast her results, she expected silence or doubt. Instead, three observatories replied within the hour, all confirming the exact same anomaly. Whatever was out there beyond the ice moons was no accident. It was a clear greeting — and for the first time in three years, Mira let herself smile."]
-  ],
-  B1: [
-    ["The message came at 3:14 a.m. It broke the silence in the control room. Mira had almost stopped believing in it. For three years, she heard only static. She put her hand on the cold window. Outside, she could see Jupiter's storms moving like ink in water. Then she heard the message. It was not words yet. But the rhythm was too clear to be an accident."],
-    ["Mira's hands shook as she reached for the recorder. She thought the signal might disappear, like all the others before. The committee always said those were just noise from space. But this one stayed. It got stronger, then weaker, then stronger again. Each time, the pattern changed a little, like it had a purpose. Somewhere far away, past the icy moons, something was listening too."],
-    ["By morning, the pattern started to make more sense. It was not really language, but it looked like something planned, like math. It also felt urgent. Mira wrote down every signal in her notebook. Her hands hurt, her coffee was cold, but she did not want to sleep. If the committee would not listen, she decided to prove it herself, piece by piece."],
-    ["When she finally shared her results, she thought people would ignore her, or laugh. But three observatories answered within the hour. Each one saw the same strange thing from a different part of the sky. Whatever was out there past the icy moons was not an accident. It was clearly a greeting. For the first time in three years, Mira smiled."]
-  ],
-  A2: [
-    ["The message came at 3:14 in the morning. It was very quiet before. Mira almost stopped waiting for it. For three years, she heard nothing but noise. She touched the cold window with her hand. She looked at Jupiter outside. The storms moved like ink in water. Then she heard something new. It was not words. But it had a pattern. It was not random."],
-    ["Mira's hands shook. She wanted to record the sound before it stopped. Other signals always stopped before. People said those signals were just noise. But this signal did not stop. It became strong, then weak, then strong again. It felt like it had a reason. Far away, past the cold moons, something else was listening."],
-    ["In the morning, the pattern became clearer. It was not real words, but it looked planned, like numbers. It also felt important. Mira wrote every signal in her notebook. Her hands hurt. Her coffee was cold. But she did not want to sleep. The committee did not want to listen. So she wanted to prove it herself, piece by piece."],
-    ["She shared her results. She thought people would ignore her. But three places answered in one hour. Each one saw the same strange thing. Whatever was out there was not an accident. It was a greeting. For the first time in three years, Mira smiled."]
-  ],
-  A1: [
-    ["The message came at night. It was 3:14 in the morning. The room was very quiet. Mira was tired. She waited for three years. She heard only noise. She looked out the window. She saw the big planet Jupiter. Then, she heard a sound. It was a special sound. It was not a word, but it was nice."],
-    ["Mira was happy. She used a computer to save the sound. She was afraid the sound would stop. But the sound did not stop. It went up and down. It was a good signal. Somewhere far in space, someone was there."],
-    ["In the morning, Mira looked at her book. She wrote down every sound. Her cup of coffee was cold. But Mira did not want to sleep. She wanted to learn more. She worked very hard step by step."],
-    ["Mira sent a note to her friends. Soon, three people wrote back. They heard the same sound! Everyone was happy. It was a hello from space. Mira smiled."]
-  ]
-};
 
 /* ================================================================
    LANGUAGE PICKER — flags top-right; drives the translation shown
@@ -1463,7 +1425,8 @@ function initHero(){
   const progressPct = progressInfo ? progressInfo.progress : 0;
 
   const variant = nearestVariant(book.level);
-  const totalPages = STORY[variant] ? STORY[variant].length : 4;
+  const pages = getBookPages(book, variant);
+  const totalPages = pages ? pages.length : 4;
 
   const cover = document.getElementById('heroCover');
   cover.className = 'hero-cover book-cover';
@@ -1667,7 +1630,8 @@ function prepareReader(book, startPosition){
   document.getElementById('readerTitle').textContent = book.title;
   document.getElementById('readerSub').textContent = book.author + ' · ' + book.level;
   currentVariant = nearestVariant(book.level);
-  const totalPages = STORY[currentVariant] ? STORY[currentVariant].length : 1;
+  const pages = getBookPages(currentBook || book, currentVariant);
+  const totalPages = pages ? pages.length : 1;
   const initialPos = (typeof startPosition === 'number' && startPosition >= 0 && startPosition < totalPages) ? startPosition : 0;
   currentPageIndex = initialPos;
   updateVariantPillsUI();
@@ -1682,7 +1646,7 @@ function prepareReader(book, startPosition){
 
 /* Builds every paper-sheet (front+back page-face) for the current variant. */
 function renderSheets(){
-  const pages = STORY[currentVariant];
+  const pages = getBookPages(currentBook, currentVariant);
   const wrapper = document.getElementById('sheetsWrapper');
   wrapper.innerHTML = '';
   const sheetCount = Math.ceil(pages.length / 2);
@@ -1711,7 +1675,7 @@ function renderSheets(){
 /* Flips/unflips every sheet and manages stacking so the correct face is on
    top — same front/back + z-index math as a real stack of paper sheets. */
 function updateSheetZIndexes(){
-  const pages = STORY[currentVariant];
+  const pages = getBookPages(currentBook, currentVariant);
   const sheetCount = Math.ceil(pages.length / 2);
   const activeSheet = Math.floor(currentPageIndex / 2);
   for (let i = 0; i < sheetCount; i++){
@@ -1742,7 +1706,7 @@ function applyWordStatusClasses(){
 }
 
 function updateReaderChrome(idx){
-  const pages = STORY[currentVariant];
+  const pages = getBookPages(currentBook, currentVariant);
   document.getElementById('progressFill').style.width = (((idx + 1) / pages.length) * 100) + '%';
   document.getElementById('pageIndicator').textContent = (idx + 1) + ' / ' + pages.length;
   document.getElementById('prevPageBtn').disabled = idx === 0;
@@ -1764,7 +1728,7 @@ function renderPage(idx){
    engine's own auto-advance-to-next-page doesn't cancel itself. */
 async function goToPage(delta, opts){
   opts = opts || {};
-  const pages = STORY[currentVariant];
+  const pages = getBookPages(currentBook, currentVariant);
   const next = currentPageIndex + delta;
   if (next < 0 || next >= pages.length || isPageAnimating) return;
   isPageAnimating = true;
@@ -1799,10 +1763,11 @@ async function setVariant(variant){
   stage.classList.add('shimmer');
   await wait(650);
   stage.classList.remove('shimmer');
-  const clampedIndex = Math.min(currentPageIndex, STORY[currentVariant].length - 1);
+  const pages = getBookPages(currentBook, currentVariant);
+  const clampedIndex = Math.min(currentPageIndex, pages.length - 1);
   renderPage(clampedIndex);
   if (currentBook && currentBook.id){
-    updateBookProgress(currentBook.id, clampedIndex, STORY[currentVariant].length);
+    updateBookProgress(currentBook.id, clampedIndex, pages.length);
   }
 }
 document.querySelectorAll('.variant-pill').forEach((p) => {
@@ -2139,7 +2104,7 @@ function speakNextSentence(){
   if (!isReading) return;
   if (readSentenceIndex >= readSentences.length){
     clearReadingHighlight();
-    const pages = STORY[currentVariant];
+    const pages = getBookPages(currentBook, currentVariant);
     if (currentPageIndex < pages.length - 1){
       goToPage(1, { keepReading: true }).then(() => {
         if (!isReading) return;
@@ -2397,12 +2362,13 @@ document.addEventListener('keydown', (e) => {
 /* ================================================================
    INIT
    ================================================================ */
-(function init(){
+(async function init(){
   try{
     const savedScale = parseFloat(localStorage.getItem('lumen_font_scale'));
     if (!isNaN(savedScale)) fontScale = savedScale;
   }catch(e){ /* ignore */ }
   applyFontScale();
+  await loadAllBooks();
   renderGenreRows();
   renderLevelGrid();
   initHero();
