@@ -871,39 +871,55 @@ const GENRE_ICONS = {
 };
 
 const BOOKS = [
-  { id:'scifi-1', genre:'scifi', title:'Neon Horizon', author:'Kaya Ilyanova', level:'B2', minutes:195, vocab:4, c1:'#4C3AFF', c2:'#150E38' },
-  { id:'scifi-2', genre:'scifi', title:'The Clockwork Sea', author:'Devon Marsh', level:'C1', minutes:240, vocab:5, c1:'#2E2470', c2:'#0B081E' },
-  { id:'scifi-3', genre:'scifi', title:'Echoes Beyond Jupiter', author:'Aiden Cole', level:'B2', minutes:100, vocab:3, c1:'#5B3FE0', c2:'#170F3D' },
-  { id:'scifi-4', genre:'scifi', title:'Synthetic Dawn', author:'R. J. Okafor', level:'B1', minutes:150, vocab:3, c1:'#6C4CF0', c2:'#1A1140' },
-  { id:'scifi-5', genre:'scifi', title:'The Last Signal', author:'Priya Nataraj', level:'C1', minutes:210, vocab:4, c1:'#3A2E8C', c2:'#100B29' },
-  { id:'scifi-6', genre:'scifi', title:'First Star in Space', author:'Leo Vance', level:'A1', minutes:30, vocab:1, c1:'#059669', c2:'#022C22' },
-  { id:'scifi-7', genre:'scifi', title:'Quantum Singularity', author:'Dr. Evelyn Cross', level:'C2', minutes:280, vocab:5, c1:'#BE123C', c2:'#31040D' },
+  { id:'scifi-7', genre:'scifi', title:'Quantum Singularity', author:'Dr. Evelyn Cross', level:'C2', minutes:280, vocab:5, dateAdded:'2026-09-22', c1:'#BE123C', c2:'#31040D' },
+  { id:'scifi-3', genre:'scifi', title:'Echoes Beyond Jupiter', author:'Aiden Cole', level:'B2', minutes:100, vocab:3, dateAdded:'2026-09-20', c1:'#5B3FE0', c2:'#170F3D' },
+  { id:'scifi-1', genre:'scifi', title:'Neon Horizon', author:'Kaya Ilyanova', level:'B2', minutes:195, vocab:4, dateAdded:'2026-09-18', c1:'#4C3AFF', c2:'#150E38' },
+  { id:'scifi-5', genre:'scifi', title:'The Last Signal', author:'Priya Nataraj', level:'C1', minutes:210, vocab:4, dateAdded:'2026-09-15', c1:'#3A2E8C', c2:'#100B29' },
+  { id:'scifi-2', genre:'scifi', title:'The Clockwork Sea', author:'Devon Marsh', level:'C1', minutes:240, vocab:5, dateAdded:'2026-09-10', c1:'#2E2470', c2:'#0B081E' },
+  { id:'scifi-4', genre:'scifi', title:'Synthetic Dawn', author:'R. J. Okafor', level:'B1', minutes:150, vocab:3, dateAdded:'2026-09-05', c1:'#6C4CF0', c2:'#1A1140' },
+  { id:'scifi-6', genre:'scifi', title:'First Star in Space', author:'Leo Vance', level:'A1', minutes:30, vocab:1, dateAdded:'2026-09-01', c1:'#059669', c2:'#022C22' },
 
-  { id:'biz-1', genre:'business', title:'The Focused Founder', author:'Mark Ellison', level:'B2', minutes:165, vocab:3, c1:'#D6A34A', c2:'#2E2008' },
-  { id:'biz-2', genre:'business', title:'Negotiate Like a Pro', author:'Laura Bennett', level:'B1', minutes:120, vocab:2, c1:'#B8863B', c2:'#2A1C0A' },
-  { id:'biz-3', genre:'business', title:'Small Habits, Big Wins', author:'Tom Reyes', level:'A2', minutes:80, vocab:2, c1:'#E0B563', c2:'#2F2410' },
-  { id:'biz-4', genre:'business', title:'The Art of the Pitch', author:'Sophie Lindqvist', level:'B2', minutes:110, vocab:3, c1:'#8C6A2E', c2:'#221806' },
-  { id:'biz-5', genre:'business', title:'Leading Remote Teams', author:'Daniel Kwan', level:'B1', minutes:100, vocab:2, c1:'#A67A2E', c2:'#241A08' },
-  { id:'biz-6', genre:'business', title:'My First Job', author:'Sarah Jenkins', level:'A1', minutes:25, vocab:1, c1:'#10B981', c2:'#064E3B' },
-  { id:'biz-7', genre:'business', title:'Macroeconomic Paradigms', author:'Prof. Victor Sterling', level:'C2', minutes:310, vocab:5, c1:'#E11D48', c2:'#4C0519' },
+  { id:'biz-7', genre:'business', title:'Macroeconomic Paradigms', author:'Prof. Victor Sterling', level:'C2', minutes:310, vocab:5, dateAdded:'2026-09-22', c1:'#E11D48', c2:'#4C0519' },
+  { id:'biz-1', genre:'business', title:'The Focused Founder', author:'Mark Ellison', level:'B2', minutes:165, vocab:3, dateAdded:'2026-09-18', c1:'#D6A34A', c2:'#2E2008' },
+  { id:'biz-4', genre:'business', title:'The Art of the Pitch', author:'Sophie Lindqvist', level:'B2', minutes:110, vocab:3, dateAdded:'2026-09-14', c1:'#8C6A2E', c2:'#221806' },
+  { id:'biz-2', genre:'business', title:'Negotiate Like a Pro', author:'Laura Bennett', level:'B1', minutes:120, vocab:2, dateAdded:'2026-09-10', c1:'#B8863B', c2:'#2A1C0A' },
+  { id:'biz-5', genre:'business', title:'Leading Remote Teams', author:'Daniel Kwan', level:'B1', minutes:100, vocab:2, dateAdded:'2026-09-08', c1:'#A67A2E', c2:'#241A08' },
+  { id:'biz-3', genre:'business', title:'Small Habits, Big Wins', author:'Tom Reyes', level:'A2', minutes:80, vocab:2, dateAdded:'2026-09-04', c1:'#E0B563', c2:'#2F2410' },
+  { id:'biz-6', genre:'business', title:'My First Job', author:'Sarah Jenkins', level:'A1', minutes:25, vocab:1, dateAdded:'2026-09-01', c1:'#10B981', c2:'#064E3B' },
 
-  { id:'classic-1', genre:'classic', title:'Pride and Prejudice', author:'Jane Austen', level:'C1', minutes:480, vocab:5, c1:'#B08D5E', c2:'#2A2013' },
-  { id:'classic-2', genre:'classic', title:'Frankenstein', author:'Mary Shelley', level:'C1', minutes:360, vocab:5, c1:'#6E5A3E', c2:'#1C1710' },
-  { id:'classic-3', genre:'classic', title:"Alice's Adventures in Wonderland", author:'Lewis Carroll', level:'B1', minutes:150, vocab:3, c1:'#9C7B4A', c2:'#261E10' },
-  { id:'classic-4', genre:'classic', title:'The Adventures of Sherlock Holmes', author:'Arthur Conan Doyle', level:'B2', minutes:300, vocab:4, c1:'#8C6F4E', c2:'#241C12' },
-  { id:'classic-5', genre:'classic', title:'A Christmas Carol', author:'Charles Dickens', level:'B1', minutes:120, vocab:3, c1:'#7A6244', c2:'#1F1810' },
-  { id:'classic-6', genre:'classic', title:'The Picture of Dorian Gray', author:'Oscar Wilde', level:'C1', minutes:330, vocab:5, c1:'#A88A5C', c2:'#2B2214' },
-  { id:'classic-7', genre:'classic', title:'Simple Tales for Beginners', author:'Hans Christian Andersen', level:'A1', minutes:35, vocab:1, c1:'#047857', c2:'#022C22' },
-  { id:'classic-8', genre:'classic', title:'Moby Dick (Unabridged)', author:'Herman Melville', level:'C2', minutes:520, vocab:5, c1:'#9F1239', c2:'#280511' },
+  { id:'classic-8', genre:'classic', title:'Moby Dick (Unabridged)', author:'Herman Melville', level:'C2', minutes:520, vocab:5, dateAdded:'2026-09-22', c1:'#9F1239', c2:'#280511' },
+  { id:'classic-1', genre:'classic', title:'Pride and Prejudice', author:'Jane Austen', level:'C1', minutes:480, vocab:5, dateAdded:'2026-09-19', c1:'#B08D5E', c2:'#2A2013' },
+  { id:'classic-6', genre:'classic', title:'The Picture of Dorian Gray', author:'Oscar Wilde', level:'C1', minutes:330, vocab:5, dateAdded:'2026-09-15', c1:'#A88A5C', c2:'#2B2214' },
+  { id:'classic-2', genre:'classic', title:'Frankenstein', author:'Mary Shelley', level:'C1', minutes:360, vocab:5, dateAdded:'2026-09-12', c1:'#6E5A3E', c2:'#1C1710' },
+  { id:'classic-4', genre:'classic', title:'The Adventures of Sherlock Holmes', author:'Arthur Conan Doyle', level:'B2', minutes:300, vocab:4, dateAdded:'2026-09-09', c1:'#8C6F4E', c2:'#241C12' },
+  { id:'classic-3', genre:'classic', title:"Alice's Adventures in Wonderland", author:'Lewis Carroll', level:'B1', minutes:150, vocab:3, dateAdded:'2026-09-06', c1:'#9C7B4A', c2:'#261E10' },
+  { id:'classic-5', genre:'classic', title:'A Christmas Carol', author:'Charles Dickens', level:'B1', minutes:120, vocab:3, dateAdded:'2026-09-03', c1:'#7A6244', c2:'#1F1810' },
+  { id:'classic-7', genre:'classic', title:'Simple Tales for Beginners', author:'Hans Christian Andersen', level:'A1', minutes:35, vocab:1, dateAdded:'2026-09-01', c1:'#047857', c2:'#022C22' },
 
-  { id:'daily-1', genre:'daily', title:'Coffee Shop Chats', author:'Emma Wallace', level:'A2', minutes:45, vocab:1, c1:'#2DBEA6', c2:'#0C2A26' },
-  { id:'daily-2', genre:'daily', title:'At the Airport', author:'Julia Novak', level:'A2', minutes:40, vocab:1, c1:'#22A896', c2:'#0A2622' },
-  { id:'daily-3', genre:'daily', title:'Small Talk, Big Confidence', author:'Chris Adeyemi', level:'B1', minutes:70, vocab:2, c1:'#3FCDB0', c2:'#0E2D28' },
-  { id:'daily-4', genre:'daily', title:'Everyday English in Action', author:'Nora Fischer', level:'B1', minutes:90, vocab:2, c1:'#4BD8BE', c2:'#10312B' },
-  { id:'daily-5', genre:'daily', title:'Ordering Without Fear', author:'Liam Torres', level:'A2', minutes:35, vocab:1, c1:'#1F9C8B', c2:'#092220' },
-  { id:'daily-6', genre:'daily', title:'Hello World', author:'Anna Miller', level:'A1', minutes:20, vocab:1, c1:'#059669', c2:'#064E3B' },
-  { id:'daily-7', genre:'daily', title:'Socio-Linguistic Nuances', author:'Dr. Marcus Thorne', level:'C2', minutes:250, vocab:5, c1:'#881337', c2:'#280511' }
+  { id:'daily-7', genre:'daily', title:'Socio-Linguistic Nuances', author:'Dr. Marcus Thorne', level:'C2', minutes:250, vocab:5, dateAdded:'2026-09-22', c1:'#881337', c2:'#280511' },
+  { id:'daily-4', genre:'daily', title:'Everyday English in Action', author:'Nora Fischer', level:'B1', minutes:90, vocab:2, dateAdded:'2026-09-17', c1:'#4BD8BE', c2:'#10312B' },
+  { id:'daily-3', genre:'daily', title:'Small Talk, Big Confidence', author:'Chris Adeyemi', level:'B1', minutes:70, vocab:2, dateAdded:'2026-09-12', c1:'#3FCDB0', c2:'#0E2D28' },
+  { id:'daily-1', genre:'daily', title:'Coffee Shop Chats', author:'Emma Wallace', level:'A2', minutes:45, vocab:1, dateAdded:'2026-09-08', c1:'#2DBEA6', c2:'#0C2A26' },
+  { id:'daily-2', genre:'daily', title:'At the Airport', author:'Julia Novak', level:'A2', minutes:40, vocab:1, dateAdded:'2026-09-05', c1:'#22A896', c2:'#0A2622' },
+  { id:'daily-5', genre:'daily', title:'Ordering Without Fear', author:'Liam Torres', level:'A2', minutes:35, vocab:1, dateAdded:'2026-09-03', c1:'#1F9C8B', c2:'#092220' },
+  { id:'daily-6', genre:'daily', title:'Hello World', author:'Anna Miller', level:'A1', minutes:20, vocab:1, dateAdded:'2026-09-01', c1:'#059669', c2:'#064E3B' }
 ];
+
+function getSortedBooks(list) {
+  return list.slice().sort((a, b) => {
+    const da = new Date(a.dateAdded || '1970-01-01').getTime();
+    const db = new Date(b.dateAdded || '1970-01-01').getTime();
+    return db - da;
+  });
+}
+
+function formatDateAdded(dateStr) {
+  if (!dateStr) return '';
+  const d = new Date(dateStr);
+  if (isNaN(d.getTime())) return dateStr;
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return months[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
+}
 
 const HERO_BOOK_ID = 'scifi-3';
 
@@ -918,7 +934,7 @@ const STORY = {
     ["The transmission arrived at 3:14 a.m., fracturing the silence of the observation deck. Mira had almost stopped believing in the signal — three years of static, three years of hollow hope drifting through the void. She pressed her palm against the cold viewport, watching Jupiter's storms churn like ink dropped into water, and listened as the message unspooled: not words, not yet, but a rhythm too deliberate to be chance."],
     ["Mira's fingers trembled as she reached for the recorder, half-expecting the signal to vanish the way all the others had — fleeting anomalies dismissed by the committee as cosmic noise. But this one held. It pulsed, faded, pulsed again, each interval shortening with what could only be described as intention. Somewhere beyond the ice moons, something was listening back."],
     ["By dawn, the pattern had resolved into something almost legible — not language exactly, but the shadow of one, mathematical in its bones yet carrying what felt unmistakably like urgency. Mira transcribed every pulse into her notebook, hands cramping, coffee cold, refusing the sleep her body kept demanding. If the committee wouldn't listen, she would build the case herself, piece by piece."],
-    ["When she finally broadcast her findings, she expected silence, or worse, ridicule. Instead, three observatories replied within the hour, each confirming the same anomaly from a different angle of the sky. Whatever was out there beyond the ice moons was not an accident of physics. It was, unmistakably, a greeting — and for the first time in three years, Mira let harmlessly smile."]
+    ["When she finally broadcast her findings, she expected silence, or worse, ridicule. Instead, three observatories replied within the hour, each confirming the same anomaly from a different angle of the sky. Whatever was out there beyond the ice moons was not an accident of physics. It was, unmistakably, a greeting — and for the first time in three years, Mira let herself smile."]
   ],
   B1: [
     ["The message came at 3:14 a.m. It broke the silence in the control room. Mira had almost stopped believing in it. For three years, she heard only static. She put her hand on the cold window. Outside, she could see Jupiter's storms moving like ink in water. Then she heard the message. It was not words yet. But the rhythm was too clear to be an accident."],
@@ -1121,8 +1137,34 @@ function paintCover(el, book){
 }
 
 /* ================================================================
-   READING PROGRESS (localStorage)
+   READING STATUS & PROGRESS (localStorage)
    ================================================================ */
+function loadReadingStatusMap(){
+  try{
+    const raw = localStorage.getItem('readingStatus');
+    return raw ? JSON.parse(raw) : {};
+  }catch(e){
+    return {};
+  }
+}
+
+function saveReadingStatusMap(map){
+  try{
+    localStorage.setItem('readingStatus', JSON.stringify(map));
+  }catch(e){ /* storage unavailable */ }
+}
+
+function getBookStatus(bookId){
+  const map = loadReadingStatusMap();
+  return map[bookId] || 'unread';
+}
+
+function setBookStatus(bookId, status){
+  const map = loadReadingStatusMap();
+  map[bookId] = status;
+  saveReadingStatusMap(map);
+}
+
 function loadReadingProgress(){
   try{
     const raw = localStorage.getItem('readingProgress');
@@ -1156,6 +1198,14 @@ function updateBookProgress(bookId, pageIndex, totalPages){
   };
 
   saveReadingProgress(data);
+
+  // Auto-update reading status when starting or finishing
+  const currentStatus = getBookStatus(bookId);
+  if (completed) {
+    setBookStatus(bookId, 'read');
+  } else if (currentStatus === 'unread') {
+    setBookStatus(bookId, 'in-progress');
+  }
 }
 
 function getMostRecentBookData(){
@@ -1209,6 +1259,58 @@ function createBookCardEl(book){
       formatTime(book.minutes) +
     '</span>';
 
+  const dateRow = document.createElement('div');
+  dateRow.className = 'book-date-row';
+  dateRow.style.fontSize = '.72rem';
+  dateRow.style.color = 'var(--text-tertiary)';
+  dateRow.style.padding = '0 2px';
+  dateRow.textContent = 'Added ' + formatDateAdded(book.dateAdded);
+
+  const statusRow = document.createElement('div');
+  statusRow.className = 'book-status-row';
+  statusRow.style.display = 'flex';
+  statusRow.style.alignItems = 'center';
+  statusRow.style.justifySpaceBetween = 'space-between';
+  statusRow.style.padding = '0 2px';
+  statusRow.style.marginTop = '2px';
+
+  const currentStatus = getBookStatus(book.id);
+  const statusSelect = document.createElement('select');
+  statusSelect.className = 'status-select';
+  statusSelect.style.fontSize = '.74rem';
+  statusSelect.style.padding = '3px 8px';
+  statusSelect.style.borderRadius = '99px';
+  statusSelect.style.border = '1px solid var(--glass-border)';
+  statusSelect.style.background = 'var(--glass-fill-soft)';
+  statusSelect.style.color = currentStatus === 'read' ? 'var(--neon-cyan)' : (currentStatus === 'in-progress' ? 'var(--neon-amber)' : 'var(--text-tertiary)');
+  statusSelect.style.cursor = 'pointer';
+
+  const options = [
+    { value: 'unread', label: 'Unread' },
+    { value: 'in-progress', label: 'In Progress' },
+    { value: 'read', label: 'Read' }
+  ];
+
+  options.forEach(opt => {
+    const o = document.createElement('option');
+    o.value = opt.value;
+    o.textContent = opt.label;
+    o.style.background = '#12141F';
+    o.style.color = '#F5F7FA';
+    if (opt.value === currentStatus) o.selected = true;
+    statusSelect.appendChild(o);
+  });
+
+  statusSelect.addEventListener('click', (e) => e.stopPropagation());
+  statusSelect.addEventListener('change', (e) => {
+    e.stopPropagation();
+    const newStatus = e.target.value;
+    setBookStatus(book.id, newStatus);
+    refreshAllBookDisplays();
+  });
+
+  statusRow.appendChild(statusSelect);
+
   const meter = document.createElement('div');
   meter.className = 'vocab-meter';
   meter.setAttribute('aria-label', 'Vocabulary difficulty ' + book.vocab + ' of 5');
@@ -1218,22 +1320,34 @@ function createBookCardEl(book){
 
   card.appendChild(cover);
   card.appendChild(metaRow);
+  card.appendChild(dateRow);
+  card.appendChild(statusRow);
   card.appendChild(meter);
 
-  const open = () => openBook(book, cover);
+  const open = (e) => {
+    if (e.target.closest('.status-select')) return;
+    openBook(book, cover);
+  };
   card.addEventListener('click', open);
   card.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); open(); }
+    if (e.target.closest('.status-select')) return;
+    if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); open(e); }
   });
   return card;
 }
 
+function refreshAllBookDisplays(){
+  renderGenreRows();
+  renderLevelGrid();
+}
+
 function renderGenreRows(){
+  const sorted = getSortedBooks(BOOKS);
   ['scifi','business','classic','daily'].forEach((g) => {
     const track = document.querySelector('.row-track[data-track="' + g + '"]');
     if (!track) return;
     track.innerHTML = '';
-    BOOKS.filter((b) => b.genre === g).forEach((b) => track.appendChild(createBookCardEl(b)));
+    sorted.filter((b) => b.genre === g).forEach((b) => track.appendChild(createBookCardEl(b)));
   });
 }
 
@@ -1241,7 +1355,8 @@ let activeLevel = 'all';
 function renderLevelGrid(){
   const grid = document.getElementById('levelGrid');
   grid.innerHTML = '';
-  const list = activeLevel === 'all' ? BOOKS : BOOKS.filter((b) => b.level === activeLevel);
+  const sorted = getSortedBooks(BOOKS);
+  const list = activeLevel === 'all' ? sorted : sorted.filter((b) => b.level === activeLevel);
   list.forEach((b) => grid.appendChild(createBookCardEl(b)));
 }
 
@@ -1290,13 +1405,13 @@ searchInput.addEventListener('input', () => {
   }
   document.body.classList.add('searching');
   searchSection.classList.add('active');
-  const matches = BOOKS.filter((b) => b.title.toLowerCase().includes(q) || b.author.toLowerCase().includes(q));
-  document.getElementById('searchResultsSub').textContent = matches.length
-    ? matches.length + (matches.length === 1 ? ' match for "' : ' matches for "') + raw + '"'
+  const sortedMatches = getSortedBooks(BOOKS.filter((b) => b.title.toLowerCase().includes(q) || b.author.toLowerCase().includes(q)));
+  document.getElementById('searchResultsSub').textContent = sortedMatches.length
+    ? sortedMatches.length + (sortedMatches.length === 1 ? ' match for "' : ' matches for "') + raw + '"'
     : 'No matches for "' + raw + '"';
   const grid = document.getElementById('searchGrid');
   grid.innerHTML = '';
-  matches.forEach((b) => grid.appendChild(createBookCardEl(b)));
+  sortedMatches.forEach((b) => grid.appendChild(createBookCardEl(b)));
 });
 
 /* ================================================================
