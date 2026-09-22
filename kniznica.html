@@ -478,7 +478,7 @@
   .page-face{
     position:absolute; inset:0; box-sizing:border-box; overflow:hidden;
     backface-visibility:hidden; -webkit-backface-visibility:hidden;
-    background:linear-gradient(165deg, rgba(255,255,255,.035), rgba(255,255,255,.01));
+    background: #0C0E18;
     border:1px solid var(--glass-border);
     box-shadow:0 30px 70px -30px rgba(0,0,0,.7);
   }
@@ -486,7 +486,7 @@
   .page-back{
     transform:rotateY(180deg); z-index:1;
     border-radius:var(--radius-panel) 0 0 var(--radius-panel);
-    background:linear-gradient(165deg, rgba(255,255,255,.05), rgba(255,255,255,.015));
+    background: #0C0E18;
   }
   .page-face::after{
     content:''; position:absolute; inset:0; pointer-events:none;
@@ -900,167 +900,9 @@ const STORY = {
   ]
 };
 
-const DICTIONARY = {
-  transmission:{ipa:'/trænzˈmɪʃən/',pos:'n.',tr:{sk:'prenos, vysielanie',cs:'přenos, vysílání',de:'Übertragung',fr:'transmission',es:'transmisión',it:'trasmissione',pl:'transmisja',ru:'передача',zh:'传输',ja:'送信'}},
-  arrived:{ipa:'/əˈraɪvd/',pos:'v.',tr:{sk:'prišiel, prišla',cs:'přišel, přišla',de:'kam an',fr:'arriva',es:'llegó',it:'arrivò',pl:'przybył, przybyła',ru:'прибыл, прибыла',zh:'到达了',ja:'到着した'}},
-  fracturing:{ipa:'/ˈfræktʃərɪŋ/',pos:'v.',tr:{sk:'narúšajúci',cs:'narušující',de:'durchbrechend',fr:'brisant',es:'quebrando',it:'spezzando',pl:'przełamujący',ru:'нарушающий',zh:'打破',ja:'破る'}},
-  silence:{ipa:'/ˈsaɪləns/',pos:'n.',tr:{sk:'ticho',cs:'ticho',de:'Stille',fr:'silence',es:'silencio',it:'silenzio',pl:'cisza',ru:'тишина',zh:'寂静',ja:'静寂'}},
-  observation:{ipa:'/ˌɒbzərˈveɪʃən/',pos:'n.',tr:{sk:'pozorovanie',cs:'pozorování',de:'Beobachtung',fr:'observation',es:'observación',it:'osservazione',pl:'obserwacja',ru:'наблюдение',zh:'观测',ja:'観測'}},
-  deck:{ipa:'/dek/',pos:'n.',tr:{sk:'paluba',cs:'paluba',de:'Deck',fr:'pont',es:'cubierta',it:'ponte',pl:'pokład',ru:'палуба',zh:'甲板',ja:'デッキ'}},
-  believing:{ipa:'/bɪˈliːvɪŋ/',pos:'v.',tr:{sk:'veriť',cs:'věřící',de:'glaubend',fr:'croyant',es:'creyendo',it:'credendo',pl:'wierzący',ru:'веря',zh:'相信',ja:'信じる'}},
-  believed:{ipa:'/bɪˈliːvd/',pos:'v.',tr:{sk:'veril, verila',cs:'věřil, věřila',de:'glaubte',fr:'croyait',es:'creía',it:'credeva',pl:'wierzył, wierzyła',ru:'верил, верила',zh:'相信过',ja:'信じた'}},
-  believe:{ipa:'/bɪˈliːv/',pos:'v.',tr:{sk:'veriť',cs:'věřit',de:'glauben',fr:'croire',es:'creer',it:'credere',pl:'wierzyć',ru:'верить',zh:'相信',ja:'信じる'}},
-  signal:{ipa:'/ˈsɪɡnəl/',pos:'n.',tr:{sk:'signál',cs:'signál',de:'Signal',fr:'signal',es:'señal',it:'segnale',pl:'sygnał',ru:'сигнал',zh:'信号',ja:'信号'}},
-  signals:{ipa:'/ˈsɪɡnəlz/',pos:'n.',tr:{sk:'signály',cs:'signály',de:'Signale',fr:'signaux',es:'señales',it:'segnali',pl:'sygnały',ru:'сигналы',zh:'信号',ja:'信号（複数）'}},
-  static:{ipa:'/ˈstætɪk/',pos:'n.',tr:{sk:'statický šum',cs:'statický šum',de:'Rauschen',fr:'parasites',es:'estática',it:'rumore statico',pl:'szum',ru:'помехи',zh:'静电噪音',ja:'雑音'}},
-  hollow:{ipa:'/ˈhɒloʊ/',pos:'adj.',tr:{sk:'dutý, prázdny',cs:'dutý, prázdný',de:'hohl',fr:'creux',es:'hueco',it:'vuoto, cavo',pl:'pusty, wydrążony',ru:'пустой, полый',zh:'空洞的',ja:'空虚な'}},
-  hope:{ipa:'/hoʊp/',pos:'n.',tr:{sk:'nádej',cs:'naděje',de:'Hoffnung',fr:'espoir',es:'esperanza',it:'speranza',pl:'nadzieja',ru:'надежда',zh:'希望',ja:'希望'}},
-  drifting:{ipa:'/ˈdrɪftɪŋ/',pos:'v.',tr:{sk:'unášajúci sa',cs:'unášející se',de:'treibend',fr:'dérivant',es:'a la deriva',it:'alla deriva',pl:'dryfujący',ru:'дрейфующий',zh:'漂流',ja:'漂う'}},
-  void:{ipa:'/vɔɪd/',pos:'n.',tr:{sk:'prázdnota',cs:'prázdnota',de:'Leere',fr:'vide',es:'vacío',it:'vuoto',pl:'pustka',ru:'пустота',zh:'虚空',ja:'虚無'}},
-  pressed:{ipa:'/prest/',pos:'v.',tr:{sk:'pritlačila',cs:'přitiskla',de:'drückte',fr:'appuya',es:'presionó',it:'premette',pl:'przycisnęła',ru:'прижала',zh:'按压了',ja:'押した'}},
-  palm:{ipa:'/pɑːm/',pos:'n.',tr:{sk:'dlaň',cs:'dlaň',de:'Handfläche',fr:'paume',es:'palma',it:'palmo',pl:'dłoń',ru:'ладонь',zh:'手掌',ja:'手のひら'}},
-  viewport:{ipa:'/ˈvjuːpɔːrt/',pos:'n.',tr:{sk:'pozorovacie okno',cs:'pozorovací okno',de:'Sichtfenster',fr:'hublot',es:'mirador',it:'oblò',pl:'okno obserwacyjne',ru:'смотровое окно',zh:'观察窗',ja:'観測窓'}},
-  storms:{ipa:'/stɔːrmz/',pos:'n.',tr:{sk:'búrky',cs:'bouře',de:'Stürme',fr:'tempêtes',es:'tormentas',it:'tempeste',pl:'burze',ru:'бури',zh:'风暴',ja:'嵐'}},
-  churn:{ipa:'/tʃɜːrn/',pos:'v.',tr:{sk:'víriť sa',cs:'vířit',de:'wirbeln',fr:'tourbillonner',es:'agitarse',it:'agitarsi',pl:'wirować',ru:'бурлить',zh:'翻腾',ja:'渦巻く'}},
-  ink:{ipa:'/ɪŋk/',pos:'n.',tr:{sk:'atrament',cs:'inkoust',de:'Tinte',fr:'encre',es:'tinta',it:'inchiostro',pl:'atrament',ru:'чернила',zh:'墨水',ja:'インク'}},
-  dropped:{ipa:'/drɒpt/',pos:'v.',tr:{sk:'kvapnutý',cs:'kapnutý',de:'getropft',fr:'tombé en goutte',es:'goteado',it:'gocciolato',pl:'kapnięty',ru:'капнувший',zh:'滴落的',ja:'落とされた'}},
-  listened:{ipa:'/ˈlɪsənd/',pos:'v.',tr:{sk:'počúvala',cs:'poslouchala',de:'hörte zu',fr:'écouta',es:'escuchó',it:'ascoltò',pl:'słuchała',ru:'слушала',zh:'倾听了',ja:'耳を傾けた'}},
-  listening:{ipa:'/ˈlɪsənɪŋ/',pos:'v.',tr:{sk:'počúvanie',cs:'poslouchání',de:'Zuhören',fr:'écoute',es:'escuchando',it:'ascoltando',pl:'słuchanie',ru:'слушание',zh:'倾听',ja:'聞くこと'}},
-  message:{ipa:'/ˈmesɪdʒ/',pos:'n.',tr:{sk:'správa',cs:'zpráva',de:'Nachricht',fr:'message',es:'mensaje',it:'messaggio',pl:'wiadomość',ru:'сообщение',zh:'信息',ja:'メッセージ'}},
-  unspooled:{ipa:'/ʌnˈspuːld/',pos:'v.',tr:{sk:'odvíjal sa',cs:'odvíjel se',de:'entrollte sich',fr:'se déroula',es:'se desenrolló',it:'si srotolò',pl:'rozwijał się',ru:'разматывался',zh:'展开了',ja:'展開した'}},
-  rhythm:{ipa:'/ˈrɪðəm/',pos:'n.',tr:{sk:'rytmus',cs:'rytmus',de:'Rhythmus',fr:'rythme',es:'ritmo',it:'ritmo',pl:'rytm',ru:'ритм',zh:'节奏',ja:'リズム'}},
-  deliberate:{ipa:'/dɪˈlɪbərət/',pos:'adj.',tr:{sk:'zámerný',cs:'záměrný',de:'absichtlich',fr:'délibéré',es:'deliberado',it:'deliberato',pl:'celowy',ru:'намеренный',zh:'刻意的',ja:'意図的な'}},
-  chance:{ipa:'/tʃæns/',pos:'n.',tr:{sk:'náhoda',cs:'náhoda',de:'Zufall',fr:'hasard',es:'casualidad',it:'caso',pl:'przypadek',ru:'случайность',zh:'机会',ja:'偶然'}},
-  trembled:{ipa:'/ˈtrembld/',pos:'v.',tr:{sk:'chvela sa',cs:'chvěla se',de:'zitterte',fr:'trembla',es:'tembló',it:'tremò',pl:'trzęsła się',ru:'дрожала',zh:'颤抖了',ja:'震えた'}},
-  fingers:{ipa:'/ˈfɪŋɡərz/',pos:'n.',tr:{sk:'prsty',cs:'prsty',de:'Finger',fr:'doigts',es:'dedos',it:'dita',pl:'palce',ru:'пальцы',zh:'手指',ja:'指'}},
-  reached:{ipa:'/riːtʃt/',pos:'v.',tr:{sk:'siahla',cs:'sáhla',de:'griff',fr:'tendit la main',es:'alcanzó',it:'raggiunse',pl:'sięgnęła',ru:'потянулась',zh:'伸手拿了',ja:'手を伸ばした'}},
-  recorder:{ipa:'/rɪˈkɔːrdər/',pos:'n.',tr:{sk:'nahrávacie zariadenie',cs:'nahrávací zařízení',de:'Aufnahmegerät',fr:'enregistreur',es:'grabadora',it:'registratore',pl:'rejestrator',ru:'диктофон',zh:'录音机',ja:'録音機'}},
-  vanish:{ipa:'/ˈvænɪʃ/',pos:'v.',tr:{sk:'zmiznúť',cs:'zmizet',de:'verschwinden',fr:'disparaître',es:'desvanecerse',it:'svanire',pl:'zniknąć',ru:'исчезнуть',zh:'消失',ja:'消える'}},
-  fleeting:{ipa:'/ˈfliːtɪŋ/',pos:'adj.',tr:{sk:'prchavý',cs:'prchavý',de:'flüchtig',fr:'fugace',es:'fugaz',it:'fugace',pl:'ulotny',ru:'мимолётный',zh:'转瞬即逝的',ja:'つかの間の'}},
-  anomalies:{ipa:'/əˈnɒməliz/',pos:'n.',tr:{sk:'anomálie',cs:'anomálie',de:'Anomalien',fr:'anomalies',es:'anomalías',it:'anomalie',pl:'anomalie',ru:'аномалии',zh:'异常现象',ja:'異常'}},
-  dismissed:{ipa:'/dɪsˈmɪst/',pos:'v.',tr:{sk:'odmietnuté',cs:'odmítnuté',de:'abgetan',fr:'rejetées',es:'descartadas',it:'respinte',pl:'odrzucone',ru:'отклонённые',zh:'被驳回的',ja:'却下された'}},
-  committee:{ipa:'/kəˈmɪti/',pos:'n.',tr:{sk:'komisia, výbor',cs:'výbor',de:'Ausschuss',fr:'comité',es:'comité',it:'comitato',pl:'komisja',ru:'комитет',zh:'委员会',ja:'委員会'}},
-  cosmic:{ipa:'/ˈkɒzmɪk/',pos:'adj.',tr:{sk:'kozmický',cs:'kosmický',de:'kosmisch',fr:'cosmique',es:'cósmico',it:'cosmico',pl:'kosmiczny',ru:'космический',zh:'宇宙的',ja:'宇宙の'}},
-  noise:{ipa:'/nɔɪz/',pos:'n.',tr:{sk:'hluk, šum',cs:'hluk',de:'Rauschen',fr:'bruit',es:'ruido',it:'rumore',pl:'hałas',ru:'шум',zh:'噪音',ja:'ノイズ'}},
-  pulsed:{ipa:'/pʌlst/',pos:'v.',tr:{sk:'pulzovalo',cs:'pulzovalo',de:'pulsierte',fr:'pulsa',es:'pulsó',it:'pulsò',pl:'pulsowało',ru:'пульсировало',zh:'脉动了',ja:'脈動した'}},
-  faded:{ipa:'/ˈfeɪdɪd/',pos:'v.',tr:{sk:'slablo',cs:'slábl',de:'verblasste',fr:"s'estompa",es:'se desvaneció',it:'svanì',pl:'zanikał',ru:'угасал',zh:'减弱了',ja:'弱まった'}},
-  interval:{ipa:'/ˈɪntərvəl/',pos:'n.',tr:{sk:'interval',cs:'interval',de:'Intervall',fr:'intervalle',es:'intervalo',it:'intervallo',pl:'interwał',ru:'интервал',zh:'间隔',ja:'間隔'}},
-  shortening:{ipa:'/ˈʃɔːrtnɪŋ/',pos:'v.',tr:{sk:'skracujúci sa',cs:'zkracující se',de:'sich verkürzend',fr:'se raccourcissant',es:'acortándose',it:'accorciandosi',pl:'skracający się',ru:'сокращающийся',zh:'缩短',ja:'短くなる'}},
-  intention:{ipa:'/ɪnˈtenʃən/',pos:'n.',tr:{sk:'zámer',cs:'záměr',de:'Absicht',fr:'intention',es:'intención',it:'intenzione',pl:'zamiar',ru:'намерение',zh:'意图',ja:'意図'}},
-  moons:{ipa:'/muːnz/',pos:'n.',tr:{sk:'mesiace (planét)',cs:'měsíce',de:'Monde',fr:'lunes',es:'lunas',it:'lune',pl:'księżyce',ru:'луны',zh:'卫星',ja:'衛星'}},
-  quiet:{ipa:'/ˈkwaɪət/',pos:'adj.',tr:{sk:'tichý',cs:'tichý',de:'leise, ruhig',fr:'silencieux',es:'silencioso',it:'silenzioso',pl:'cichy',ru:'тихий',zh:'安静的',ja:'静かな'}},
-  touched:{ipa:'/tʌtʃt/',pos:'v.',tr:{sk:'dotkla sa',cs:'dotkla se',de:'berührte',fr:'toucha',es:'tocó',it:'toccò',pl:'dotknęła',ru:'коснулась',zh:'触摸了',ja:'触れた'}},
-  cold:{ipa:'/koʊld/',pos:'adj.',tr:{sk:'studený',cs:'studený',de:'kalt',fr:'froid',es:'frío',it:'freddo',pl:'zimny',ru:'холодный',zh:'寒冷的',ja:'冷たい'}},
-  window:{ipa:'/ˈwɪndoʊ/',pos:'n.',tr:{sk:'okno',cs:'okno',de:'Fenster',fr:'fenêtre',es:'ventana',it:'finestra',pl:'okno',ru:'окно',zh:'窗户',ja:'窓'}},
-  pattern:{ipa:'/ˈpætərn/',pos:'n.',tr:{sk:'vzor',cs:'vzor',de:'Muster',fr:'motif',es:'patrón',it:'schema',pl:'wzór',ru:'узор',zh:'模式',ja:'パターン'}},
-  random:{ipa:'/ˈrændəm/',pos:'adj.',tr:{sk:'náhodný',cs:'náhodný',de:'zufällig',fr:'aléatoire',es:'aleatorio',it:'casuale',pl:'losowy',ru:'случайный',zh:'随机的',ja:'ランダムな'}},
-  shook:{ipa:'/ʃʊk/',pos:'v.',tr:{sk:'triasli sa',cs:'třásly se',de:'zitterten',fr:'tremblèrent',es:'temblaron',it:'tremarono',pl:'trzęsły się',ru:'тряслись',zh:'颤抖了',ja:'震えた'}},
-  stayed:{ipa:'/steɪd/',pos:'v.',tr:{sk:'zostal, pretrval',cs:'zůstal, přetrval',de:'blieb',fr:'resta',es:'permaneció',it:'rimase',pl:'pozostał',ru:'остался',zh:'持续了',ja:'続いた'}},
-  purpose:{ipa:'/ˈpɜːrpəs/',pos:'n.',tr:{sk:'účel, zámer',cs:'účel',de:'Zweck',fr:'but',es:'propósito',it:'scopo',pl:'cel',ru:'цель',zh:'目的',ja:'目的'}},
-  strong:{ipa:'/strɔːŋ/',pos:'adj.',tr:{sk:'silný',cs:'silný',de:'stark',fr:'fort',es:'fuerte',it:'forte',pl:'silny',ru:'сильный',zh:'强的',ja:'強い'}},
-  stronger:{ipa:'/ˈstrɔːŋɡər/',pos:'adj.',tr:{sk:'silnejší',cs:'silnější',de:'stärker',fr:'plus fort',es:'más fuerte',it:'più forte',pl:'silniejszy',ru:'сильнее',zh:'更强的',ja:'より強い'}},
-  weak:{ipa:'/wiːk/',pos:'adj.',tr:{sk:'slabý',cs:'slabý',de:'schwach',fr:'faible',es:'débil',it:'debole',pl:'słaby',ru:'слабый',zh:'弱的',ja:'弱い'}},
-  weaker:{ipa:'/ˈwiːkər/',pos:'adj.',tr:{sk:'slabší',cs:'slabší',de:'schwächer',fr:'plus faible',es:'más débil',it:'più debole',pl:'słabszy',ru:'слабее',zh:'更弱的',ja:'より弱い'}},
-  morning:{ipa:'/ˈmɔːrnɪŋ/',pos:'n.',tr:{sk:'ráno',cs:'ráno',de:'Morgen',fr:'matin',es:'mañana',it:'mattina',pl:'rano',ru:'утро',zh:'早晨',ja:'朝'}},
-  control:{ipa:'/kənˈtroʊl/',pos:'n.',tr:{sk:'riadenie',cs:'řízení',de:'Kontrolle',fr:'contrôle',es:'control',it:'controllo',pl:'kontrola',ru:'управление',zh:'控制',ja:'制御'}},
-  broke:{ipa:'/broʊk/',pos:'v.',tr:{sk:'prerušilo',cs:'přerušilo',de:'unterbrach',fr:'rompit',es:'rompió',it:'ruppe',pl:'przerwało',ru:'прервало',zh:'打破了',ja:'破った'}},
-  held:{ipa:'/held/',pos:'v.',tr:{sk:'vydržal',cs:'vydržel',de:'hielt',fr:'tint',es:'se mantuvo',it:'tenne',pl:'utrzymał',ru:'держался',zh:'持续了',ja:'持ちこたえた'}},
-  changed:{ipa:'/tʃeɪndʒd/',pos:'v.',tr:{sk:'zmenil sa',cs:'změnil se',de:'änderte sich',fr:'changea',es:'cambió',it:'cambiò',pl:'zmienił się',ru:'изменился',zh:'变化了',ja:'変化した'}},
-  described:{ipa:'/dɪˈskraɪbd/',pos:'v.',tr:{sk:'opísaný',cs:'popsaný',de:'beschrieben',fr:'décrit',es:'descrito',it:'descritto',pl:'opisany',ru:'описанный',zh:'被描述为',ja:'表現された'}},
-  somewhere:{ipa:'/ˈsʌmwer/',pos:'adv.',tr:{sk:'niekde',cs:'někde',de:'irgendwo',fr:'quelque part',es:'en algún lugar',it:'da qualche parte',pl:'gdzieś',ru:'где-то',zh:'某处',ja:'どこかで'}},
-  beyond:{ipa:'/bɪˈjɒnd/',pos:'prep.',tr:{sk:'za, mimo',cs:'za, mimo',de:'jenseits',fr:'au-delà de',es:'más allá de',it:'oltre',pl:'poza',ru:'за пределами',zh:'超越',ja:'越えて'}},
-  ice:{ipa:'/aɪs/',pos:'n.',tr:{sk:'ľad',cs:'led',de:'Eis',fr:'glace',es:'hielo',it:'ghiaccio',pl:'lód',ru:'лёд',zh:'冰',ja:'氷'}},
-  waiting:{ipa:'/ˈweɪtɪŋ/',pos:'v.',tr:{sk:'čakanie',cs:'čekání',de:'Warten',fr:'attente',es:'esperando',it:'aspettando',pl:'czekanie',ru:'ожидание',zh:'等待',ja:'待つこと'}},
-  outside:{ipa:'/aʊtˈsaɪd/',pos:'adv.',tr:{sk:'vonku',cs:'venku',de:'draußen',fr:'dehors',es:'afuera',it:'fuori',pl:'na zewnątrz',ru:'снаружи',zh:'外面',ja:'外で'}},
-  accident:{ipa:'/ˈæksɪdənt/',pos:'n.',tr:{sk:'nehoda, náhoda',cs:'nehoda',de:'Unfall, Zufall',fr:'accident',es:'accidente',it:'incidente',pl:'wypadek',ru:'случайность',zh:'意外',ja:'偶然の出来事'}},
-  reason:{ipa:'/ˈriːzən/',pos:'n.',tr:{sk:'dôvod',cs:'důvod',de:'Grund',fr:'raison',es:'razón',it:'ragione',pl:'powód',ru:'причина',zh:'原因',ja:'理由'}},
-  record:{ipa:'/rɪˈkɔːrd/',pos:'v.',tr:{sk:'nahrať',cs:'nahrát',de:'aufnehmen',fr:'enregistrer',es:'grabar',it:'registrare',pl:'nagrać',ru:'записать',zh:'记录',ja:'記録する'}},
-  stopped:{ipa:'/stɒpt/',pos:'v.',tr:{sk:'zastavil sa',cs:'zastavil se',de:'hörte auf',fr:"s'arrêta",es:'se detuvo',it:'si fermò',pl:'zatrzymał się',ru:'остановился',zh:'停止了',ja:'止まった'}},
-  sound:{ipa:'/saʊnd/',pos:'n.',tr:{sk:'zvuk',cs:'zvuk',de:'Klang',fr:'son',es:'sonido',it:'suono',pl:'dźwięk',ru:'звук',zh:'声音',ja:'音'}},
-  watching:{ipa:'/ˈwɒtʃɪŋ/',pos:'v.',tr:{sk:'sledovala',cs:'sledovala',de:'beobachtete',fr:'regardait',es:'observaba',it:'osservava',pl:'obserwowała',ru:'наблюдала',zh:'注视着',ja:'見ていた'}},
-  water:{ipa:'/ˈwɔːtər/',pos:'n.',tr:{sk:'voda',cs:'voda',de:'Wasser',fr:'eau',es:'agua',it:'acqua',pl:'woda',ru:'вода',zh:'水',ja:'水'}},
-  half:{ipa:'/hæf/',pos:'n.',tr:{sk:'polovica',cs:'polovina',de:'Hälfte',fr:'moitié',es:'mitad',it:'metà',pl:'połowa',ru:'половина',zh:'一半',ja:'半分'}},
-  expecting:{ipa:'/ɪkˈspektɪŋ/',pos:'v.',tr:{sk:'očakávajúci',cs:'očekávající',de:'erwartend',fr:"s'attendant à",es:'esperando',it:'aspettandosi',pl:'oczekujący',ru:'ожидающий',zh:'期待着',ja:'予期して'}},
-  came:{ipa:'/keɪm/',pos:'v.',tr:{sk:'prišla',cs:'přišla',de:'kam',fr:'vint',es:'llegó',it:'venne',pl:'przyszła',ru:'пришла',zh:'来了',ja:'来た'}},
-  heard:{ipa:'/hɜːrd/',pos:'v.',tr:{sk:'počula',cs:'slyšela',de:'hörte',fr:'entendit',es:'oyó',it:'sentì',pl:'usłyszała',ru:'услышала',zh:'听到了',ja:'聞いた'}},
-  moving:{ipa:'/ˈmuːvɪŋ/',pos:'v.',tr:{sk:'pohybujúce sa',cs:'pohybující se',de:'sich bewegend',fr:'se déplaçant',es:'moviéndose',it:'muovendosi',pl:'poruszający się',ru:'движущийся',zh:'移动的',ja:'動いている'}},
-  clear:{ipa:'/klɪr/',pos:'adj.',tr:{sk:'jasný',cs:'jasný',de:'klar',fr:'clair',es:'claro',it:'chiaro',pl:'jasny',ru:'ясный',zh:'清晰的',ja:'明確な'}},
-  hand:{ipa:'/hænd/',pos:'n.',tr:{sk:'ruka',cs:'ruka',de:'Hand',fr:'main',es:'mano',it:'mano',pl:'ręka',ru:'рука',zh:'手',ja:'手'}},
-  hands:{ipa:'/hændz/',pos:'n.',tr:{sk:'ruky',cs:'ruce',de:'Hände',fr:'mains',es:'manos',it:'mani',pl:'ręce',ru:'руки',zh:'双手',ja:'両手'}},
-  disappear:{ipa:'/ˌdɪsəˈpɪr/',pos:'v.',tr:{sk:'zmiznúť',cs:'zmizet',de:'verschwinden',fr:'disparaître',es:'desaparecer',it:'sparire',pl:'zniknąć',ru:'исчезнуть',zh:'消失',ja:'消える'}},
-  space:{ipa:'/speɪs/',pos:'n.',tr:{sk:'vesmír, priestor',cs:'vesmír, prostor',de:'Weltraum, Raum',fr:'espace',es:'espacio',it:'spazio',pl:'przestrzeń',ru:'космос',zh:'太空',ja:'宇宙'}},
-  nothing:{ipa:'/ˈnʌθɪŋ/',pos:'pron.',tr:{sk:'nič',cs:'nic',de:'nichts',fr:'rien',es:'nada',it:'niente',pl:'nic',ru:'ничего',zh:'什么都没有',ja:'何も'}},
-  looked:{ipa:'/lʊkt/',pos:'v.',tr:{sk:'pozerala sa',cs:'dívala se',de:'schaute',fr:'regarda',es:'miró',it:'guardò',pl:'patrzyła',ru:'смотрела',zh:'看了',ja:'見た'}},
-  wanted:{ipa:'/ˈwɒntɪd/',pos:'v.',tr:{sk:'chcela',cs:'chtěla',de:'wollte',fr:'voulut',es:'quiso',it:'volle',pl:'chciała',ru:'хотела',zh:'想要',ja:'望んだ'}},
-  people:{ipa:'/ˈpiːpəl/',pos:'n.',tr:{sk:'ľudia',cs:'lidé',de:'Menschen',fr:'gens',es:'gente',it:'persone',pl:'ludzie',ru:'люди',zh:'人们',ja:'人々'}},
-  said:{ipa:'/sed/',pos:'v.',tr:{sk:'povedali',cs:'řekli',de:'sagten',fr:'dirent',es:'dijeron',it:'dissero',pl:'powiedzieli',ru:'сказали',zh:'说了',ja:'言った'}},
-  felt:{ipa:'/felt/',pos:'v.',tr:{sk:'cítilo sa',cs:'cítilo se',de:'fühlte sich an',fr:'se sentit',es:'se sintió',it:'si sentì',pl:'czuło się',ru:'чувствовалось',zh:'感觉像',ja:'感じた'}},
-  far:{ipa:'/fɑːr/',pos:'adv.',tr:{sk:'ďaleko',cs:'daleko',de:'weit',fr:'loin',es:'lejos',it:'lontano',pl:'daleko',ru:'далеко',zh:'远',ja:'遠く'}},
-  away:{ipa:'/əˈweɪ/',pos:'adv.',tr:{sk:'preč',cs:'pryč',de:'weg',fr:'au loin',es:'lejos',it:'via',pl:'precz',ru:'прочь',zh:'离开',ja:'離れて'}},
-  else:{ipa:'/els/',pos:'adv.',tr:{sk:'iné, iný',cs:'jiný, jinak',de:'sonst',fr:"d'autre",es:'otro',it:'altro',pl:'inny',ru:'ещё',zh:'其他',ja:'他の'}},
-  dawn:{ipa:'/dɔːn/',pos:'n.',tr:{sk:'svitanie',cs:'svítání',de:'Morgendämmerung',fr:'aube',es:'amanecer',it:'alba',pl:'świt',ru:'рассвет',zh:'黎明',ja:'夜明け'}},
-  resolved:{ipa:'/rɪˈzɒlvd/',pos:'v.',tr:{sk:'vyjasnil sa',cs:'vyjasnil se',de:'löste sich auf',fr:'se résolut',es:'se resolvió',it:'si risolse',pl:'rozwiązał się',ru:'разрешился',zh:'显现出来了',ja:'解明された'}},
-  legible:{ipa:'/ˈledʒəbəl/',pos:'adj.',tr:{sk:'čitateľný',cs:'čitelný',de:'lesbar',fr:'lisible',es:'legible',it:'leggibile',pl:'czytelny',ru:'разборчивый',zh:'可辨认的',ja:'判読可能な'}},
-  mathematical:{ipa:'/ˌmæθəˈmætɪkəl/',pos:'adj.',tr:{sk:'matematický',cs:'matematický',de:'mathematisch',fr:'mathématique',es:'matemático',it:'matematico',pl:'matematyczny',ru:'математический',zh:'数学的',ja:'数学的な'}},
-  urgency:{ipa:'/ˈɜːrdʒənsi/',pos:'n.',tr:{sk:'naliehavosť',cs:'naléhavost',de:'Dringlichkeit',fr:'urgence',es:'urgencia',it:'urgenza',pl:'pilność',ru:'срочность',zh:'紧迫感',ja:'緊急性'}},
-  transcribed:{ipa:'/trænˈskraɪbd/',pos:'v.',tr:{sk:'prepisovala',cs:'přepisovala',de:'transkribierte',fr:'transcrivait',es:'transcribía',it:'trascriveva',pl:'przepisywała',ru:'расшифровывала',zh:'转录了',ja:'書き写した'}},
-  notebook:{ipa:'/ˈnoʊtbʊk/',pos:'n.',tr:{sk:'zošit',cs:'sešit',de:'Notizbuch',fr:'carnet',es:'cuaderno',it:'taccuino',pl:'notatnik',ru:'блокнот',zh:'笔记本',ja:'ノート'}},
-  cramping:{ipa:'/ˈkræmpɪŋ/',pos:'v.',tr:{sk:'kŕčovité (o rukách)',cs:'křečovité',de:'krampfend',fr:'crampes',es:'acalambrado',it:'crampi',pl:'skurcze',ru:'сводило судорогой',zh:'抽筋',ja:'けいれんする'}},
-  coffee:{ipa:'/ˈkɒfi/',pos:'n.',tr:{sk:'káva',cs:'káva',de:'Kaffee',fr:'café',es:'café',it:'caffè',pl:'kawa',ru:'кофе',zh:'咖啡',ja:'コーヒー'}},
-  refusing:{ipa:'/rɪˈfjuːzɪŋ/',pos:'v.',tr:{sk:'odmietajúca',cs:'odmítající',de:'sich verweigernd',fr:'refusant',es:'negándose',it:'rifiutando',pl:'odmawiająca',ru:'отказывающаяся',zh:'拒绝',ja:'拒んで'}},
-  sleep:{ipa:'/sliːp/',pos:'n./v.',tr:{sk:'spánok, spať',cs:'spánek, spát',de:'Schlaf, schlafen',fr:'sommeil, dormir',es:'sueño, dormir',it:'sonno, dormire',pl:'sen, spać',ru:'сон, спать',zh:'睡眠',ja:'睡眠'}},
-  demanding:{ipa:'/dɪˈmændɪŋ/',pos:'v.',tr:{sk:'vyžadujúce',cs:'vyžadující',de:'fordernd',fr:'exigeant',es:'exigiendo',it:'esigendo',pl:'wymagający',ru:'требующий',zh:'要求',ja:'要求する'}},
-  broadcast:{ipa:'/ˈbrɔːdkæst/',pos:'v.',tr:{sk:'vysielať',cs:'vysílat',de:'senden',fr:'diffuser',es:'transmitir',it:'trasmettere',pl:'nadawać',ru:'транслировать',zh:'广播',ja:'放送する'}},
-  findings:{ipa:'/ˈfaɪndɪŋz/',pos:'n.',tr:{sk:'zistenia',cs:'zjištění',de:'Erkenntnisse',fr:'conclusions',es:'hallazgos',it:'scoperte',pl:'ustalenia',ru:'выводы',zh:'发现',ja:'調査結果'}},
-  expected:{ipa:'/ɪkˈspektɪd/',pos:'v.',tr:{sk:'očakávala',cs:'očekávala',de:'erwartete',fr:"s'attendait à",es:'esperaba',it:'si aspettava',pl:'spodziewała się',ru:'ожидала',zh:'预料到了',ja:'予想した'}},
-  ridicule:{ipa:'/ˈrɪdɪkjuːl/',pos:'n.',tr:{sk:'výsmech',cs:'výsměch',de:'Spott',fr:'ridicule',es:'burla',it:'ridicolo',pl:'kpina',ru:'насмешка',zh:'嘲笑',ja:'嘲笑'}},
-  instead:{ipa:'/ɪnˈsted/',pos:'adv.',tr:{sk:'namiesto toho',cs:'místo toho',de:'stattdessen',fr:'au lieu de cela',es:'en cambio',it:'invece',pl:'zamiast tego',ru:'вместо этого',zh:'相反',ja:'その代わりに'}},
-  observatories:{ipa:'/əbˈzɜːrvətɔːriz/',pos:'n.',tr:{sk:'observatóriá',cs:'observatoře',de:'Observatorien',fr:'observatoires',es:'observatorios',it:'osservatori',pl:'obserwatoria',ru:'обсерватории',zh:'天文台',ja:'天文台'}},
-  confirming:{ipa:'/kənˈfɜːrmɪŋ/',pos:'v.',tr:{sk:'potvrdzujúce',cs:'potvrzující',de:'bestätigend',fr:'confirmant',es:'confirmando',it:'confermando',pl:'potwierdzający',ru:'подтверждающий',zh:'确认',ja:'確認する'}},
-  anomaly:{ipa:'/əˈnɒməli/',pos:'n.',tr:{sk:'anomália',cs:'anomálie',de:'Anomalie',fr:'anomalie',es:'anomalía',it:'anomalia',pl:'anomalia',ru:'аномалия',zh:'异常',ja:'異常'}},
-  angle:{ipa:'/ˈæŋɡəl/',pos:'n.',tr:{sk:'uhol',cs:'úhel',de:'Winkel',fr:'angle',es:'ángulo',it:'angolo',pl:'kąt',ru:'угол',zh:'角度',ja:'角度'}},
-  sky:{ipa:'/skaɪ/',pos:'n.',tr:{sk:'obloha',cs:'obloha',de:'Himmel',fr:'ciel',es:'cielo',it:'cielo',pl:'niebo',ru:'небо',zh:'天空',ja:'空'}},
-  physics:{ipa:'/ˈfɪzɪks/',pos:'n.',tr:{sk:'fyzika',cs:'fyzika',de:'Physik',fr:'physique',es:'física',it:'fisica',pl:'fizyka',ru:'физика',zh:'物理学',ja:'物理学'}},
-  unmistakably:{ipa:'/ˌʌnmɪˈsteɪkəbli/',pos:'adv.',tr:{sk:'nezameniteľne',cs:'nezaměnitelně',de:'unverkennbar',fr:'incontestablement',es:'inconfundiblemente',it:'inconfondibilmente',pl:'niewątpliwie',ru:'безошибочно',zh:'明确无误地',ja:'紛れもなく'}},
-  greeting:{ipa:'/ˈɡriːtɪŋ/',pos:'n.',tr:{sk:'pozdrav',cs:'pozdrav',de:'Gruß',fr:'salutation',es:'saludo',it:'saluto',pl:'pozdrowienie',ru:'приветствие',zh:'问候',ja:'挨拶'}},
-  smile:{ipa:'/smaɪl/',pos:'n./v.',tr:{sk:'úsmev, usmiať sa',cs:'úsměv, usmát se',de:'Lächeln, lächeln',fr:'sourire',es:'sonrisa, sonreír',it:'sorriso, sorridere',pl:'uśmiech',ru:'улыбка',zh:'微笑',ja:'笑顔'}},
-  smiled:{ipa:'/smaɪld/',pos:'v.',tr:{sk:'usmiala sa',cs:'usmála se',de:'lächelte',fr:'sourit',es:'sonrió',it:'sorrise',pl:'uśmiechnęła się',ru:'улыбнулась',zh:'微笑了',ja:'微笑んだ'}},
-  sense:{ipa:'/sens/',pos:'n.',tr:{sk:'zmysel',cs:'smysl',de:'Sinn',fr:'sens',es:'sentido',it:'senso',pl:'sens',ru:'смысл',zh:'意义',ja:'意味'}},
-  planned:{ipa:'/plænd/',pos:'v.',tr:{sk:'plánované',cs:'plánované',de:'geplant',fr:'planifié',es:'planeado',it:'pianificato',pl:'zaplanowane',ru:'запланированный',zh:'计划好的',ja:'計画された'}},
-  math:{ipa:'/mæθ/',pos:'n.',tr:{sk:'matematika',cs:'matematika',de:'Mathe',fr:'maths',es:'matemáticas',it:'matematica',pl:'matematyka',ru:'математика',zh:'数学',ja:'数学'}},
-  piece:{ipa:'/piːs/',pos:'n.',tr:{sk:'kúsok',cs:'kousek',de:'Stück',fr:'morceau',es:'pedazo',it:'pezzo',pl:'kawałek',ru:'кусок',zh:'一块',ja:'断片'}},
-  prove:{ipa:'/pruːv/',pos:'v.',tr:{sk:'dokázať',cs:'dokázat',de:'beweisen',fr:'prouver',es:'probar',it:'dimostrare',pl:'udowodnić',ru:'доказать',zh:'证明',ja:'証明する'}},
-  herself:{ipa:'/hɜːrˈself/',pos:'pron.',tr:{sk:'ona sama',cs:'ona sama',de:'sich selbst',fr:'elle-même',es:'ella misma',it:'lei stessa',pl:'ona sama',ru:'она сама',zh:'她自己',ja:'彼女自身'}},
-  shared:{ipa:'/ʃerd/',pos:'v.',tr:{sk:'zdieľala',cs:'sdílela',de:'teilte',fr:'partagea',es:'compartió',it:'condivise',pl:'podzieliła się',ru:'поделилась',zh:'分享了',ja:'共有した'}},
-  results:{ipa:'/rɪˈzʌlts/',pos:'n.',tr:{sk:'výsledky',cs:'výsledky',de:'Ergebnisse',fr:'résultats',es:'resultados',it:'risultati',pl:'wyniki',ru:'результаты',zh:'结果',ja:'結果'}},
-  ignore:{ipa:'/ɪɡˈnɔːr/',pos:'v.',tr:{sk:'ignorovať',cs:'ignorovat',de:'ignorieren',fr:'ignorer',es:'ignorar',it:'ignorare',pl:'ignorować',ru:'игнорировать',zh:'忽视',ja:'無視する'}},
-  laugh:{ipa:'/læf/',pos:'v.',tr:{sk:'smiať sa',cs:'smát se',de:'lachen',fr:'rire',es:'reír',it:'ridere',pl:'śmiać się',ru:'смеяться',zh:'大笑',ja:'笑う'}},
-  answered:{ipa:'/ˈænsərd/',pos:'v.',tr:{sk:'odpovedali',cs:'odpověděli',de:'antworteten',fr:'répondirent',es:'respondieron',it:'risposero',pl:'odpowiedzieli',ru:'ответили',zh:'回应了',ja:'答えた'}},
-  hour:{ipa:'/aʊər/',pos:'n.',tr:{sk:'hodina',cs:'hodina',de:'Stunde',fr:'heure',es:'hora',it:'ora',pl:'godzina',ru:'час',zh:'小时',ja:'時間'}},
-  strange:{ipa:'/streɪndʒ/',pos:'adj.',tr:{sk:'zvláštny',cs:'zvláštní',de:'seltsam',fr:'étrange',es:'extraño',it:'strano',pl:'dziwny',ru:'странный',zh:'奇怪的',ja:'奇妙な'}},
-  thing:{ipa:'/θɪŋ/',pos:'n.',tr:{sk:'vec',cs:'věc',de:'Ding',fr:'chose',es:'cosa',it:'cosa',pl:'rzecz',ru:'вещь',zh:'事物',ja:'物事'}},
-  whatever:{ipa:'/wʌtˈevər/',pos:'pron.',tr:{sk:'čokoľvek',cs:'cokoli',de:'was auch immer',fr:'quoi que ce soit',es:'lo que sea',it:'qualunque cosa',pl:'cokolwiek',ru:'что бы ни',zh:'无论什么',ja:'何であれ'}},
-  clearly:{ipa:'/ˈklɪrli/',pos:'adv.',tr:{sk:'jasne',cs:'jasně',de:'eindeutig',fr:'clairement',es:'claramente',it:'chiaramente',pl:'wyraźnie',ru:'явно',zh:'显然',ja:'明らかに'}},
-  places:{ipa:'/ˈpleɪsɪz/',pos:'n.',tr:{sk:'miesta',cs:'místa',de:'Orte',fr:'endroits',es:'lugares',it:'luoghi',pl:'miejsca',ru:'места',zh:'地方',ja:'場所'}},
-  /* phrases (collocations) — matched as whole units by the tokenizer, see PHRASE_LIST */
-  'three years':{ipa:'',pos:'fráza',tr:{sk:'tri roky',cs:'tři roky',de:'drei Jahre',fr:'trois ans',es:'tres años',it:'tre anni',pl:'trzy lata',ru:'три года',zh:'三年',ja:'三年間'}},
-  'for the first time':{ipa:'',pos:'fráza',tr:{sk:'po prvýkrát',cs:'poprvé',de:'zum ersten Mal',fr:'pour la première fois',es:'por primera vez',it:'per la prima volta',pl:'po raz pierwszy',ru:'впервые',zh:'第一次',ja:'初めて'}},
-  'piece by piece':{ipa:'',pos:'fráza',tr:{sk:'kúsok po kúsku',cs:'kousek po kousku',de:'Stück für Stück',fr:'morceau par morceau',es:'pieza por pieza',it:'pezzo per pezzo',pl:'kawałek po kawałku',ru:'по кусочкам',zh:'一点一点地',ja:'少しずつ'}},
-  'within the hour':{ipa:'',pos:'fráza',tr:{sk:'do hodiny',cs:'do hodiny',de:'innerhalb einer Stunde',fr:"dans l'heure",es:'en menos de una hora',it:"entro un'ora",pl:'w ciągu godziny',ru:'в течение часа',zh:'一小时之内',ja:'一時間以内に'}},
-  'in one hour':{ipa:'',pos:'fráza',tr:{sk:'za hodinu',cs:'za hodinu',de:'in einer Stunde',fr:'en une heure',es:'en una hora',it:"in un'ora",pl:'w ciągu godziny',ru:'через час',zh:'一小时后',ja:'一時間で'}},
-  'cold window':{ipa:'',pos:'fráza',tr:{sk:'studené okno',cs:'studené okno',de:'kaltes Fenster',fr:'fenêtre froide',es:'ventana fría',it:'finestra fredda',pl:'zimne okno',ru:'холодное окно',zh:'冰冷的窗户',ja:'冷たい窓'}},
-  'cold viewport':{ipa:'',pos:'fráza',tr:{sk:'studené pozorovacie okno',cs:'studené pozorovací okno',de:'kaltes Sichtfenster',fr:'hublot froid',es:'mirador frío',it:'oblò freddo',pl:'zimne okno obserwacyjne',ru:'холодное смотровое окно',zh:'冰冷的观察窗',ja:'冷たい観測窓'}},
-  'beyond the ice moons':{ipa:'',pos:'fráza',tr:{sk:'za ľadovými mesiacmi',cs:'za ledovými měsíci',de:'jenseits der Eismonde',fr:'au-delà des lunes de glace',es:'más allá de las lunas heladas',it:'oltre le lune di ghiaccio',pl:'za lodowymi księżycami',ru:'за ледяными лунами',zh:'在冰月之外',ja:'氷の衛星の彼方に'}},
-  'past the icy moons':{ipa:'',pos:'fráza',tr:{sk:'popri ľadových mesiacoch',cs:'kolem ledových měsíců',de:'vorbei an den eisigen Monden',fr:'au-delà des lunes glacées',es:'más allá de las lunas heladas',it:'oltre le lune ghiacciate',pl:'obok lodowych księżyców',ru:'мимо ледяных лун',zh:'经过冰冷的卫星',ja:'凍った衛星のそばを'}},
-  'past the cold moons':{ipa:'',pos:'fráza',tr:{sk:'popri studených mesiacoch',cs:'kolem studených měsíců',de:'vorbei an den kalten Monden',fr:'au-delà des lunes froides',es:'más allá de las lunas frías',it:'oltre le lune fredde',pl:'obok zimnych księżyców',ru:'мимо холодных лун',zh:'经过寒冷的卫星',ja:'冷たい衛星のそばを'}}
-};
-
 /* ================================================================
    LANGUAGE PICKER — flags top-right; drives the translation shown
-   in the word popover. 10 languages have full DICTIONARY coverage
-   (sk/cs/de/fr/es/it/pl/ru/zh/ja); the rest are selectable too but
-   fall back to a correctly-localized "not translated yet" notice
-   per word, rather than being left out of the picker entirely.
+   in the word popover.
    ================================================================ */
 const LANGUAGES = [
   { code:'sk', flag:'🇸🇰', name:'Slovenčina',      continent:'Europe' },
@@ -1595,18 +1437,96 @@ document.querySelectorAll('.variant-pill').forEach((p) => {
 });
 
 /* ================================================================
-   WORD POPOVER
+   WORD POPOVER & EXTERNAL API INTEGRATION
    ================================================================ */
 const popoverEl = document.getElementById('wordPopover');
 let activeWordEl = null;
+let currentAudioUrl = null;
+const wordCache = {};
 
-function getTranslation(entry){
-  if (entry && entry.tr && entry.tr[currentLang]) return entry.tr[currentLang];
-  return FALLBACK_MSG[currentLang] || FALLBACK_MSG.sk;
+async function fetchWordData(textToProcess) {
+    const ipaElem = document.getElementById('pop-ipa');
+    const transElem = document.getElementById('pop-translation');
+
+    if (wordCache[textToProcess]) {
+        const cached = wordCache[textToProcess];
+        if (ipaElem) ipaElem.innerText = cached.ipa;
+        if (transElem) transElem.innerText = cached.translation;
+        currentAudioUrl = cached.audioUrl;
+        return cached;
+    }
+
+    if (ipaElem) ipaElem.innerText = "| ... |";
+    if (transElem) transElem.innerText = "Načítavam preklad...";
+    currentAudioUrl = null;
+
+    const isPhrase = textToProcess.trim().includes(' ');
+
+    const cacheObj = {
+        ipa: '| ... |',
+        translation: 'Preklad nedostupný',
+        audioUrl: null
+    };
+
+    const translationPromise = fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(textToProcess)}&langpair=en|sk`)
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.responseData && data.responseData.translatedText) {
+          const transText = data.responseData.translatedText.toLowerCase();
+          if (transElem) transElem.innerText = transText;
+          cacheObj.translation = transText;
+        } else {
+          if (transElem) transElem.innerText = "Preklad nedostupný";
+        }
+      })
+      .catch(err => {
+        if (transElem) transElem.innerText = "Preklad nedostupný";
+      });
+
+    let dictionaryPromise = Promise.resolve();
+
+    if (!isPhrase) {
+      const cleanWord = textToProcess.trim().toLowerCase();
+      dictionaryPromise = fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(cleanWord)}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data && data[0]) {
+            const phonetic = data[0].phonetic ||
+              (data[0].phonetics && data[0].phonetics.find(p => p.text)?.text) || '';
+
+            const ipaText = phonetic ? `| ${phonetic} |` : '| - |';
+            if (ipaElem) ipaElem.innerText = ipaText;
+            cacheObj.ipa = ipaText;
+
+            const audioObj = data[0].phonetics && data[0].phonetics.find(
+              p => p.audio && p.audio.length > 0
+            );
+
+            if (audioObj) {
+              currentAudioUrl = audioObj.audio;
+              cacheObj.audioUrl = audioObj.audio;
+            }
+          } else {
+            if (ipaElem) ipaElem.innerText = '| - |';
+            cacheObj.ipa = '| - |';
+          }
+        })
+        .catch(err => {
+          if (ipaElem) ipaElem.innerText = '| - |';
+          cacheObj.ipa = '| - |';
+        });
+    } else {
+      const ipaText = '| fráza |';
+      if (ipaElem) ipaElem.innerText = ipaText;
+      cacheObj.ipa = ipaText;
+    }
+
+    await Promise.all([translationPromise, dictionaryPromise]);
+    wordCache[textToProcess] = cacheObj;
+    return cacheObj;
 }
 
 function renderPopoverContent(key, displayWord){
-  const entry = DICTIONARY[key];
   const isKnown = loadKnown().includes(key);
   const isLearning = loadVocab().some((v) => v.word === key);
   return '' +
@@ -1616,8 +1536,8 @@ function renderPopoverContent(key, displayWord){
         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>' +
       '</button>' +
     '</div>' +
-    '<p class="wp-ipa">' + (entry ? (entry.ipa ? entry.ipa + ' · ' + entry.pos : entry.pos) : '—') + '</p>' +
-    '<p class="wp-translation">' + escapeHtml(getTranslation(entry)) + '</p>' +
+    '<p class="wp-ipa" id="pop-ipa">| ... |</p>' +
+    '<p class="wp-translation" id="pop-translation">Načítavam preklad...</p>' +
     '<div class="wp-speak-row">' +
       '<button class="wp-btn" data-action="speak" style="width:100%">' +
         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 5V4L8 9H4z"/><path d="M17 8a5 5 0 0 1 0 8"/></svg>' +
@@ -1645,6 +1565,8 @@ function showPopover(wordEl){
   popoverEl.innerHTML = renderPopoverContent(key, wordEl.textContent);
   popoverEl.classList.add('visible');
 
+  fetchWordData(wordEl.textContent.trim());
+
   const r = wordEl.getBoundingClientRect();
   const pRect = popoverEl.getBoundingClientRect();
   let left = r.left + r.width / 2 - pRect.width / 2;
@@ -1657,11 +1579,13 @@ function showPopover(wordEl){
   popoverEl.dataset.placement = placement;
   popoverEl.style.setProperty('--arrow-x', (r.left + r.width / 2 - left) + 'px');
 }
+
 function hidePopover(){
   popoverEl.classList.remove('visible');
   if (activeWordEl) activeWordEl.classList.remove('active-word');
   activeWordEl = null;
 }
+
 popoverEl.addEventListener('click', (e) => {
   const btn = e.target.closest('[data-action]');
   if (!btn) return;
@@ -1670,15 +1594,18 @@ popoverEl.addEventListener('click', (e) => {
   if (action === 'close') hidePopover();
   if (action === 'speak') speak(key);
   if (action === 'known' || action === 'learning'){
-    const entry = DICTIONARY[key];
-    const newStatus = setWordStatus(key, getTranslation(entry), action);
+    const currentTranslation = document.getElementById('pop-translation')?.innerText || '—';
+    const newStatus = setWordStatus(key, currentTranslation, action);
     document.querySelectorAll('.w').forEach((w) => {
       if (w.dataset.w === key){
         w.classList.toggle('known', newStatus === 'known');
         w.classList.toggle('learning', newStatus === 'learning');
       }
     });
-    if (activeWordEl) popoverEl.innerHTML = renderPopoverContent(key, activeWordEl.textContent);
+    if (activeWordEl) {
+      popoverEl.innerHTML = renderPopoverContent(key, activeWordEl.textContent);
+      fetchWordData(activeWordEl.textContent.trim());
+    }
   }
 });
 
@@ -1706,8 +1633,23 @@ function pickEnglishVoice(){
 }
 function speak(word){
   try{
-    if (!('speechSynthesis' in window)) return;
     stopReadAloud();
+    if (currentAudioUrl) {
+      const audio = new Audio(currentAudioUrl);
+      audio.play().catch(err => {
+        // Fallback to SpeechSynthesis if audio playback fails
+        if ('speechSynthesis' in window) {
+          const u = new SpeechSynthesisUtterance(word);
+          u.lang = 'en-US';
+          u.rate = 0.9;
+          const v = pickEnglishVoice();
+          if (v) u.voice = v;
+          window.speechSynthesis.speak(u);
+        }
+      });
+      return;
+    }
+    if (!('speechSynthesis' in window)) return;
     const u = new SpeechSynthesisUtterance(word);
     u.lang = 'en-US';
     u.rate = 0.9;
