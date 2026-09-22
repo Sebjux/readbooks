@@ -1,0 +1,2012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lumen — English Reading Library</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Literata:opsz,wght@6..72,400;6..72,500;6..72,600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          void: '#04050A',
+          deep: '#0A0C16',
+          elevated: '#12141F',
+        },
+        fontFamily: {
+          display: ['"Space Grotesk"', 'sans-serif'],
+          body: ['"Inter"', 'sans-serif'],
+          reader: ['"Literata"', 'serif'],
+          mono: ['"JetBrains Mono"', 'monospace'],
+        }
+      }
+    }
+  }
+</script>
+
+<style>
+  /* ============================================================
+     DESIGN TOKENS
+     ============================================================ */
+  :root{
+    --bg-void:#04050A;
+    --bg-deep:#0A0C16;
+    --bg-elevated:#12141F;
+    --bg-reader:#0C0E18;
+
+    --glass-fill: rgba(20,22,36,.55);
+    --glass-fill-soft: rgba(20,22,36,.32);
+    --glass-border: rgba(255,255,255,.08);
+    --glass-border-hi: rgba(255,255,255,.16);
+
+    --text-primary:#F5F7FA;
+    --text-secondary:#A7AFC2;
+    --text-tertiary:#666E82;
+    --text-reader:#EAE6DD;
+
+    --neon-cyan:#4CF5E0;
+    --neon-blue:#7CACF8;
+    --neon-violet:#9B7BFF;
+    --neon-magenta:#F472B6;
+    --neon-amber:#FFC876;
+
+    --lvl-A2:#4CF5E0;
+    --lvl-B1:#7CACF8;
+    --lvl-B2:#9B7BFF;
+    --lvl-C1:#F472B6;
+
+    --genre-scifi:#8B7CFC;
+    --genre-business:#FFC876;
+    --genre-classic:#E8C79E;
+    --genre-daily:#4CF5E0;
+
+    --radius-card:20px;
+    --radius-panel:26px;
+    --radius-pill:999px;
+
+    --ease-out-expo:cubic-bezier(.16,1,.3,1);
+    --ease-open:cubic-bezier(.65,0,.35,1);
+    --ease-spring:cubic-bezier(.34,1.56,.64,1);
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-padding-top:24px;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background:var(--bg-void);
+    color:var(--text-primary);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  ::selection{background:rgba(155,123,255,.35); color:#fff;}
+
+  a,button{font-family:inherit;}
+  button{cursor:pointer; background:none; border:none; color:inherit;}
+  button:disabled{cursor:default; opacity:.35;}
+  img{max-width:100%; display:block;}
+
+  :focus-visible{
+    outline:2px solid var(--neon-cyan);
+    outline-offset:3px;
+    border-radius:6px;
+  }
+
+  h1,h2,h3{font-family:'Space Grotesk',sans-serif; margin:0; letter-spacing:-0.01em;}
+  p{margin:0;}
+
+  /* ============================================================
+     AMBIENT BACKGROUND — static, quiet, not animated
+     ============================================================ */
+  .ambient{
+    position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden;
+  }
+  .ambient::before, .ambient::after{
+    content:''; position:absolute; border-radius:50%; filter:blur(90px); opacity:.28;
+  }
+  .ambient::before{
+    width:640px; height:640px; top:-220px; left:-160px;
+    background:radial-gradient(circle, var(--neon-violet), transparent 70%);
+  }
+  .ambient::after{
+    width:560px; height:560px; bottom:-260px; right:-140px;
+    background:radial-gradient(circle, var(--neon-cyan), transparent 70%);
+    opacity:.18;
+  }
+  .grain{
+    position:fixed; inset:0; z-index:1; pointer-events:none;
+    opacity:.05; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ============================================================
+     GLASS PRIMITIVE
+     ============================================================ */
+  .glass{
+    background:var(--glass-fill);
+    backdrop-filter:blur(22px) saturate(140%);
+    -webkit-backdrop-filter:blur(22px) saturate(140%);
+    border:1px solid var(--glass-border);
+  }
+
+  /* ============================================================
+     TOP BAR
+     ============================================================ */
+  .topbar{
+    position:sticky; top:0; z-index:40;
+    display:flex; align-items:center; justify-content:space-between;
+    gap:16px; padding:16px clamp(16px,4vw,48px);
+    padding-top:calc(16px + env(safe-area-inset-top,0px));
+    background:rgba(4,5,10,.65);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+    border-bottom:1px solid var(--glass-border);
+  }
+  .brand{display:flex; align-items:center; gap:10px; flex-shrink:0;}
+  .brand-mark{
+    width:34px; height:34px; border-radius:10px;
+    background:linear-gradient(145deg, var(--neon-cyan), var(--neon-violet));
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 0 24px -4px rgba(155,123,255,.7);
+  }
+  .brand-mark svg{width:18px; height:18px; color:#04050A;}
+  .brand-name{font-family:'Space Grotesk'; font-weight:600; font-size:1.05rem; letter-spacing:-.01em;}
+
+  .search-wrap{
+    flex:1; max-width:420px; display:flex; align-items:center; gap:10px;
+    padding:9px 16px; border-radius:var(--radius-pill);
+    background:var(--glass-fill-soft); border:1px solid var(--glass-border);
+    transition:border-color 200ms var(--ease-out-expo), background 200ms var(--ease-out-expo);
+  }
+  .search-wrap:focus-within{ border-color:var(--glass-border-hi); background:var(--glass-fill); }
+  .search-wrap svg{width:16px; height:16px; color:var(--text-tertiary); flex-shrink:0;}
+  .search-wrap input{
+    background:none; border:none; outline:none; color:var(--text-primary);
+    font-size:.9rem; width:100%;
+  }
+  .search-wrap input::placeholder{color:var(--text-tertiary);}
+
+  .vocab-toggle-nav{
+    display:flex; align-items:center; gap:6px; flex-shrink:0;
+    padding:8px 14px; border-radius:var(--radius-pill);
+    background:var(--glass-fill-soft); border:1px solid var(--glass-border);
+    font-size:.82rem; color:var(--text-secondary);
+    transition:border-color 200ms;
+  }
+  .vocab-toggle-nav:hover{ border-color:var(--glass-border-hi); color:var(--text-primary); }
+  .vocab-toggle-nav svg{width:15px; height:15px;}
+  .vocab-count{
+    font-family:'JetBrains Mono'; font-size:.72rem; color:var(--neon-cyan);
+    background:rgba(76,245,224,.12); padding:1px 7px; border-radius:99px;
+  }
+
+  /* ============================================================
+     LANGUAGE PICKER (top-right, flags)
+     ============================================================ */
+  .lang-picker{ position:relative; flex-shrink:0; }
+  .lang-trigger{
+    display:flex; align-items:center; gap:6px; padding:8px 10px; border-radius:var(--radius-pill);
+    background:var(--glass-fill-soft); border:1px solid var(--glass-border);
+    font-size:1.05rem; line-height:1; color:var(--text-secondary);
+    transition:border-color 150ms;
+  }
+  .lang-trigger:hover{ border-color:var(--glass-border-hi); }
+  .lang-trigger svg{ width:13px; height:13px; opacity:.7; }
+  .lang-menu{
+    position:absolute; top:calc(100% + 10px); right:0; z-index:50; width:290px; max-height:360px;
+    overflow-y:auto; padding:10px; border-radius:18px;
+    background:rgba(14,16,26,.92); backdrop-filter:blur(24px) saturate(160%); -webkit-backdrop-filter:blur(24px) saturate(160%);
+    border:1px solid var(--glass-border-hi);
+    box-shadow:0 24px 60px -18px rgba(0,0,0,.75);
+    opacity:0; transform:translateY(-6px) scale(.97); pointer-events:none;
+    transition:opacity 160ms var(--ease-out-expo), transform 160ms var(--ease-out-expo);
+  }
+  .lang-menu.open{ opacity:1; transform:translateY(0) scale(1); pointer-events:auto; }
+  .lang-group-label{
+    font-size:.68rem; text-transform:uppercase; letter-spacing:.06em; color:var(--text-tertiary);
+    padding:8px 8px 4px;
+  }
+  .lang-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:4px; margin-bottom:4px; }
+  .lang-option{
+    display:flex; align-items:center; gap:7px; padding:7px 8px; border-radius:10px;
+    font-size:.8rem; color:var(--text-secondary); text-align:left;
+  }
+  .lang-option span.flag{ font-size:1rem; flex-shrink:0; }
+  .lang-option span.name{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .lang-option:hover{ background:rgba(255,255,255,.06); color:var(--text-primary); }
+  .lang-option.active{ background:rgba(76,245,224,.14); color:var(--neon-cyan); }
+  .lang-option.no-dict{ opacity:.55; }
+  .lang-option.no-dict::after{ content:'·'; margin-left:auto; color:var(--text-tertiary); }
+
+  /* ============================================================
+     LAYOUT SHELL
+     ============================================================ */
+  #libraryMain{
+    position:relative; z-index:2;
+    max-width:1320px; margin:0 auto;
+    padding:32px clamp(16px,4vw,48px) 96px;
+    transition:filter 480ms var(--ease-out-expo), opacity 480ms var(--ease-out-expo);
+  }
+  #libraryMain.dimmed{ filter:blur(10px) brightness(.45); opacity:.75; pointer-events:none; }
+
+  /* ============================================================
+     HERO — Continue Reading spotlight
+     ============================================================ */
+  .hero{
+    position:relative; margin-bottom:56px; padding:clamp(20px,3vw,36px);
+    border-radius:32px; overflow:hidden;
+    display:grid; grid-template-columns:auto 1fr auto; gap:28px; align-items:center;
+  }
+  .hero::before{
+    content:''; position:absolute; inset:-40% -10% auto auto; width:70%; height:180%;
+    border-radius:42% 58% 65% 35% / 45% 45% 55% 55%;
+    background:radial-gradient(circle at 60% 40%, rgba(139,124,252,.30), transparent 65%);
+    z-index:-1; pointer-events:none;
+  }
+  .hero-cover{
+    width:104px; height:150px; border-radius:14px; flex-shrink:0;
+    position:relative; overflow:hidden;
+    box-shadow:0 20px 50px -16px rgba(0,0,0,.65);
+  }
+  .hero-body{ min-width:0; }
+  .hero-eyebrow{ color:var(--text-tertiary); font-size:.85rem; margin-bottom:6px; }
+  .hero-title{ font-size:clamp(1.3rem,2.4vw,1.8rem); font-weight:600; margin-bottom:6px; }
+  .hero-sub{ color:var(--text-secondary); font-size:.92rem; margin-bottom:16px; }
+  .hero-progress-row{ display:flex; align-items:center; gap:12px; max-width:360px; }
+  .hero-progress-track{ flex:1; height:6px; border-radius:99px; background:rgba(255,255,255,.08); overflow:hidden; }
+  .hero-progress-fill{ height:100%; border-radius:99px; background:linear-gradient(90deg, var(--neon-cyan), var(--neon-violet)); }
+  .hero-progress-pct{ font-family:'JetBrains Mono'; font-size:.78rem; color:var(--text-secondary); flex-shrink:0; }
+  .hero-actions{ display:flex; flex-direction:column; gap:10px; align-items:flex-end; flex-shrink:0; }
+  .btn-primary{
+    display:flex; align-items:center; gap:8px;
+    padding:12px 22px; border-radius:var(--radius-pill);
+    background:linear-gradient(120deg, var(--neon-cyan), var(--neon-violet));
+    color:#04050A; font-weight:600; font-size:.92rem;
+    box-shadow:0 10px 30px -8px rgba(155,123,255,.55);
+    transition:transform 200ms var(--ease-out-expo), box-shadow 200ms var(--ease-out-expo);
+    white-space:nowrap;
+  }
+  .btn-primary:hover{ transform:translateY(-2px); box-shadow:0 14px 36px -8px rgba(155,123,255,.7); }
+  .btn-primary svg{width:16px; height:16px;}
+  .hero-stat{ font-size:.78rem; color:var(--text-tertiary); }
+  .hero-stat b{ color:var(--text-secondary); font-weight:600; }
+
+  @media (max-width:680px){
+    .hero{ grid-template-columns:auto 1fr; }
+    .hero-actions{ grid-column:1 / -1; flex-direction:row; align-items:center; justify-content:space-between; margin-top:4px;}
+  }
+
+  /* ============================================================
+     GENRE SECTIONS
+     ============================================================ */
+  .genre-section{ margin-bottom:44px; }
+  .genre-head{
+    display:flex; align-items:flex-end; justify-content:space-between;
+    gap:16px; margin-bottom:16px;
+  }
+  .genre-head-left{ display:flex; gap:12px; align-items:flex-start; }
+  .genre-bar{ width:4px; border-radius:99px; margin-top:4px; align-self:stretch; min-height:38px; }
+  .genre-title{ font-size:1.3rem; font-weight:600; margin-bottom:3px; }
+  .genre-sub{ font-size:.85rem; color:var(--text-tertiary); }
+  .see-all{
+    font-size:.82rem; color:var(--text-secondary); flex-shrink:0; padding:6px 4px;
+    border-bottom:1px solid transparent; transition:color 150ms, border-color 150ms;
+  }
+  .see-all:hover{ color:var(--text-primary); border-color:var(--glass-border-hi); }
+
+  .row-track{
+    display:flex; gap:18px; overflow-x:auto; padding:4px 4px 14px;
+    scroll-snap-type:x proximity;
+    scrollbar-width:thin; scrollbar-color:rgba(255,255,255,.18) transparent;
+  }
+  .row-track::-webkit-scrollbar{ height:6px; }
+  .row-track::-webkit-scrollbar-track{ background:transparent; }
+  .row-track::-webkit-scrollbar-thumb{ background:rgba(255,255,255,.14); border-radius:99px; }
+  .row-track::-webkit-scrollbar-thumb:hover{ background:rgba(255,255,255,.28); }
+
+  .genre-section.expanded .row-track{
+    display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+    overflow:visible; padding-bottom:4px;
+  }
+
+  /* ============================================================
+     BOOK CARD
+     ============================================================ */
+  .book-card{
+    flex:0 0 168px; scroll-snap-align:start;
+    display:flex; flex-direction:column; gap:10px;
+    border-radius:var(--radius-card);
+    padding:8px; border:1px solid transparent;
+    transition:transform 220ms var(--ease-out-expo), background 220ms, border-color 220ms;
+  }
+  .book-card:hover, .book-card:focus-visible{
+    transform:translateY(-5px);
+    background:rgba(255,255,255,.03);
+    border-color:var(--glass-border);
+  }
+  .book-cover{
+    position:relative; width:100%; aspect-ratio:2/3; border-radius:14px; overflow:hidden;
+    background:linear-gradient(160deg, var(--c1), var(--c2));
+    box-shadow:0 14px 34px -14px rgba(0,0,0,.65);
+    transition:box-shadow 220ms var(--ease-out-expo);
+  }
+  .book-card:hover .book-cover{ box-shadow:0 18px 40px -12px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.06), 0 0 32px -6px var(--c1); }
+  .cover-pattern{ position:absolute; inset:0; opacity:.35; mix-blend-mode:overlay; pointer-events:none; }
+  .pattern-scifi{ background-image:radial-gradient(circle at 22% 22%, rgba(255,255,255,.55) 1px, transparent 1.6px), radial-gradient(circle at 65% 55%, rgba(255,255,255,.4) 1px, transparent 1.6px), radial-gradient(circle at 80% 85%, rgba(255,255,255,.5) 1px, transparent 1.6px); background-size:36px 36px,52px 52px,30px 30px; }
+  .pattern-business{ background-image:repeating-linear-gradient(0deg, rgba(255,255,255,.22) 0 1px, transparent 1px 22px), repeating-linear-gradient(90deg, rgba(255,255,255,.12) 0 1px, transparent 1px 22px); }
+  .pattern-classic{ background-image:repeating-radial-gradient(circle at 50% 0%, rgba(255,255,255,.18) 0 2px, transparent 2px 34px); }
+  .pattern-daily{ background-image:radial-gradient(circle at 30% 72%, rgba(255,255,255,.28) 18%, transparent 58%), radial-gradient(circle at 76% 28%, rgba(255,255,255,.22) 14%, transparent 52%); }
+  .cover-icon{ position:absolute; top:10px; right:10px; width:22px; height:22px; color:rgba(255,255,255,.55); }
+  .cover-icon svg{ width:100%; height:100%; }
+  .cover-text{
+    position:absolute; left:0; right:0; bottom:0; padding:12px 10px 10px;
+    background:linear-gradient(0deg, rgba(0,0,0,.72), transparent 90%);
+  }
+  .cover-title{ font-family:'Space Grotesk'; font-size:.82rem; font-weight:600; color:#fff; line-height:1.25; margin-bottom:2px; }
+  .cover-author{ font-size:.68rem; color:rgba(255,255,255,.65); }
+
+  .book-meta-row{ display:flex; align-items:center; justify-content:space-between; padding:0 2px; }
+  .level-chip{ display:flex; align-items:center; gap:5px; font-size:.76rem; font-weight:600; color:var(--text-secondary); }
+  .level-dot{ width:7px; height:7px; border-radius:50%; background:var(--lvl-color); box-shadow:0 0 8px 0 var(--lvl-color); }
+  .meta-time{ display:flex; align-items:center; gap:4px; font-family:'JetBrains Mono'; font-size:.7rem; color:var(--text-tertiary); }
+  .meta-time svg{ width:11px; height:11px; }
+
+  .vocab-meter{ display:flex; gap:3px; padding:0 2px; }
+  .vocab-meter i{ display:block; width:100%; height:3px; border-radius:99px; background:rgba(255,255,255,.09); }
+  .vocab-meter i.on{ background:var(--neon-violet); }
+
+  /* ============================================================
+     LEVEL SHELF
+     ============================================================ */
+  .level-pills{ display:flex; gap:8px; margin-bottom:18px; flex-wrap:wrap; }
+  .level-pill{
+    padding:7px 16px; border-radius:var(--radius-pill); font-size:.82rem; font-weight:500;
+    background:var(--glass-fill-soft); border:1px solid var(--glass-border); color:var(--text-secondary);
+    transition:all 180ms var(--ease-out-expo);
+  }
+  .level-pill:hover{ color:var(--text-primary); border-color:var(--glass-border-hi); }
+  .level-pill.active{ background:var(--text-primary); color:var(--bg-void); border-color:var(--text-primary); }
+  .level-grid{
+    display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:18px 18px;
+  }
+
+  /* ============================================================
+     SEARCH RESULTS
+     ============================================================ */
+  #searchResultsSection{ display:none; }
+  #searchResultsSection.active{ display:block; }
+  #searchResultsSection ~ #genreRows, 
+  body.searching #genreRows, body.searching #levelShelfSection, body.searching .hero{ display:none; }
+
+  /* ============================================================
+     READER VIEW
+     ============================================================ */
+  .reader{
+    position:fixed; inset:0; z-index:60;
+    background:var(--bg-reader);
+    opacity:0; transform:scale(.97);
+    transition:opacity 340ms var(--ease-out-expo), transform 340ms var(--ease-out-expo);
+    display:flex; flex-direction:column;
+  }
+  .reader.entered{ opacity:1; transform:scale(1); }
+  .reader::before{
+    content:''; position:absolute; inset:0; z-index:0; pointer-events:none;
+    background:radial-gradient(ellipse at 50% -10%, rgba(139,124,252,.14), transparent 60%);
+  }
+
+  .reader-top{
+    position:relative; z-index:2; display:flex; align-items:center; justify-content:space-between;
+    gap:12px; padding:16px clamp(14px,3vw,32px);
+    padding-top:calc(16px + env(safe-area-inset-top,0px));
+    border-bottom:1px solid var(--glass-border);
+  }
+  .reader-back{
+    display:flex; align-items:center; gap:8px; padding:8px 14px 8px 10px; border-radius:var(--radius-pill);
+    background:var(--glass-fill-soft); border:1px solid var(--glass-border); font-size:.85rem; color:var(--text-secondary);
+    transition:color 150ms, border-color 150ms; flex-shrink:0;
+  }
+  .reader-back:hover{ color:var(--text-primary); border-color:var(--glass-border-hi); }
+  .reader-back svg{ width:16px; height:16px; }
+  .reader-heading{ min-width:0; text-align:center; flex:1; }
+  .reader-heading .t{ font-family:'Space Grotesk'; font-size:.95rem; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .reader-heading .s{ font-size:.72rem; color:var(--text-tertiary); }
+  .reader-tools{ display:flex; align-items:center; gap:8px; flex-shrink:0; }
+
+  .variant-pills{ display:flex; gap:4px; padding:4px; border-radius:var(--radius-pill); background:var(--glass-fill-soft); border:1px solid var(--glass-border); }
+  .variant-pill{ padding:6px 12px; border-radius:var(--radius-pill); font-size:.76rem; font-weight:500; color:var(--text-tertiary); transition:all 180ms; }
+  .variant-pill.active{ background:rgba(255,255,255,.09); color:var(--text-primary); }
+
+  .icon-btn{
+    width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    background:var(--glass-fill-soft); border:1px solid var(--glass-border); color:var(--text-secondary);
+    transition:color 150ms, border-color 150ms; position:relative; flex-shrink:0;
+  }
+  .icon-btn:hover{ color:var(--text-primary); border-color:var(--glass-border-hi); }
+  .icon-btn svg{ width:15px; height:15px; }
+  .icon-btn.is-playing{ color:var(--neon-cyan); border-color:rgba(76,245,224,.45); background:rgba(76,245,224,.1); }
+  .icon-btn .badge{
+    position:absolute; top:-4px; right:-4px; min-width:15px; height:15px; padding:0 3px;
+    border-radius:99px; background:var(--neon-violet); color:#fff; font-size:.6rem; font-family:'JetBrains Mono';
+    display:flex; align-items:center; justify-content:center;
+  }
+  .font-ctrl{ display:flex; align-items:center; gap:2px; }
+  .font-ctrl button{ width:30px; height:30px; border-radius:50%; font-family:'JetBrains Mono'; font-size:.8rem; color:var(--text-secondary); }
+  .font-ctrl button:hover{ color:var(--text-primary); background:var(--glass-fill-soft); }
+
+  .reader-stage{
+    position:relative; z-index:1; flex:1; display:flex; align-items:center; justify-content:center;
+    padding:20px clamp(10px,3vw,40px); min-height:0;
+  }
+  .page-edge{
+    flex-shrink:0; width:44px; height:44px; border-radius:50%; align-self:center;
+    display:flex; align-items:center; justify-content:center; color:var(--text-tertiary);
+    background:var(--glass-fill-soft); border:1px solid var(--glass-border);
+    transition:color 150ms, border-color 150ms;
+  }
+  .page-edge:hover:not(:disabled){ color:var(--text-primary); border-color:var(--glass-border-hi); }
+  .page-edge svg{ width:18px; height:18px; }
+
+  .book-stage{
+    perspective:2200px; width:100%; max-width:680px; height:100%; max-height:640px;
+    margin:0 18px; position:relative;
+  }
+  .book-stage::before{
+    content:''; position:absolute; left:0; top:0; bottom:0; width:6px; z-index:5;
+    background:linear-gradient(180deg, var(--neon-violet), var(--neon-cyan));
+    border-radius:6px 0 0 6px; opacity:.85; box-shadow:0 0 20px -2px var(--neon-violet);
+  }
+  .book-stage.shimmer #sheetsWrapper{ opacity:.12; transition:opacity 200ms; }
+  .book-stage.shimmer::after{
+    content:'Simplifying with AI…'; position:absolute; inset:0; z-index:6;
+    display:flex; align-items:center; justify-content:center;
+    color:var(--text-tertiary); font-family:'Inter'; font-size:.85rem;
+  }
+  #sheetsWrapper{ position:absolute; inset:0; }
+  .paper-sheet{
+    position:absolute; inset:0; transform-origin:left center; transform-style:preserve-3d;
+    transition:transform 450ms var(--ease-open);
+  }
+  .paper-sheet.flipped{ transform:rotateY(-180deg); }
+  .page-face{
+    position:absolute; inset:0; box-sizing:border-box; overflow:hidden;
+    backface-visibility:hidden; -webkit-backface-visibility:hidden;
+    background:linear-gradient(165deg, rgba(255,255,255,.035), rgba(255,255,255,.01));
+    border:1px solid var(--glass-border);
+    box-shadow:0 30px 70px -30px rgba(0,0,0,.7);
+  }
+  .page-front{ z-index:2; border-radius:0 var(--radius-panel) var(--radius-panel) 0; }
+  .page-back{
+    transform:rotateY(180deg); z-index:1;
+    border-radius:var(--radius-panel) 0 0 var(--radius-panel);
+    background:linear-gradient(165deg, rgba(255,255,255,.05), rgba(255,255,255,.015));
+  }
+  .page-face::after{
+    content:''; position:absolute; inset:0; pointer-events:none;
+    background:linear-gradient(to right, rgba(0,0,0,.16) 0%, transparent 7%);
+  }
+  .page-content{
+    height:100%; overflow-y:auto; padding:clamp(24px,4vw,52px);
+    font-family:'Literata', serif;
+    font-size:calc(1.15rem * var(--font-scale, 1));
+    line-height:1.85;
+    color:var(--text-reader);
+    max-width:64ch; margin:0 auto;
+  }
+  .page-content p{ margin-bottom:1.3em; }
+  .page-content p:last-child{ margin-bottom:0; }
+  .page-content.page-end{ display:flex; align-items:center; justify-content:center; height:100%; font-style:italic; color:var(--text-tertiary); }
+
+  .w{ border-bottom:1px solid rgba(124,172,248,.35); cursor:pointer; border-radius:2px; transition:background 150ms, border-color 300ms; }
+  .w:hover{ background:rgba(124,172,248,.14); }
+  .w.active-word{ background:rgba(124,172,248,.25); }
+  .w.learning{ border-bottom-color:var(--neon-cyan); }
+  .w.known{ border-bottom-color:transparent; }
+  .w.phrase{ border-bottom-style:solid; border-bottom-color:rgba(255,200,118,.5); background:rgba(255,200,118,.09); border-radius:4px; padding:0 3px; }
+  .w.phrase:hover{ background:rgba(255,200,118,.2); }
+  .w.reading-now{
+    background:rgba(76,245,224,.22);
+    border-radius:5px; border-bottom-color:transparent;
+    box-shadow:0 0 0 1px rgba(76,245,224,.3);
+  }
+
+  .reader-bottom{
+    position:relative; z-index:1; display:flex; align-items:center; gap:14px;
+    padding:12px clamp(14px,3vw,32px) calc(16px + env(safe-area-inset-bottom,0px));
+  }
+  .progress-track{ flex:1; height:4px; border-radius:99px; background:rgba(255,255,255,.08); overflow:hidden; }
+  .progress-fill{ height:100%; background:linear-gradient(90deg, var(--neon-cyan), var(--neon-violet)); border-radius:99px; transition:width 300ms var(--ease-out-expo); }
+  .page-indicator{ font-family:'JetBrains Mono'; font-size:.74rem; color:var(--text-tertiary); flex-shrink:0; }
+
+  /* ============================================================
+     WORD POPOVER
+     ============================================================ */
+  .word-popover{
+    position:fixed; z-index:90; width:min(272px,86vw);
+    padding:16px; border-radius:18px;
+    background:rgba(16,18,30,.85); backdrop-filter:blur(24px) saturate(160%); -webkit-backdrop-filter:blur(24px) saturate(160%);
+    border:1px solid var(--glass-border-hi);
+    box-shadow:0 24px 60px -18px rgba(0,0,0,.75);
+    opacity:0; transform:translateY(6px) scale(.96);
+    transition:opacity 160ms var(--ease-out-expo), transform 160ms var(--ease-out-expo);
+    pointer-events:none;
+  }
+  .word-popover.visible{ opacity:1; transform:translateY(0) scale(1); pointer-events:auto; }
+  .word-popover::before{
+    content:''; position:absolute; left:var(--arrow-x,50%); width:12px; height:12px;
+    background:inherit; border:inherit; border-top:none; border-left:none;
+    transform:translateX(-50%) rotate(45deg);
+  }
+  .word-popover[data-placement="top"]::before{ bottom:-6.5px; border-bottom-right-radius:3px; }
+  .word-popover[data-placement="bottom"]::before{ top:-6.5px; border:inherit; border-top:1px solid var(--glass-border-hi); border-left:1px solid var(--glass-border-hi); border-right:none; border-bottom:none; border-top-left-radius:3px; }
+  .wp-head{ display:flex; align-items:baseline; justify-content:space-between; gap:8px; margin-bottom:2px; }
+  .wp-word{ font-family:'Space Grotesk'; font-weight:600; font-size:1.05rem; }
+  .wp-close{ color:var(--text-tertiary); width:20px; height:20px; flex-shrink:0; }
+  .wp-close svg{ width:12px; height:12px; }
+  .wp-ipa{ font-family:'JetBrains Mono'; font-size:.76rem; color:var(--text-tertiary); margin-bottom:10px; }
+  .wp-translation{ font-size:.95rem; color:var(--neon-cyan); margin-bottom:14px; }
+  .wp-actions{ display:flex; gap:8px; }
+  .wp-btn{
+    flex:1; display:flex; align-items:center; justify-content:center; gap:6px;
+    padding:8px 10px; border-radius:12px; font-size:.78rem; font-weight:500;
+    background:var(--glass-fill-soft); border:1px solid var(--glass-border); color:var(--text-secondary);
+    transition:all 150ms;
+  }
+  .wp-btn:hover{ color:var(--text-primary); border-color:var(--glass-border-hi); }
+  .wp-btn svg{ width:13px; height:13px; }
+  .wp-speak-row{ margin-bottom:8px; }
+  .wp-status-row{ display:flex; gap:8px; }
+  .wp-btn.is-known{ background:rgba(245,247,250,.12); border-color:rgba(255,255,255,.28); color:var(--text-primary); }
+  .wp-btn.is-learning{ background:rgba(76,245,224,.14); border-color:rgba(76,245,224,.4); color:var(--neon-cyan); }
+
+  /* ============================================================
+     VOCAB DRAWER
+     ============================================================ */
+  .vocab-drawer{
+    position:absolute; top:0; right:0; bottom:0; z-index:3; width:min(320px,86vw);
+    background:rgba(10,11,20,.88); backdrop-filter:blur(26px); -webkit-backdrop-filter:blur(26px);
+    border-left:1px solid var(--glass-border);
+    transform:translateX(100%); transition:transform 320ms var(--ease-out-expo);
+    display:flex; flex-direction:column;
+  }
+  .vocab-drawer.open{ transform:translateX(0); }
+  .vocab-drawer-head{ display:flex; align-items:center; justify-content:space-between; padding:18px 20px; border-bottom:1px solid var(--glass-border); }
+  .vocab-drawer-head h3{ font-size:1rem; font-weight:600; }
+  .vocab-list{ flex:1; overflow-y:auto; padding:8px 12px; list-style:none; margin:0; }
+  .vocab-item{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:11px 10px; border-radius:12px; }
+  .vocab-item:hover{ background:rgba(255,255,255,.03); }
+  .vocab-item .vw{ font-family:'Space Grotesk'; font-size:.9rem; font-weight:600; }
+  .vocab-item .vt{ font-size:.78rem; color:var(--neon-cyan); }
+  .vocab-remove{ width:24px; height:24px; border-radius:50%; color:var(--text-tertiary); flex-shrink:0; }
+  .vocab-remove:hover{ color:var(--neon-magenta); background:rgba(244,114,182,.1); }
+  .vocab-remove svg{ width:11px; height:11px; margin:0 auto; }
+  .vocab-empty{ padding:28px 20px; color:var(--text-tertiary); font-size:.85rem; line-height:1.6; text-align:center; }
+
+  /* ============================================================
+     FLYING BOOK (FLIP + 3D open transition)
+     ============================================================ */
+  .flying-book{
+    position:fixed; z-index:80; perspective:1800px; pointer-events:none;
+  }
+  .flying-cover{
+    position:absolute; inset:0; border-radius:var(--radius-card); overflow:hidden;
+    transform-origin:left center; transform-style:preserve-3d;
+    box-shadow:0 30px 90px -20px rgba(0,0,0,.7), 0 0 70px -10px var(--c1);
+    z-index:2;
+  }
+  .flying-pages{
+    position:absolute; inset:3px; border-radius:calc(var(--radius-card) - 3px);
+    background:linear-gradient(160deg,#efe9db,#ddd4bf);
+    z-index:1;
+  }
+
+  /* ============================================================
+     RESPONSIVE / MOTION PREFERENCES
+     ============================================================ */
+  @media (max-width:640px){
+    .book-card{ flex-basis:132px; }
+    .hero-cover{ width:78px; height:112px; }
+    .reader-tools .variant-pills{ display:none; }
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{ animation-duration:.001ms !important; transition-duration:.001ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="ambient" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-mark">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h9a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3V4z"/><path d="M20 6v14h-4V6a2 2 0 0 1 4 0z" opacity=".55"/></svg>
+    </div>
+    <span class="brand-name">Lumen</span>
+  </div>
+  <label class="search-wrap">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+    <input id="searchInput" type="text" placeholder="Search titles or authors…" autocomplete="off">
+  </label>
+  <button class="vocab-toggle-nav" id="navVocabBtn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-6-4-6 4V3z"/></svg>
+    My words <span class="vocab-count" id="navVocabCount">0</span>
+  </button>
+  <div class="lang-picker" id="langPicker">
+    <button class="lang-trigger" id="langTrigger" aria-label="Choose translation language" aria-haspopup="true">
+      <span id="langTriggerFlag">🇸🇰</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+    </button>
+    <div class="lang-menu" id="langMenu" hidden></div>
+  </div>
+</header>
+
+<main id="libraryMain">
+
+  <!-- HERO — Continue Reading -->
+  <section class="hero glass">
+    <div class="hero-cover" id="heroCover"></div>
+    <div class="hero-body">
+      <p class="hero-eyebrow">Continue reading</p>
+      <h1 class="hero-title" id="heroTitle">Echoes Beyond Jupiter</h1>
+      <p class="hero-sub" id="heroSub">Aiden Cole · B2 · Page 1 of 2</p>
+      <div class="hero-progress-row">
+        <div class="hero-progress-track"><div class="hero-progress-fill" style="width:34%"></div></div>
+        <span class="hero-progress-pct">34%</span>
+      </div>
+    </div>
+    <div class="hero-actions">
+      <button class="btn-primary" id="heroContinueBtn">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        Continue reading
+      </button>
+      <span class="hero-stat"><b id="heroVocabStat">0</b> words saved this week</span>
+    </div>
+  </section>
+
+  <!-- SEARCH RESULTS -->
+  <section id="searchResultsSection">
+    <div class="genre-head">
+      <div class="genre-head-left">
+        <div class="genre-bar" style="background:var(--neon-cyan)"></div>
+        <div>
+          <h2 class="genre-title">Search results</h2>
+          <p class="genre-sub" id="searchResultsSub"></p>
+        </div>
+      </div>
+    </div>
+    <div class="level-grid" id="searchGrid"></div>
+  </section>
+
+  <!-- GENRE ROWS -->
+  <div id="genreRows">
+    <section class="genre-section" id="genre-scifi" data-genre="scifi">
+      <div class="genre-head">
+        <div class="genre-head-left">
+          <div class="genre-bar" style="background:var(--genre-scifi)"></div>
+          <div>
+            <h2 class="genre-title">Sci-Fi &amp; Future Worlds</h2>
+            <p class="genre-sub">Distant futures and the questions they raise.</p>
+          </div>
+        </div>
+        <button class="see-all" data-target="genre-scifi">Show all</button>
+      </div>
+      <div class="row-track" data-track="scifi"></div>
+    </section>
+
+    <section class="genre-section" id="genre-business" data-genre="business">
+      <div class="genre-head">
+        <div class="genre-head-left">
+          <div class="genre-bar" style="background:var(--genre-business)"></div>
+          <div>
+            <h2 class="genre-title">Business &amp; Growth</h2>
+            <p class="genre-sub">Sharpen the skills behind the job title.</p>
+          </div>
+        </div>
+        <button class="see-all" data-target="genre-business">Show all</button>
+      </div>
+      <div class="row-track" data-track="business"></div>
+    </section>
+
+    <section class="genre-section" id="genre-classic" data-genre="classic">
+      <div class="genre-head">
+        <div class="genre-head-left">
+          <div class="genre-bar" style="background:var(--genre-classic)"></div>
+          <div>
+            <h2 class="genre-title">Classic Literature</h2>
+            <p class="genre-sub">Timeless stories, adapted for every level.</p>
+          </div>
+        </div>
+        <button class="see-all" data-target="genre-classic">Show all</button>
+      </div>
+      <div class="row-track" data-track="classic"></div>
+    </section>
+
+    <section class="genre-section" id="genre-daily" data-genre="daily">
+      <div class="genre-head">
+        <div class="genre-head-left">
+          <div class="genre-bar" style="background:var(--genre-daily)"></div>
+          <div>
+            <h2 class="genre-title">Daily Conversations</h2>
+            <p class="genre-sub">The English you'll actually use today.</p>
+          </div>
+        </div>
+        <button class="see-all" data-target="genre-daily">Show all</button>
+      </div>
+      <div class="row-track" data-track="daily"></div>
+    </section>
+  </div>
+
+  <!-- LEVEL SHELF -->
+  <section id="levelShelfSection">
+    <div class="genre-head">
+      <div class="genre-head-left">
+        <div class="genre-bar" style="background:linear-gradient(180deg, var(--lvl-A2), var(--lvl-C1))"></div>
+        <div>
+          <h2 class="genre-title">Browse by Level</h2>
+          <p class="genre-sub">Every shelf, sorted the way you learn.</p>
+        </div>
+      </div>
+    </div>
+    <div class="level-pills" id="levelPills">
+      <button class="level-pill active" data-level="all">All levels</button>
+      <button class="level-pill" data-level="A2">A2</button>
+      <button class="level-pill" data-level="B1">B1</button>
+      <button class="level-pill" data-level="B2">B2</button>
+      <button class="level-pill" data-level="C1">C1</button>
+    </div>
+    <div class="level-grid" id="levelGrid"></div>
+  </section>
+
+</main>
+
+<!-- READER VIEW -->
+<section class="reader" id="readerView" hidden>
+  <div class="reader-top">
+    <button class="reader-back" id="readerBackBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+      Library
+    </button>
+    <div class="reader-heading">
+      <p class="t" id="readerTitle">—</p>
+      <p class="s" id="readerSub">—</p>
+    </div>
+    <div class="reader-tools">
+      <button class="icon-btn" id="playBtn" aria-label="Read this page aloud">
+        <svg id="playIcon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        <svg id="pauseIcon" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>
+      </button>
+      <div class="variant-pills" id="variantPills">
+        <button class="variant-pill" data-variant="A2">A2</button>
+        <button class="variant-pill" data-variant="B1">B1</button>
+        <button class="variant-pill" data-variant="C1">C1</button>
+      </div>
+      <div class="font-ctrl">
+        <button id="fontDownBtn" aria-label="Decrease text size">A−</button>
+        <button id="fontUpBtn" aria-label="Increase text size">A+</button>
+      </div>
+      <button class="icon-btn" id="drawerToggleBtn" aria-label="My vocabulary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-6-4-6 4V3z"/></svg>
+        <span class="badge" id="drawerBadge">0</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="reader-stage">
+    <button class="page-edge" id="prevPageBtn" aria-label="Previous page">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>
+    </button>
+    <div class="book-stage" id="bookStage">
+      <div id="sheetsWrapper"></div>
+    </div>
+    <button class="page-edge" id="nextPageBtn" aria-label="Next page">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+    </button>
+  </div>
+
+  <div class="reader-bottom">
+    <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <span class="page-indicator" id="pageIndicator">1 / 2</span>
+  </div>
+
+  <aside class="vocab-drawer" id="vocabDrawer">
+    <div class="vocab-drawer-head">
+      <h3>My vocabulary</h3>
+      <button class="icon-btn" id="drawerCloseBtn" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <ul class="vocab-list" id="vocabList"></ul>
+  </aside>
+</section>
+
+<!-- FLYING BOOK — FLIP + 3D open transition element -->
+<div class="flying-book" id="flyingBook" hidden aria-hidden="true">
+  <div class="flying-cover" id="flyingCover"></div>
+  <div class="flying-pages"></div>
+</div>
+
+<!-- WORD POPOVER -->
+<div class="word-popover" id="wordPopover" role="dialog" aria-label="Word details"></div>
+
+<script>
+/* ================================================================
+   DATA MODEL
+   ================================================================ */
+const LEVEL_COLORS = { A2:'#4CF5E0', B1:'#7CACF8', B2:'#9B7BFF', C1:'#F472B6' };
+
+const GENRE_ICONS = {
+  scifi: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c2.5 2 4 5.5 4 9 0 2-1 4-1 4h-6s-1-2-1-4c0-3.5 1.5-7 4-9z"/><circle cx="12" cy="9" r="1.4"/><path d="M9 15l-2.5 4M15 15l2.5 4M10 19h4"/></svg>',
+  business: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M8 8V6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M3 13h18"/></svg>',
+  classic: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 4c-6 0-13 3-15 11-1 3 1 5 4 4 8-2 11-9 11-15z"/><path d="M9 15L4 20"/></svg>',
+  daily: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h13v8H9l-4 3.5V13H3z"/><path d="M21 9v6.5h-3V19l-3.5-3.5H11"/></svg>'
+};
+
+const BOOKS = [
+  { id:'scifi-1', genre:'scifi', title:'Neon Horizon', author:'Kaya Ilyanova', level:'B2', minutes:195, vocab:4, c1:'#4C3AFF', c2:'#150E38' },
+  { id:'scifi-2', genre:'scifi', title:'The Clockwork Sea', author:'Devon Marsh', level:'C1', minutes:240, vocab:5, c1:'#2E2470', c2:'#0B081E' },
+  { id:'scifi-3', genre:'scifi', title:'Echoes Beyond Jupiter', author:'Aiden Cole', level:'B2', minutes:100, vocab:3, c1:'#5B3FE0', c2:'#170F3D' },
+  { id:'scifi-4', genre:'scifi', title:'Synthetic Dawn', author:'R. J. Okafor', level:'B1', minutes:150, vocab:3, c1:'#6C4CF0', c2:'#1A1140' },
+  { id:'scifi-5', genre:'scifi', title:'The Last Signal', author:'Priya Nataraj', level:'C1', minutes:210, vocab:4, c1:'#3A2E8C', c2:'#100B29' },
+
+  { id:'biz-1', genre:'business', title:'The Focused Founder', author:'Mark Ellison', level:'B2', minutes:165, vocab:3, c1:'#D6A34A', c2:'#2E2008' },
+  { id:'biz-2', genre:'business', title:'Negotiate Like a Pro', author:'Laura Bennett', level:'B1', minutes:120, vocab:2, c1:'#B8863B', c2:'#2A1C0A' },
+  { id:'biz-3', genre:'business', title:'Small Habits, Big Wins', author:'Tom Reyes', level:'A2', minutes:80, vocab:2, c1:'#E0B563', c2:'#2F2410' },
+  { id:'biz-4', genre:'business', title:'The Art of the Pitch', author:'Sophie Lindqvist', level:'B2', minutes:110, vocab:3, c1:'#8C6A2E', c2:'#221806' },
+  { id:'biz-5', genre:'business', title:'Leading Remote Teams', author:'Daniel Kwan', level:'B1', minutes:100, vocab:2, c1:'#A67A2E', c2:'#241A08' },
+
+  { id:'classic-1', genre:'classic', title:'Pride and Prejudice', author:'Jane Austen', level:'C1', minutes:480, vocab:5, c1:'#B08D5E', c2:'#2A2013' },
+  { id:'classic-2', genre:'classic', title:'Frankenstein', author:'Mary Shelley', level:'C1', minutes:360, vocab:5, c1:'#6E5A3E', c2:'#1C1710' },
+  { id:'classic-3', genre:'classic', title:"Alice's Adventures in Wonderland", author:'Lewis Carroll', level:'B1', minutes:150, vocab:3, c1:'#9C7B4A', c2:'#261E10' },
+  { id:'classic-4', genre:'classic', title:'The Adventures of Sherlock Holmes', author:'Arthur Conan Doyle', level:'B2', minutes:300, vocab:4, c1:'#8C6F4E', c2:'#241C12' },
+  { id:'classic-5', genre:'classic', title:'A Christmas Carol', author:'Charles Dickens', level:'B1', minutes:120, vocab:3, c1:'#7A6244', c2:'#1F1810' },
+  { id:'classic-6', genre:'classic', title:'The Picture of Dorian Gray', author:'Oscar Wilde', level:'C1', minutes:330, vocab:5, c1:'#A88A5C', c2:'#2B2214' },
+
+  { id:'daily-1', genre:'daily', title:'Coffee Shop Chats', author:'Emma Wallace', level:'A2', minutes:45, vocab:1, c1:'#2DBEA6', c2:'#0C2A26' },
+  { id:'daily-2', genre:'daily', title:'At the Airport', author:'Julia Novak', level:'A2', minutes:40, vocab:1, c1:'#22A896', c2:'#0A2622' },
+  { id:'daily-3', genre:'daily', title:'Small Talk, Big Confidence', author:'Chris Adeyemi', level:'B1', minutes:70, vocab:2, c1:'#3FCDB0', c2:'#0E2D28' },
+  { id:'daily-4', genre:'daily', title:'Everyday English in Action', author:'Nora Fischer', level:'B1', minutes:90, vocab:2, c1:'#4BD8BE', c2:'#10312B' },
+  { id:'daily-5', genre:'daily', title:'Ordering Without Fear', author:'Liam Torres', level:'A2', minutes:35, vocab:1, c1:'#1F9C8B', c2:'#092220' }
+];
+
+const HERO_BOOK_ID = 'scifi-3';
+
+const STORY = {
+  C1: [
+    ["The transmission arrived at 3:14 a.m., fracturing the silence of the observation deck. Mira had almost stopped believing in the signal — three years of static, three years of hollow hope drifting through the void. She pressed her palm against the cold viewport, watching Jupiter's storms churn like ink dropped into water, and listened as the message unspooled: not words, not yet, but a rhythm too deliberate to be chance."],
+    ["Mira's fingers trembled as she reached for the recorder, half-expecting the signal to vanish the way all the others had — fleeting anomalies dismissed by the committee as cosmic noise. But this one held. It pulsed, faded, pulsed again, each interval shortening with what could only be described as intention. Somewhere beyond the ice moons, something was listening back."],
+    ["By dawn, the pattern had resolved into something almost legible — not language exactly, but the shadow of one, mathematical in its bones yet carrying what felt unmistakably like urgency. Mira transcribed every pulse into her notebook, hands cramping, coffee cold, refusing the sleep her body kept demanding. If the committee wouldn't listen, she would build the case herself, piece by piece."],
+    ["When she finally broadcast her findings, she expected silence, or worse, ridicule. Instead, three observatories replied within the hour, each confirming the same anomaly from a different angle of the sky. Whatever was out there beyond the ice moons was not an accident of physics. It was, unmistakably, a greeting — and for the first time in three years, Mira let herself smile."]
+  ],
+  B1: [
+    ["The message came at 3:14 a.m. It broke the silence in the control room. Mira had almost stopped believing in it. For three years, she heard only static. She put her hand on the cold window. Outside, she could see Jupiter's storms moving like ink in water. Then she heard the message. It was not words yet. But the rhythm was too clear to be an accident."],
+    ["Mira's hands shook as she reached for the recorder. She thought the signal might disappear, like all the others before. The committee always said those were just noise from space. But this one stayed. It got stronger, then weaker, then stronger again. Each time, the pattern changed a little, like it had a purpose. Somewhere far away, past the icy moons, something was listening too."],
+    ["By morning, the pattern started to make more sense. It was not really language, but it looked like something planned, like math. It also felt urgent. Mira wrote down every signal in her notebook. Her hands hurt, her coffee was cold, but she did not want to sleep. If the committee would not listen, she decided to prove it herself, piece by piece."],
+    ["When she finally shared her results, she thought people would ignore her, or laugh. But three observatories answered within the hour. Each one saw the same strange thing from a different part of the sky. Whatever was out there past the icy moons was not an accident. It was clearly a greeting. For the first time in three years, Mira smiled."]
+  ],
+  A2: [
+    ["The message came at 3:14 in the morning. It was very quiet before. Mira almost stopped waiting for it. For three years, she heard nothing but noise. She touched the cold window with her hand. She looked at Jupiter outside. The storms moved like ink in water. Then she heard something new. It was not words. But it had a pattern. It was not random."],
+    ["Mira's hands shook. She wanted to record the sound before it stopped. Other signals always stopped before. People said those signals were just noise. But this signal did not stop. It became strong, then weak, then strong again. It felt like it had a reason. Far away, past the cold moons, something else was listening."],
+    ["In the morning, the pattern became clearer. It was not real words, but it looked planned, like numbers. It also felt important. Mira wrote every signal in her notebook. Her hands hurt. Her coffee was cold. But she did not want to sleep. The committee did not want to listen. So she wanted to prove it herself, piece by piece."],
+    ["She shared her results. She thought people would ignore her. But three places answered in one hour. Each one saw the same strange thing. Whatever was out there was not an accident. It was a greeting. For the first time in three years, Mira smiled."]
+  ]
+};
+
+const DICTIONARY = {
+  transmission:{ipa:'/trænzˈmɪʃən/',pos:'n.',tr:{sk:'prenos, vysielanie',cs:'přenos, vysílání',de:'Übertragung',fr:'transmission',es:'transmisión',it:'trasmissione',pl:'transmisja',ru:'передача',zh:'传输',ja:'送信'}},
+  arrived:{ipa:'/əˈraɪvd/',pos:'v.',tr:{sk:'prišiel, prišla',cs:'přišel, přišla',de:'kam an',fr:'arriva',es:'llegó',it:'arrivò',pl:'przybył, przybyła',ru:'прибыл, прибыла',zh:'到达了',ja:'到着した'}},
+  fracturing:{ipa:'/ˈfræktʃərɪŋ/',pos:'v.',tr:{sk:'narúšajúci',cs:'narušující',de:'durchbrechend',fr:'brisant',es:'quebrando',it:'spezzando',pl:'przełamujący',ru:'нарушающий',zh:'打破',ja:'破る'}},
+  silence:{ipa:'/ˈsaɪləns/',pos:'n.',tr:{sk:'ticho',cs:'ticho',de:'Stille',fr:'silence',es:'silencio',it:'silenzio',pl:'cisza',ru:'тишина',zh:'寂静',ja:'静寂'}},
+  observation:{ipa:'/ˌɒbzərˈveɪʃən/',pos:'n.',tr:{sk:'pozorovanie',cs:'pozorování',de:'Beobachtung',fr:'observation',es:'observación',it:'osservazione',pl:'obserwacja',ru:'наблюдение',zh:'观测',ja:'観測'}},
+  deck:{ipa:'/dek/',pos:'n.',tr:{sk:'paluba',cs:'paluba',de:'Deck',fr:'pont',es:'cubierta',it:'ponte',pl:'pokład',ru:'палуба',zh:'甲板',ja:'デッキ'}},
+  believing:{ipa:'/bɪˈliːvɪŋ/',pos:'v.',tr:{sk:'veriť',cs:'věřící',de:'glaubend',fr:'croyant',es:'creyendo',it:'credendo',pl:'wierzący',ru:'веря',zh:'相信',ja:'信じる'}},
+  believed:{ipa:'/bɪˈliːvd/',pos:'v.',tr:{sk:'veril, verila',cs:'věřil, věřila',de:'glaubte',fr:'croyait',es:'creía',it:'credeva',pl:'wierzył, wierzyła',ru:'верил, верила',zh:'相信过',ja:'信じた'}},
+  believe:{ipa:'/bɪˈliːv/',pos:'v.',tr:{sk:'veriť',cs:'věřit',de:'glauben',fr:'croire',es:'creer',it:'credere',pl:'wierzyć',ru:'верить',zh:'相信',ja:'信じる'}},
+  signal:{ipa:'/ˈsɪɡnəl/',pos:'n.',tr:{sk:'signál',cs:'signál',de:'Signal',fr:'signal',es:'señal',it:'segnale',pl:'sygnał',ru:'сигнал',zh:'信号',ja:'信号'}},
+  signals:{ipa:'/ˈsɪɡnəlz/',pos:'n.',tr:{sk:'signály',cs:'signály',de:'Signale',fr:'signaux',es:'señales',it:'segnali',pl:'sygnały',ru:'сигналы',zh:'信号',ja:'信号（複数）'}},
+  static:{ipa:'/ˈstætɪk/',pos:'n.',tr:{sk:'statický šum',cs:'statický šum',de:'Rauschen',fr:'parasites',es:'estática',it:'rumore statico',pl:'szum',ru:'помехи',zh:'静电噪音',ja:'雑音'}},
+  hollow:{ipa:'/ˈhɒloʊ/',pos:'adj.',tr:{sk:'dutý, prázdny',cs:'dutý, prázdný',de:'hohl',fr:'creux',es:'hueco',it:'vuoto, cavo',pl:'pusty, wydrążony',ru:'пустой, полый',zh:'空洞的',ja:'空虚な'}},
+  hope:{ipa:'/hoʊp/',pos:'n.',tr:{sk:'nádej',cs:'naděje',de:'Hoffnung',fr:'espoir',es:'esperanza',it:'speranza',pl:'nadzieja',ru:'надежда',zh:'希望',ja:'希望'}},
+  drifting:{ipa:'/ˈdrɪftɪŋ/',pos:'v.',tr:{sk:'unášajúci sa',cs:'unášející se',de:'treibend',fr:'dérivant',es:'a la deriva',it:'alla deriva',pl:'dryfujący',ru:'дрейфующий',zh:'漂流',ja:'漂う'}},
+  void:{ipa:'/vɔɪd/',pos:'n.',tr:{sk:'prázdnota',cs:'prázdnota',de:'Leere',fr:'vide',es:'vacío',it:'vuoto',pl:'pustka',ru:'пустота',zh:'虚空',ja:'虚無'}},
+  pressed:{ipa:'/prest/',pos:'v.',tr:{sk:'pritlačila',cs:'přitiskla',de:'drückte',fr:'appuya',es:'presionó',it:'premette',pl:'przycisnęła',ru:'прижала',zh:'按压了',ja:'押した'}},
+  palm:{ipa:'/pɑːm/',pos:'n.',tr:{sk:'dlaň',cs:'dlaň',de:'Handfläche',fr:'paume',es:'palma',it:'palmo',pl:'dłoń',ru:'ладонь',zh:'手掌',ja:'手のひら'}},
+  viewport:{ipa:'/ˈvjuːpɔːrt/',pos:'n.',tr:{sk:'pozorovacie okno',cs:'pozorovací okno',de:'Sichtfenster',fr:'hublot',es:'mirador',it:'oblò',pl:'okno obserwacyjne',ru:'смотровое окно',zh:'观察窗',ja:'観測窓'}},
+  storms:{ipa:'/stɔːrmz/',pos:'n.',tr:{sk:'búrky',cs:'bouře',de:'Stürme',fr:'tempêtes',es:'tormentas',it:'tempeste',pl:'burze',ru:'бури',zh:'风暴',ja:'嵐'}},
+  churn:{ipa:'/tʃɜːrn/',pos:'v.',tr:{sk:'víriť sa',cs:'vířit',de:'wirbeln',fr:'tourbillonner',es:'agitarse',it:'agitarsi',pl:'wirować',ru:'бурлить',zh:'翻腾',ja:'渦巻く'}},
+  ink:{ipa:'/ɪŋk/',pos:'n.',tr:{sk:'atrament',cs:'inkoust',de:'Tinte',fr:'encre',es:'tinta',it:'inchiostro',pl:'atrament',ru:'чернила',zh:'墨水',ja:'インク'}},
+  dropped:{ipa:'/drɒpt/',pos:'v.',tr:{sk:'kvapnutý',cs:'kapnutý',de:'getropft',fr:'tombé en goutte',es:'goteado',it:'gocciolato',pl:'kapnięty',ru:'капнувший',zh:'滴落的',ja:'落とされた'}},
+  listened:{ipa:'/ˈlɪsənd/',pos:'v.',tr:{sk:'počúvala',cs:'poslouchala',de:'hörte zu',fr:'écouta',es:'escuchó',it:'ascoltò',pl:'słuchała',ru:'слушала',zh:'倾听了',ja:'耳を傾けた'}},
+  listening:{ipa:'/ˈlɪsənɪŋ/',pos:'v.',tr:{sk:'počúvanie',cs:'poslouchání',de:'Zuhören',fr:'écoute',es:'escuchando',it:'ascoltando',pl:'słuchanie',ru:'слушание',zh:'倾听',ja:'聞くこと'}},
+  message:{ipa:'/ˈmesɪdʒ/',pos:'n.',tr:{sk:'správa',cs:'zpráva',de:'Nachricht',fr:'message',es:'mensaje',it:'messaggio',pl:'wiadomość',ru:'сообщение',zh:'信息',ja:'メッセージ'}},
+  unspooled:{ipa:'/ʌnˈspuːld/',pos:'v.',tr:{sk:'odvíjal sa',cs:'odvíjel se',de:'entrollte sich',fr:'se déroula',es:'se desenrolló',it:'si srotolò',pl:'rozwijał się',ru:'разматывался',zh:'展开了',ja:'展開した'}},
+  rhythm:{ipa:'/ˈrɪðəm/',pos:'n.',tr:{sk:'rytmus',cs:'rytmus',de:'Rhythmus',fr:'rythme',es:'ritmo',it:'ritmo',pl:'rytm',ru:'ритм',zh:'节奏',ja:'リズム'}},
+  deliberate:{ipa:'/dɪˈlɪbərət/',pos:'adj.',tr:{sk:'zámerný',cs:'záměrný',de:'absichtlich',fr:'délibéré',es:'deliberado',it:'deliberato',pl:'celowy',ru:'намеренный',zh:'刻意的',ja:'意図的な'}},
+  chance:{ipa:'/tʃæns/',pos:'n.',tr:{sk:'náhoda',cs:'náhoda',de:'Zufall',fr:'hasard',es:'casualidad',it:'caso',pl:'przypadek',ru:'случайность',zh:'机会',ja:'偶然'}},
+  trembled:{ipa:'/ˈtrembld/',pos:'v.',tr:{sk:'chvela sa',cs:'chvěla se',de:'zitterte',fr:'trembla',es:'tembló',it:'tremò',pl:'trzęsła się',ru:'дрожала',zh:'颤抖了',ja:'震えた'}},
+  fingers:{ipa:'/ˈfɪŋɡərz/',pos:'n.',tr:{sk:'prsty',cs:'prsty',de:'Finger',fr:'doigts',es:'dedos',it:'dita',pl:'palce',ru:'пальцы',zh:'手指',ja:'指'}},
+  reached:{ipa:'/riːtʃt/',pos:'v.',tr:{sk:'siahla',cs:'sáhla',de:'griff',fr:'tendit la main',es:'alcanzó',it:'raggiunse',pl:'sięgnęła',ru:'потянулась',zh:'伸手拿了',ja:'手を伸ばした'}},
+  recorder:{ipa:'/rɪˈkɔːrdər/',pos:'n.',tr:{sk:'nahrávacie zariadenie',cs:'nahrávací zařízení',de:'Aufnahmegerät',fr:'enregistreur',es:'grabadora',it:'registratore',pl:'rejestrator',ru:'диктофон',zh:'录音机',ja:'録音機'}},
+  vanish:{ipa:'/ˈvænɪʃ/',pos:'v.',tr:{sk:'zmiznúť',cs:'zmizet',de:'verschwinden',fr:'disparaître',es:'desvanecerse',it:'svanire',pl:'zniknąć',ru:'исчезнуть',zh:'消失',ja:'消える'}},
+  fleeting:{ipa:'/ˈfliːtɪŋ/',pos:'adj.',tr:{sk:'prchavý',cs:'prchavý',de:'flüchtig',fr:'fugace',es:'fugaz',it:'fugace',pl:'ulotny',ru:'мимолётный',zh:'转瞬即逝的',ja:'つかの間の'}},
+  anomalies:{ipa:'/əˈnɒməliz/',pos:'n.',tr:{sk:'anomálie',cs:'anomálie',de:'Anomalien',fr:'anomalies',es:'anomalías',it:'anomalie',pl:'anomalie',ru:'аномалии',zh:'异常现象',ja:'異常'}},
+  dismissed:{ipa:'/dɪsˈmɪst/',pos:'v.',tr:{sk:'odmietnuté',cs:'odmítnuté',de:'abgetan',fr:'rejetées',es:'descartadas',it:'respinte',pl:'odrzucone',ru:'отклонённые',zh:'被驳回的',ja:'却下された'}},
+  committee:{ipa:'/kəˈmɪti/',pos:'n.',tr:{sk:'komisia, výbor',cs:'výbor',de:'Ausschuss',fr:'comité',es:'comité',it:'comitato',pl:'komisja',ru:'комитет',zh:'委员会',ja:'委員会'}},
+  cosmic:{ipa:'/ˈkɒzmɪk/',pos:'adj.',tr:{sk:'kozmický',cs:'kosmický',de:'kosmisch',fr:'cosmique',es:'cósmico',it:'cosmico',pl:'kosmiczny',ru:'космический',zh:'宇宙的',ja:'宇宙の'}},
+  noise:{ipa:'/nɔɪz/',pos:'n.',tr:{sk:'hluk, šum',cs:'hluk',de:'Rauschen',fr:'bruit',es:'ruido',it:'rumore',pl:'hałas',ru:'шум',zh:'噪音',ja:'ノイズ'}},
+  pulsed:{ipa:'/pʌlst/',pos:'v.',tr:{sk:'pulzovalo',cs:'pulzovalo',de:'pulsierte',fr:'pulsa',es:'pulsó',it:'pulsò',pl:'pulsowało',ru:'пульсировало',zh:'脉动了',ja:'脈動した'}},
+  faded:{ipa:'/ˈfeɪdɪd/',pos:'v.',tr:{sk:'slablo',cs:'slábl',de:'verblasste',fr:"s'estompa",es:'se desvaneció',it:'svanì',pl:'zanikał',ru:'угасал',zh:'减弱了',ja:'弱まった'}},
+  interval:{ipa:'/ˈɪntərvəl/',pos:'n.',tr:{sk:'interval',cs:'interval',de:'Intervall',fr:'intervalle',es:'intervalo',it:'intervallo',pl:'interwał',ru:'интервал',zh:'间隔',ja:'間隔'}},
+  shortening:{ipa:'/ˈʃɔːrtnɪŋ/',pos:'v.',tr:{sk:'skracujúci sa',cs:'zkracující se',de:'sich verkürzend',fr:'se raccourcissant',es:'acortándose',it:'accorciandosi',pl:'skracający się',ru:'сокращающийся',zh:'缩短',ja:'短くなる'}},
+  intention:{ipa:'/ɪnˈtenʃən/',pos:'n.',tr:{sk:'zámer',cs:'záměr',de:'Absicht',fr:'intention',es:'intención',it:'intenzione',pl:'zamiar',ru:'намерение',zh:'意图',ja:'意図'}},
+  moons:{ipa:'/muːnz/',pos:'n.',tr:{sk:'mesiace (planét)',cs:'měsíce',de:'Monde',fr:'lunes',es:'lunas',it:'lune',pl:'księżyce',ru:'луны',zh:'卫星',ja:'衛星'}},
+  quiet:{ipa:'/ˈkwaɪət/',pos:'adj.',tr:{sk:'tichý',cs:'tichý',de:'leise, ruhig',fr:'silencieux',es:'silencioso',it:'silenzioso',pl:'cichy',ru:'тихий',zh:'安静的',ja:'静かな'}},
+  touched:{ipa:'/tʌtʃt/',pos:'v.',tr:{sk:'dotkla sa',cs:'dotkla se',de:'berührte',fr:'toucha',es:'tocó',it:'toccò',pl:'dotknęła',ru:'коснулась',zh:'触摸了',ja:'触れた'}},
+  cold:{ipa:'/koʊld/',pos:'adj.',tr:{sk:'studený',cs:'studený',de:'kalt',fr:'froid',es:'frío',it:'freddo',pl:'zimny',ru:'холодный',zh:'寒冷的',ja:'冷たい'}},
+  window:{ipa:'/ˈwɪndoʊ/',pos:'n.',tr:{sk:'okno',cs:'okno',de:'Fenster',fr:'fenêtre',es:'ventana',it:'finestra',pl:'okno',ru:'окно',zh:'窗户',ja:'窓'}},
+  pattern:{ipa:'/ˈpætərn/',pos:'n.',tr:{sk:'vzor',cs:'vzor',de:'Muster',fr:'motif',es:'patrón',it:'schema',pl:'wzór',ru:'узор',zh:'模式',ja:'パターン'}},
+  random:{ipa:'/ˈrændəm/',pos:'adj.',tr:{sk:'náhodný',cs:'náhodný',de:'zufällig',fr:'aléatoire',es:'aleatorio',it:'casuale',pl:'losowy',ru:'случайный',zh:'随机的',ja:'ランダムな'}},
+  shook:{ipa:'/ʃʊk/',pos:'v.',tr:{sk:'triasli sa',cs:'třásly se',de:'zitterten',fr:'tremblèrent',es:'temblaron',it:'tremarono',pl:'trzęsły się',ru:'тряслись',zh:'颤抖了',ja:'震えた'}},
+  stayed:{ipa:'/steɪd/',pos:'v.',tr:{sk:'zostal, pretrval',cs:'zůstal, přetrval',de:'blieb',fr:'resta',es:'permaneció',it:'rimase',pl:'pozostał',ru:'остался',zh:'持续了',ja:'続いた'}},
+  purpose:{ipa:'/ˈpɜːrpəs/',pos:'n.',tr:{sk:'účel, zámer',cs:'účel',de:'Zweck',fr:'but',es:'propósito',it:'scopo',pl:'cel',ru:'цель',zh:'目的',ja:'目的'}},
+  strong:{ipa:'/strɔːŋ/',pos:'adj.',tr:{sk:'silný',cs:'silný',de:'stark',fr:'fort',es:'fuerte',it:'forte',pl:'silny',ru:'сильный',zh:'强的',ja:'強い'}},
+  stronger:{ipa:'/ˈstrɔːŋɡər/',pos:'adj.',tr:{sk:'silnejší',cs:'silnější',de:'stärker',fr:'plus fort',es:'más fuerte',it:'più forte',pl:'silniejszy',ru:'сильнее',zh:'更强的',ja:'より強い'}},
+  weak:{ipa:'/wiːk/',pos:'adj.',tr:{sk:'slabý',cs:'slabý',de:'schwach',fr:'faible',es:'débil',it:'debole',pl:'słaby',ru:'слабый',zh:'弱的',ja:'弱い'}},
+  weaker:{ipa:'/ˈwiːkər/',pos:'adj.',tr:{sk:'slabší',cs:'slabší',de:'schwächer',fr:'plus faible',es:'más débil',it:'più debole',pl:'słabszy',ru:'слабее',zh:'更弱的',ja:'より弱い'}},
+  morning:{ipa:'/ˈmɔːrnɪŋ/',pos:'n.',tr:{sk:'ráno',cs:'ráno',de:'Morgen',fr:'matin',es:'mañana',it:'mattina',pl:'rano',ru:'утро',zh:'早晨',ja:'朝'}},
+  control:{ipa:'/kənˈtroʊl/',pos:'n.',tr:{sk:'riadenie',cs:'řízení',de:'Kontrolle',fr:'contrôle',es:'control',it:'controllo',pl:'kontrola',ru:'управление',zh:'控制',ja:'制御'}},
+  broke:{ipa:'/broʊk/',pos:'v.',tr:{sk:'prerušilo',cs:'přerušilo',de:'unterbrach',fr:'rompit',es:'rompió',it:'ruppe',pl:'przerwało',ru:'прервало',zh:'打破了',ja:'破った'}},
+  held:{ipa:'/held/',pos:'v.',tr:{sk:'vydržal',cs:'vydržel',de:'hielt',fr:'tint',es:'se mantuvo',it:'tenne',pl:'utrzymał',ru:'держался',zh:'持续了',ja:'持ちこたえた'}},
+  changed:{ipa:'/tʃeɪndʒd/',pos:'v.',tr:{sk:'zmenil sa',cs:'změnil se',de:'änderte sich',fr:'changea',es:'cambió',it:'cambiò',pl:'zmienił się',ru:'изменился',zh:'变化了',ja:'変化した'}},
+  described:{ipa:'/dɪˈskraɪbd/',pos:'v.',tr:{sk:'opísaný',cs:'popsaný',de:'beschrieben',fr:'décrit',es:'descrito',it:'descritto',pl:'opisany',ru:'описанный',zh:'被描述为',ja:'表現された'}},
+  somewhere:{ipa:'/ˈsʌmwer/',pos:'adv.',tr:{sk:'niekde',cs:'někde',de:'irgendwo',fr:'quelque part',es:'en algún lugar',it:'da qualche parte',pl:'gdzieś',ru:'где-то',zh:'某处',ja:'どこかで'}},
+  beyond:{ipa:'/bɪˈjɒnd/',pos:'prep.',tr:{sk:'za, mimo',cs:'za, mimo',de:'jenseits',fr:'au-delà de',es:'más allá de',it:'oltre',pl:'poza',ru:'за пределами',zh:'超越',ja:'越えて'}},
+  ice:{ipa:'/aɪs/',pos:'n.',tr:{sk:'ľad',cs:'led',de:'Eis',fr:'glace',es:'hielo',it:'ghiaccio',pl:'lód',ru:'лёд',zh:'冰',ja:'氷'}},
+  waiting:{ipa:'/ˈweɪtɪŋ/',pos:'v.',tr:{sk:'čakanie',cs:'čekání',de:'Warten',fr:'attente',es:'esperando',it:'aspettando',pl:'czekanie',ru:'ожидание',zh:'等待',ja:'待つこと'}},
+  outside:{ipa:'/aʊtˈsaɪd/',pos:'adv.',tr:{sk:'vonku',cs:'venku',de:'draußen',fr:'dehors',es:'afuera',it:'fuori',pl:'na zewnątrz',ru:'снаружи',zh:'外面',ja:'外で'}},
+  accident:{ipa:'/ˈæksɪdənt/',pos:'n.',tr:{sk:'nehoda, náhoda',cs:'nehoda',de:'Unfall, Zufall',fr:'accident',es:'accidente',it:'incidente',pl:'wypadek',ru:'случайность',zh:'意外',ja:'偶然の出来事'}},
+  reason:{ipa:'/ˈriːzən/',pos:'n.',tr:{sk:'dôvod',cs:'důvod',de:'Grund',fr:'raison',es:'razón',it:'ragione',pl:'powód',ru:'причина',zh:'原因',ja:'理由'}},
+  record:{ipa:'/rɪˈkɔːrd/',pos:'v.',tr:{sk:'nahrať',cs:'nahrát',de:'aufnehmen',fr:'enregistrer',es:'grabar',it:'registrare',pl:'nagrać',ru:'записать',zh:'记录',ja:'記録する'}},
+  stopped:{ipa:'/stɒpt/',pos:'v.',tr:{sk:'zastavil sa',cs:'zastavil se',de:'hörte auf',fr:"s'arrêta",es:'se detuvo',it:'si fermò',pl:'zatrzymał się',ru:'остановился',zh:'停止了',ja:'止まった'}},
+  sound:{ipa:'/saʊnd/',pos:'n.',tr:{sk:'zvuk',cs:'zvuk',de:'Klang',fr:'son',es:'sonido',it:'suono',pl:'dźwięk',ru:'звук',zh:'声音',ja:'音'}},
+  watching:{ipa:'/ˈwɒtʃɪŋ/',pos:'v.',tr:{sk:'sledovala',cs:'sledovala',de:'beobachtete',fr:'regardait',es:'observaba',it:'osservava',pl:'obserwowała',ru:'наблюдала',zh:'注视着',ja:'見ていた'}},
+  water:{ipa:'/ˈwɔːtər/',pos:'n.',tr:{sk:'voda',cs:'voda',de:'Wasser',fr:'eau',es:'agua',it:'acqua',pl:'woda',ru:'вода',zh:'水',ja:'水'}},
+  half:{ipa:'/hæf/',pos:'n.',tr:{sk:'polovica',cs:'polovina',de:'Hälfte',fr:'moitié',es:'mitad',it:'metà',pl:'połowa',ru:'половина',zh:'一半',ja:'半分'}},
+  expecting:{ipa:'/ɪkˈspektɪŋ/',pos:'v.',tr:{sk:'očakávajúci',cs:'očekávající',de:'erwartend',fr:"s'attendant à",es:'esperando',it:'aspettandosi',pl:'oczekujący',ru:'ожидающий',zh:'期待着',ja:'予期して'}},
+  came:{ipa:'/keɪm/',pos:'v.',tr:{sk:'prišla',cs:'přišla',de:'kam',fr:'vint',es:'llegó',it:'venne',pl:'przyszła',ru:'пришла',zh:'来了',ja:'来た'}},
+  heard:{ipa:'/hɜːrd/',pos:'v.',tr:{sk:'počula',cs:'slyšela',de:'hörte',fr:'entendit',es:'oyó',it:'sentì',pl:'usłyszała',ru:'услышала',zh:'听到了',ja:'聞いた'}},
+  moving:{ipa:'/ˈmuːvɪŋ/',pos:'v.',tr:{sk:'pohybujúce sa',cs:'pohybující se',de:'sich bewegend',fr:'se déplaçant',es:'moviéndose',it:'muovendosi',pl:'poruszający się',ru:'движущийся',zh:'移动的',ja:'動いている'}},
+  clear:{ipa:'/klɪr/',pos:'adj.',tr:{sk:'jasný',cs:'jasný',de:'klar',fr:'clair',es:'claro',it:'chiaro',pl:'jasny',ru:'ясный',zh:'清晰的',ja:'明確な'}},
+  hand:{ipa:'/hænd/',pos:'n.',tr:{sk:'ruka',cs:'ruka',de:'Hand',fr:'main',es:'mano',it:'mano',pl:'ręka',ru:'рука',zh:'手',ja:'手'}},
+  hands:{ipa:'/hændz/',pos:'n.',tr:{sk:'ruky',cs:'ruce',de:'Hände',fr:'mains',es:'manos',it:'mani',pl:'ręce',ru:'руки',zh:'双手',ja:'両手'}},
+  disappear:{ipa:'/ˌdɪsəˈpɪr/',pos:'v.',tr:{sk:'zmiznúť',cs:'zmizet',de:'verschwinden',fr:'disparaître',es:'desaparecer',it:'sparire',pl:'zniknąć',ru:'исчезнуть',zh:'消失',ja:'消える'}},
+  space:{ipa:'/speɪs/',pos:'n.',tr:{sk:'vesmír, priestor',cs:'vesmír, prostor',de:'Weltraum, Raum',fr:'espace',es:'espacio',it:'spazio',pl:'przestrzeń',ru:'космос',zh:'太空',ja:'宇宙'}},
+  nothing:{ipa:'/ˈnʌθɪŋ/',pos:'pron.',tr:{sk:'nič',cs:'nic',de:'nichts',fr:'rien',es:'nada',it:'niente',pl:'nic',ru:'ничего',zh:'什么都没有',ja:'何も'}},
+  looked:{ipa:'/lʊkt/',pos:'v.',tr:{sk:'pozerala sa',cs:'dívala se',de:'schaute',fr:'regarda',es:'miró',it:'guardò',pl:'patrzyła',ru:'смотрела',zh:'看了',ja:'見た'}},
+  wanted:{ipa:'/ˈwɒntɪd/',pos:'v.',tr:{sk:'chcela',cs:'chtěla',de:'wollte',fr:'voulut',es:'quiso',it:'volle',pl:'chciała',ru:'хотела',zh:'想要',ja:'望んだ'}},
+  people:{ipa:'/ˈpiːpəl/',pos:'n.',tr:{sk:'ľudia',cs:'lidé',de:'Menschen',fr:'gens',es:'gente',it:'persone',pl:'ludzie',ru:'люди',zh:'人们',ja:'人々'}},
+  said:{ipa:'/sed/',pos:'v.',tr:{sk:'povedali',cs:'řekli',de:'sagten',fr:'dirent',es:'dijeron',it:'dissero',pl:'powiedzieli',ru:'сказали',zh:'说了',ja:'言った'}},
+  felt:{ipa:'/felt/',pos:'v.',tr:{sk:'cítilo sa',cs:'cítilo se',de:'fühlte sich an',fr:'se sentit',es:'se sintió',it:'si sentì',pl:'czuło się',ru:'чувствовалось',zh:'感觉像',ja:'感じた'}},
+  far:{ipa:'/fɑːr/',pos:'adv.',tr:{sk:'ďaleko',cs:'daleko',de:'weit',fr:'loin',es:'lejos',it:'lontano',pl:'daleko',ru:'далеко',zh:'远',ja:'遠く'}},
+  away:{ipa:'/əˈweɪ/',pos:'adv.',tr:{sk:'preč',cs:'pryč',de:'weg',fr:'au loin',es:'lejos',it:'via',pl:'precz',ru:'прочь',zh:'离开',ja:'離れて'}},
+  else:{ipa:'/els/',pos:'adv.',tr:{sk:'iné, iný',cs:'jiný, jinak',de:'sonst',fr:"d'autre",es:'otro',it:'altro',pl:'inny',ru:'ещё',zh:'其他',ja:'他の'}},
+  dawn:{ipa:'/dɔːn/',pos:'n.',tr:{sk:'svitanie',cs:'svítání',de:'Morgendämmerung',fr:'aube',es:'amanecer',it:'alba',pl:'świt',ru:'рассвет',zh:'黎明',ja:'夜明け'}},
+  resolved:{ipa:'/rɪˈzɒlvd/',pos:'v.',tr:{sk:'vyjasnil sa',cs:'vyjasnil se',de:'löste sich auf',fr:'se résolut',es:'se resolvió',it:'si risolse',pl:'rozwiązał się',ru:'разрешился',zh:'显现出来了',ja:'解明された'}},
+  legible:{ipa:'/ˈledʒəbəl/',pos:'adj.',tr:{sk:'čitateľný',cs:'čitelný',de:'lesbar',fr:'lisible',es:'legible',it:'leggibile',pl:'czytelny',ru:'разборчивый',zh:'可辨认的',ja:'判読可能な'}},
+  mathematical:{ipa:'/ˌmæθəˈmætɪkəl/',pos:'adj.',tr:{sk:'matematický',cs:'matematický',de:'mathematisch',fr:'mathématique',es:'matemático',it:'matematico',pl:'matematyczny',ru:'математический',zh:'数学的',ja:'数学的な'}},
+  urgency:{ipa:'/ˈɜːrdʒənsi/',pos:'n.',tr:{sk:'naliehavosť',cs:'naléhavost',de:'Dringlichkeit',fr:'urgence',es:'urgencia',it:'urgenza',pl:'pilność',ru:'срочность',zh:'紧迫感',ja:'緊急性'}},
+  transcribed:{ipa:'/trænˈskraɪbd/',pos:'v.',tr:{sk:'prepisovala',cs:'přepisovala',de:'transkribierte',fr:'transcrivait',es:'transcribía',it:'trascriveva',pl:'przepisywała',ru:'расшифровывала',zh:'转录了',ja:'書き写した'}},
+  notebook:{ipa:'/ˈnoʊtbʊk/',pos:'n.',tr:{sk:'zošit',cs:'sešit',de:'Notizbuch',fr:'carnet',es:'cuaderno',it:'taccuino',pl:'notatnik',ru:'блокнот',zh:'笔记本',ja:'ノート'}},
+  cramping:{ipa:'/ˈkræmpɪŋ/',pos:'v.',tr:{sk:'kŕčovité (o rukách)',cs:'křečovité',de:'krampfend',fr:'crampes',es:'acalambrado',it:'crampi',pl:'skurcze',ru:'сводило судорогой',zh:'抽筋',ja:'けいれんする'}},
+  coffee:{ipa:'/ˈkɒfi/',pos:'n.',tr:{sk:'káva',cs:'káva',de:'Kaffee',fr:'café',es:'café',it:'caffè',pl:'kawa',ru:'кофе',zh:'咖啡',ja:'コーヒー'}},
+  refusing:{ipa:'/rɪˈfjuːzɪŋ/',pos:'v.',tr:{sk:'odmietajúca',cs:'odmítající',de:'sich verweigernd',fr:'refusant',es:'negándose',it:'rifiutando',pl:'odmawiająca',ru:'отказывающаяся',zh:'拒绝',ja:'拒んで'}},
+  sleep:{ipa:'/sliːp/',pos:'n./v.',tr:{sk:'spánok, spať',cs:'spánek, spát',de:'Schlaf, schlafen',fr:'sommeil, dormir',es:'sueño, dormir',it:'sonno, dormire',pl:'sen, spać',ru:'сон, спать',zh:'睡眠',ja:'睡眠'}},
+  demanding:{ipa:'/dɪˈmændɪŋ/',pos:'v.',tr:{sk:'vyžadujúce',cs:'vyžadující',de:'fordernd',fr:'exigeant',es:'exigiendo',it:'esigendo',pl:'wymagający',ru:'требующий',zh:'要求',ja:'要求する'}},
+  broadcast:{ipa:'/ˈbrɔːdkæst/',pos:'v.',tr:{sk:'vysielať',cs:'vysílat',de:'senden',fr:'diffuser',es:'transmitir',it:'trasmettere',pl:'nadawać',ru:'транслировать',zh:'广播',ja:'放送する'}},
+  findings:{ipa:'/ˈfaɪndɪŋz/',pos:'n.',tr:{sk:'zistenia',cs:'zjištění',de:'Erkenntnisse',fr:'conclusions',es:'hallazgos',it:'scoperte',pl:'ustalenia',ru:'выводы',zh:'发现',ja:'調査結果'}},
+  expected:{ipa:'/ɪkˈspektɪd/',pos:'v.',tr:{sk:'očakávala',cs:'očekávala',de:'erwartete',fr:"s'attendait à",es:'esperaba',it:'si aspettava',pl:'spodziewała się',ru:'ожидала',zh:'预料到了',ja:'予想した'}},
+  ridicule:{ipa:'/ˈrɪdɪkjuːl/',pos:'n.',tr:{sk:'výsmech',cs:'výsměch',de:'Spott',fr:'ridicule',es:'burla',it:'ridicolo',pl:'kpina',ru:'насмешка',zh:'嘲笑',ja:'嘲笑'}},
+  instead:{ipa:'/ɪnˈsted/',pos:'adv.',tr:{sk:'namiesto toho',cs:'místo toho',de:'stattdessen',fr:'au lieu de cela',es:'en cambio',it:'invece',pl:'zamiast tego',ru:'вместо этого',zh:'相反',ja:'その代わりに'}},
+  observatories:{ipa:'/əbˈzɜːrvətɔːriz/',pos:'n.',tr:{sk:'observatóriá',cs:'observatoře',de:'Observatorien',fr:'observatoires',es:'observatorios',it:'osservatori',pl:'obserwatoria',ru:'обсерватории',zh:'天文台',ja:'天文台'}},
+  confirming:{ipa:'/kənˈfɜːrmɪŋ/',pos:'v.',tr:{sk:'potvrdzujúce',cs:'potvrzující',de:'bestätigend',fr:'confirmant',es:'confirmando',it:'confermando',pl:'potwierdzający',ru:'подтверждающий',zh:'确认',ja:'確認する'}},
+  anomaly:{ipa:'/əˈnɒməli/',pos:'n.',tr:{sk:'anomália',cs:'anomálie',de:'Anomalie',fr:'anomalie',es:'anomalía',it:'anomalia',pl:'anomalia',ru:'аномалия',zh:'异常',ja:'異常'}},
+  angle:{ipa:'/ˈæŋɡəl/',pos:'n.',tr:{sk:'uhol',cs:'úhel',de:'Winkel',fr:'angle',es:'ángulo',it:'angolo',pl:'kąt',ru:'угол',zh:'角度',ja:'角度'}},
+  sky:{ipa:'/skaɪ/',pos:'n.',tr:{sk:'obloha',cs:'obloha',de:'Himmel',fr:'ciel',es:'cielo',it:'cielo',pl:'niebo',ru:'небо',zh:'天空',ja:'空'}},
+  physics:{ipa:'/ˈfɪzɪks/',pos:'n.',tr:{sk:'fyzika',cs:'fyzika',de:'Physik',fr:'physique',es:'física',it:'fisica',pl:'fizyka',ru:'физика',zh:'物理学',ja:'物理学'}},
+  unmistakably:{ipa:'/ˌʌnmɪˈsteɪkəbli/',pos:'adv.',tr:{sk:'nezameniteľne',cs:'nezaměnitelně',de:'unverkennbar',fr:'incontestablement',es:'inconfundiblemente',it:'inconfondibilmente',pl:'niewątpliwie',ru:'безошибочно',zh:'明确无误地',ja:'紛れもなく'}},
+  greeting:{ipa:'/ˈɡriːtɪŋ/',pos:'n.',tr:{sk:'pozdrav',cs:'pozdrav',de:'Gruß',fr:'salutation',es:'saludo',it:'saluto',pl:'pozdrowienie',ru:'приветствие',zh:'问候',ja:'挨拶'}},
+  smile:{ipa:'/smaɪl/',pos:'n./v.',tr:{sk:'úsmev, usmiať sa',cs:'úsměv, usmát se',de:'Lächeln, lächeln',fr:'sourire',es:'sonrisa, sonreír',it:'sorriso, sorridere',pl:'uśmiech',ru:'улыбка',zh:'微笑',ja:'笑顔'}},
+  smiled:{ipa:'/smaɪld/',pos:'v.',tr:{sk:'usmiala sa',cs:'usmála se',de:'lächelte',fr:'sourit',es:'sonrió',it:'sorrise',pl:'uśmiechnęła się',ru:'улыбнулась',zh:'微笑了',ja:'微笑んだ'}},
+  sense:{ipa:'/sens/',pos:'n.',tr:{sk:'zmysel',cs:'smysl',de:'Sinn',fr:'sens',es:'sentido',it:'senso',pl:'sens',ru:'смысл',zh:'意义',ja:'意味'}},
+  planned:{ipa:'/plænd/',pos:'v.',tr:{sk:'plánované',cs:'plánované',de:'geplant',fr:'planifié',es:'planeado',it:'pianificato',pl:'zaplanowane',ru:'запланированный',zh:'计划好的',ja:'計画された'}},
+  math:{ipa:'/mæθ/',pos:'n.',tr:{sk:'matematika',cs:'matematika',de:'Mathe',fr:'maths',es:'matemáticas',it:'matematica',pl:'matematyka',ru:'математика',zh:'数学',ja:'数学'}},
+  piece:{ipa:'/piːs/',pos:'n.',tr:{sk:'kúsok',cs:'kousek',de:'Stück',fr:'morceau',es:'pedazo',it:'pezzo',pl:'kawałek',ru:'кусок',zh:'一块',ja:'断片'}},
+  prove:{ipa:'/pruːv/',pos:'v.',tr:{sk:'dokázať',cs:'dokázat',de:'beweisen',fr:'prouver',es:'probar',it:'dimostrare',pl:'udowodnić',ru:'доказать',zh:'证明',ja:'証明する'}},
+  herself:{ipa:'/hɜːrˈself/',pos:'pron.',tr:{sk:'ona sama',cs:'ona sama',de:'sich selbst',fr:'elle-même',es:'ella misma',it:'lei stessa',pl:'ona sama',ru:'она сама',zh:'她自己',ja:'彼女自身'}},
+  shared:{ipa:'/ʃerd/',pos:'v.',tr:{sk:'zdieľala',cs:'sdílela',de:'teilte',fr:'partagea',es:'compartió',it:'condivise',pl:'podzieliła się',ru:'поделилась',zh:'分享了',ja:'共有した'}},
+  results:{ipa:'/rɪˈzʌlts/',pos:'n.',tr:{sk:'výsledky',cs:'výsledky',de:'Ergebnisse',fr:'résultats',es:'resultados',it:'risultati',pl:'wyniki',ru:'результаты',zh:'结果',ja:'結果'}},
+  ignore:{ipa:'/ɪɡˈnɔːr/',pos:'v.',tr:{sk:'ignorovať',cs:'ignorovat',de:'ignorieren',fr:'ignorer',es:'ignorar',it:'ignorare',pl:'ignorować',ru:'игнорировать',zh:'忽视',ja:'無視する'}},
+  laugh:{ipa:'/læf/',pos:'v.',tr:{sk:'smiať sa',cs:'smát se',de:'lachen',fr:'rire',es:'reír',it:'ridere',pl:'śmiać się',ru:'смеяться',zh:'大笑',ja:'笑う'}},
+  answered:{ipa:'/ˈænsərd/',pos:'v.',tr:{sk:'odpovedali',cs:'odpověděli',de:'antworteten',fr:'répondirent',es:'respondieron',it:'risposero',pl:'odpowiedzieli',ru:'ответили',zh:'回应了',ja:'答えた'}},
+  hour:{ipa:'/aʊər/',pos:'n.',tr:{sk:'hodina',cs:'hodina',de:'Stunde',fr:'heure',es:'hora',it:'ora',pl:'godzina',ru:'час',zh:'小时',ja:'時間'}},
+  strange:{ipa:'/streɪndʒ/',pos:'adj.',tr:{sk:'zvláštny',cs:'zvláštní',de:'seltsam',fr:'étrange',es:'extraño',it:'strano',pl:'dziwny',ru:'странный',zh:'奇怪的',ja:'奇妙な'}},
+  thing:{ipa:'/θɪŋ/',pos:'n.',tr:{sk:'vec',cs:'věc',de:'Ding',fr:'chose',es:'cosa',it:'cosa',pl:'rzecz',ru:'вещь',zh:'事物',ja:'物事'}},
+  whatever:{ipa:'/wʌtˈevər/',pos:'pron.',tr:{sk:'čokoľvek',cs:'cokoli',de:'was auch immer',fr:'quoi que ce soit',es:'lo que sea',it:'qualunque cosa',pl:'cokolwiek',ru:'что бы ни',zh:'无论什么',ja:'何であれ'}},
+  clearly:{ipa:'/ˈklɪrli/',pos:'adv.',tr:{sk:'jasne',cs:'jasně',de:'eindeutig',fr:'clairement',es:'claramente',it:'chiaramente',pl:'wyraźnie',ru:'явно',zh:'显然',ja:'明らかに'}},
+  places:{ipa:'/ˈpleɪsɪz/',pos:'n.',tr:{sk:'miesta',cs:'místa',de:'Orte',fr:'endroits',es:'lugares',it:'luoghi',pl:'miejsca',ru:'места',zh:'地方',ja:'場所'}},
+  /* phrases (collocations) — matched as whole units by the tokenizer, see PHRASE_LIST */
+  'three years':{ipa:'',pos:'fráza',tr:{sk:'tri roky',cs:'tři roky',de:'drei Jahre',fr:'trois ans',es:'tres años',it:'tre anni',pl:'trzy lata',ru:'три года',zh:'三年',ja:'三年間'}},
+  'for the first time':{ipa:'',pos:'fráza',tr:{sk:'po prvýkrát',cs:'poprvé',de:'zum ersten Mal',fr:'pour la première fois',es:'por primera vez',it:'per la prima volta',pl:'po raz pierwszy',ru:'впервые',zh:'第一次',ja:'初めて'}},
+  'piece by piece':{ipa:'',pos:'fráza',tr:{sk:'kúsok po kúsku',cs:'kousek po kousku',de:'Stück für Stück',fr:'morceau par morceau',es:'pieza por pieza',it:'pezzo per pezzo',pl:'kawałek po kawałku',ru:'по кусочкам',zh:'一点一点地',ja:'少しずつ'}},
+  'within the hour':{ipa:'',pos:'fráza',tr:{sk:'do hodiny',cs:'do hodiny',de:'innerhalb einer Stunde',fr:"dans l'heure",es:'en menos de una hora',it:"entro un'ora",pl:'w ciągu godziny',ru:'в течение часа',zh:'一小时之内',ja:'一時間以内に'}},
+  'in one hour':{ipa:'',pos:'fráza',tr:{sk:'za hodinu',cs:'za hodinu',de:'in einer Stunde',fr:'en une heure',es:'en una hora',it:"in un'ora",pl:'w ciągu godziny',ru:'через час',zh:'一小时后',ja:'一時間で'}},
+  'cold window':{ipa:'',pos:'fráza',tr:{sk:'studené okno',cs:'studené okno',de:'kaltes Fenster',fr:'fenêtre froide',es:'ventana fría',it:'finestra fredda',pl:'zimne okno',ru:'холодное окно',zh:'冰冷的窗户',ja:'冷たい窓'}},
+  'cold viewport':{ipa:'',pos:'fráza',tr:{sk:'studené pozorovacie okno',cs:'studené pozorovací okno',de:'kaltes Sichtfenster',fr:'hublot froid',es:'mirador frío',it:'oblò freddo',pl:'zimne okno obserwacyjne',ru:'холодное смотровое окно',zh:'冰冷的观察窗',ja:'冷たい観測窓'}},
+  'beyond the ice moons':{ipa:'',pos:'fráza',tr:{sk:'za ľadovými mesiacmi',cs:'za ledovými měsíci',de:'jenseits der Eismonde',fr:'au-delà des lunes de glace',es:'más allá de las lunas heladas',it:'oltre le lune di ghiaccio',pl:'za lodowymi księżycami',ru:'за ледяными лунами',zh:'在冰月之外',ja:'氷の衛星の彼方に'}},
+  'past the icy moons':{ipa:'',pos:'fráza',tr:{sk:'popri ľadových mesiacoch',cs:'kolem ledových měsíců',de:'vorbei an den eisigen Monden',fr:'au-delà des lunes glacées',es:'más allá de las lunas heladas',it:'oltre le lune ghiacciate',pl:'obok lodowych księżyców',ru:'мимо ледяных лун',zh:'经过冰冷的卫星',ja:'凍った衛星のそばを'}},
+  'past the cold moons':{ipa:'',pos:'fráza',tr:{sk:'popri studených mesiacoch',cs:'kolem studených měsíců',de:'vorbei an den kalten Monden',fr:'au-delà des lunes froides',es:'más allá de las lunas frías',it:'oltre le lune fredde',pl:'obok zimnych księżyców',ru:'мимо холодных лун',zh:'经过寒冷的卫星',ja:'冷たい衛星のそばを'}}
+};
+
+/* ================================================================
+   LANGUAGE PICKER — flags top-right; drives the translation shown
+   in the word popover. 10 languages have full DICTIONARY coverage
+   (sk/cs/de/fr/es/it/pl/ru/zh/ja); the rest are selectable too but
+   fall back to a correctly-localized "not translated yet" notice
+   per word, rather than being left out of the picker entirely.
+   ================================================================ */
+const LANGUAGES = [
+  { code:'sk', flag:'🇸🇰', name:'Slovenčina',      continent:'Europe' },
+  { code:'cs', flag:'🇨🇿', name:'Čeština',         continent:'Europe' },
+  { code:'de', flag:'🇩🇪', name:'Deutsch',         continent:'Europe' },
+  { code:'fr', flag:'🇫🇷', name:'Français',        continent:'Europe' },
+  { code:'es', flag:'🇪🇸', name:'Español',         continent:'Europe' },
+  { code:'it', flag:'🇮🇹', name:'Italiano',        continent:'Europe' },
+  { code:'pl', flag:'🇵🇱', name:'Polski',          continent:'Europe' },
+  { code:'ru', flag:'🇷🇺', name:'Русский',         continent:'Europe' },
+  { code:'uk', flag:'🇺🇦', name:'Українська',      continent:'Europe' },
+  { code:'el', flag:'🇬🇷', name:'Ελληνικά',        continent:'Europe' },
+  { code:'ro', flag:'🇷🇴', name:'Română',          continent:'Europe' },
+  { code:'nl', flag:'🇳🇱', name:'Nederlands',      continent:'Europe' },
+  { code:'sv', flag:'🇸🇪', name:'Svenska',         continent:'Europe' },
+  { code:'tr', flag:'🇹🇷', name:'Türkçe',          continent:'Europe' },
+  { code:'pt', flag:'🇵🇹', name:'Português',       continent:'Americas' },
+  { code:'zh', flag:'🇨🇳', name:'中文',            continent:'Asia' },
+  { code:'ja', flag:'🇯🇵', name:'日本語',          continent:'Asia' },
+  { code:'ko', flag:'🇰🇷', name:'한국어',          continent:'Asia' },
+  { code:'hi', flag:'🇮🇳', name:'हिन्दी',          continent:'Asia' },
+  { code:'ar', flag:'🇸🇦', name:'العربية',         continent:'Asia' },
+  { code:'th', flag:'🇹🇭', name:'ไทย',             continent:'Asia' },
+  { code:'vi', flag:'🇻🇳', name:'Tiếng Việt',      continent:'Asia' },
+  { code:'id', flag:'🇮🇩', name:'Bahasa Indonesia',continent:'Asia' },
+  { code:'he', flag:'🇮🇱', name:'עברית',           continent:'Asia' }
+];
+const FULLY_TRANSLATED_LANGS = ['sk','cs','de','fr','es','it','pl','ru','zh','ja'];
+const FALLBACK_MSG = {
+  sk:'Preklad zatiaľ nie je k dispozícii.', cs:'Překlad zatím není k dispozici.',
+  de:'Übersetzung noch nicht verfügbar.', fr:'Traduction pas encore disponible.',
+  es:'Traducción aún no disponible.', it:'Traduzione non ancora disponibile.',
+  pl:'Tłumaczenie jeszcze niedostępne.', ru:'Перевод пока недоступен.',
+  pt:'Tradução ainda não disponível.', zh:'翻译暂不可用。', ja:'翻訳はまだありません。',
+  uk:'Переклад поки що недоступний.', el:'Η μετάφραση δεν είναι ακόμη διαθέσιμη.',
+  ro:'Traducere încă indisponibilă.', nl:'Vertaling nog niet beschikbaar.',
+  sv:'Översättning ännu inte tillgänglig.', tr:'Çeviri henüz mevcut değil.',
+  ko:'번역이 아직 없습니다.', hi:'अनुवाद अभी उपलब्ध नहीं है।',
+  ar:'الترجمة غير متوفرة بعد.', th:'ยังไม่มีคำแปล', vi:'Bản dịch chưa có sẵn.',
+  id:'Terjemahan belum tersedia.', he:'התרגום עדיין לא זמין.'
+};
+function loadLang(){
+  try{ return localStorage.getItem('lumen_lang_v1') || 'sk'; }catch(e){ return 'sk'; }
+}
+function saveLang(code){
+  try{ localStorage.setItem('lumen_lang_v1', code); }catch(e){ /* ignore */ }
+}
+let currentLang = loadLang();
+
+const langMenuEl = document.getElementById('langMenu');
+const langTriggerFlagEl = document.getElementById('langTriggerFlag');
+
+function renderLangMenu(){
+  const continents = ['Europe','Americas','Asia'];
+  const labels = { Europe:'Europe', Americas:'Americas', Asia:'Asia' };
+  let html = '';
+  continents.forEach((cont) => {
+    const langs = LANGUAGES.filter((l) => l.continent === cont);
+    if (!langs.length) return;
+    html += '<p class="lang-group-label">' + labels[cont] + '</p><div class="lang-grid">';
+    langs.forEach((l) => {
+      const hasDict = FULLY_TRANSLATED_LANGS.indexOf(l.code) !== -1;
+      html += '<button class="lang-option' + (l.code === currentLang ? ' active' : '') + (hasDict ? '' : ' no-dict') + '" data-lang="' + l.code + '" title="' + escapeHtml(l.name) + (hasDict ? '' : ' — coming soon') + '">' +
+        '<span class="flag">' + l.flag + '</span><span class="name">' + escapeHtml(l.name) + '</span>' +
+      '</button>';
+    });
+    html += '</div>';
+  });
+  langMenuEl.innerHTML = html;
+}
+
+function openLangMenu(){ renderLangMenu(); langMenuEl.hidden = false; requestAnimationFrame(() => langMenuEl.classList.add('open')); }
+function closeLangMenu(){ langMenuEl.classList.remove('open'); setTimeout(() => { langMenuEl.hidden = true; }, 170); }
+
+document.getElementById('langTrigger').addEventListener('click', (e) => {
+  e.stopPropagation();
+  if (langMenuEl.classList.contains('open')) closeLangMenu(); else openLangMenu();
+});
+langMenuEl.addEventListener('click', (e) => {
+  const btn = e.target.closest('.lang-option');
+  if (!btn) return;
+  currentLang = btn.dataset.lang;
+  saveLang(currentLang);
+  const picked = LANGUAGES.find((l) => l.code === currentLang);
+  if (picked) langTriggerFlagEl.textContent = picked.flag;
+  closeLangMenu();
+  if (activeWordEl && popoverEl.classList.contains('visible')){
+    popoverEl.innerHTML = renderPopoverContent(popoverEl.dataset.word, activeWordEl.textContent);
+  }
+});
+document.addEventListener('click', (e) => {
+  if (!document.getElementById('langPicker').contains(e.target)) closeLangMenu();
+});
+(function initLangTrigger(){
+  const picked = LANGUAGES.find((l) => l.code === currentLang) || LANGUAGES[0];
+  langTriggerFlagEl.textContent = picked.flag;
+})();
+
+/* Collocations the tokenizer marks as ONE clickable unit instead of separate
+   words — inspired by the reference reader's phrasesList. Sorted longest-first
+   at match time so e.g. "beyond the ice moons" wins over a shorter overlap. */
+const PHRASE_LIST = [
+  'three years', 'for the first time', 'piece by piece', 'within the hour',
+  'in one hour', 'cold window', 'cold viewport', 'beyond the ice moons',
+  'past the icy moons', 'past the cold moons'
+];
+
+/* ================================================================
+   HELPERS
+   ================================================================ */
+function escapeHtml(str){
+  return String(str).replace(/[&<>"']/g, function(c){
+    return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c];
+  });
+}
+function formatTime(mins){
+  const h = Math.floor(mins/60), m = mins%60;
+  if (h === 0) return m + 'm';
+  if (m === 0) return h + 'h';
+  return h + 'h ' + m + 'm';
+}
+function tokenizeWord(segment){
+  if (/^[A-Za-z']+$/.test(segment)){
+    const key = segment.toLowerCase();
+    return '<span class="w" data-w="' + key + '">' + escapeHtml(segment) + '</span>';
+  }
+  return escapeHtml(segment);
+}
+const SORTED_PHRASES = PHRASE_LIST.slice().sort((a, b) => b.length - a.length);
+function tokenize(text){
+  const PSTART = '\uE000', PEND = '\uE001';
+  let marked = text;
+  SORTED_PHRASES.forEach((phrase) => {
+    const escaped = phrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const re = new RegExp('\\b' + escaped + '\\b', 'gi');
+    marked = marked.replace(re, (m) => PSTART + m + PEND);
+  });
+
+  let html = '', i = 0;
+  while (i < marked.length){
+    if (marked[i] === PSTART){
+      const end = marked.indexOf(PEND, i);
+      const phraseText = marked.slice(i + 1, end);
+      const key = phraseText.toLowerCase();
+      html += '<span class="w phrase" data-w="' + key + '">' + escapeHtml(phraseText) + '</span>';
+      i = end + 1;
+    } else {
+      let next = marked.indexOf(PSTART, i);
+      if (next === -1) next = marked.length;
+      html += marked.slice(i, next).replace(/[A-Za-z']+|[^A-Za-z']+/g, tokenizeWord);
+      i = next;
+    }
+  }
+  return html;
+}
+const wait = (ms) => new Promise((res) => setTimeout(res, ms));
+
+/* ================================================================
+   COVER PAINTING (shared by cards, hero, flying book)
+   ================================================================ */
+function coverInnerHTML(book){
+  return '' +
+    '<div class="cover-pattern pattern-' + book.genre + '"></div>' +
+    '<div class="cover-icon">' + (GENRE_ICONS[book.genre] || '') + '</div>' +
+    '<div class="cover-text">' +
+      '<p class="cover-title">' + escapeHtml(book.title) + '</p>' +
+      '<p class="cover-author">' + escapeHtml(book.author) + '</p>' +
+    '</div>';
+}
+function paintCover(el, book){
+  el.style.setProperty('--c1', book.c1);
+  el.style.setProperty('--c2', book.c2);
+  el.innerHTML = coverInnerHTML(book);
+}
+
+/* ================================================================
+   BOOK CARD + SECTION RENDERING
+   ================================================================ */
+function createBookCardEl(book){
+  const card = document.createElement('article');
+  card.className = 'book-card';
+  card.tabIndex = 0;
+  card.setAttribute('role','button');
+  card.setAttribute('aria-label', 'Open ' + book.title + ' by ' + book.author);
+
+  const cover = document.createElement('div');
+  cover.className = 'book-cover';
+  paintCover(cover, book);
+
+  const metaRow = document.createElement('div');
+  metaRow.className = 'book-meta-row';
+  metaRow.innerHTML =
+    '<span class="level-chip" style="--lvl-color:' + LEVEL_COLORS[book.level] + '">' +
+      '<span class="level-dot"></span>' + book.level +
+    '</span>' +
+    '<span class="meta-time">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>' +
+      formatTime(book.minutes) +
+    '</span>';
+
+  const meter = document.createElement('div');
+  meter.className = 'vocab-meter';
+  meter.setAttribute('aria-label', 'Vocabulary difficulty ' + book.vocab + ' of 5');
+  let segs = '';
+  for (let i = 0; i < 5; i++){ segs += '<i class="' + (i < book.vocab ? 'on' : '') + '"></i>'; }
+  meter.innerHTML = segs;
+
+  card.appendChild(cover);
+  card.appendChild(metaRow);
+  card.appendChild(meter);
+
+  const open = () => openBook(book, cover);
+  card.addEventListener('click', open);
+  card.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); open(); }
+  });
+  return card;
+}
+
+function renderGenreRows(){
+  ['scifi','business','classic','daily'].forEach((g) => {
+    const track = document.querySelector('.row-track[data-track="' + g + '"]');
+    if (!track) return;
+    track.innerHTML = '';
+    BOOKS.filter((b) => b.genre === g).forEach((b) => track.appendChild(createBookCardEl(b)));
+  });
+}
+
+let activeLevel = 'all';
+function renderLevelGrid(){
+  const grid = document.getElementById('levelGrid');
+  grid.innerHTML = '';
+  const list = activeLevel === 'all' ? BOOKS : BOOKS.filter((b) => b.level === activeLevel);
+  list.forEach((b) => grid.appendChild(createBookCardEl(b)));
+}
+
+function initHero(){
+  const book = BOOKS.find((b) => b.id === HERO_BOOK_ID);
+  const cover = document.getElementById('heroCover');
+  cover.classList.add('book-cover');
+  paintCover(cover, book);
+  document.getElementById('heroTitle').textContent = book.title;
+  document.getElementById('heroSub').textContent = book.author + ' · ' + book.level + ' · Page 1 of 2';
+  document.getElementById('heroContinueBtn').addEventListener('click', () => openBook(book, cover));
+}
+
+/* ================================================================
+   SEARCH
+   ================================================================ */
+const searchInput = document.getElementById('searchInput');
+const searchSection = document.getElementById('searchResultsSection');
+searchInput.addEventListener('input', () => {
+  const raw = searchInput.value.trim();
+  const q = raw.toLowerCase();
+  if (!q){
+    document.body.classList.remove('searching');
+    searchSection.classList.remove('active');
+    return;
+  }
+  document.body.classList.add('searching');
+  searchSection.classList.add('active');
+  const matches = BOOKS.filter((b) => b.title.toLowerCase().includes(q) || b.author.toLowerCase().includes(q));
+  document.getElementById('searchResultsSub').textContent = matches.length
+    ? matches.length + (matches.length === 1 ? ' match for "' : ' matches for "') + raw + '"'
+    : 'No matches for "' + raw + '"';
+  const grid = document.getElementById('searchGrid');
+  grid.innerHTML = '';
+  matches.forEach((b) => grid.appendChild(createBookCardEl(b)));
+});
+
+/* ================================================================
+   FLIP + 3D OPEN/CLOSE TRANSITION
+   ================================================================ */
+const libraryMain = document.getElementById('libraryMain');
+const flyingBookEl = document.getElementById('flyingBook');
+const flyingCoverEl = document.getElementById('flyingCover');
+const readerView = document.getElementById('readerView');
+
+let isAnimating = false;
+let currentBook = null;
+let currentOriginCover = null;
+
+function computeFinalRect(){
+  const vw = window.innerWidth, vh = window.innerHeight;
+  const w = Math.min(340, vw * 0.62);
+  const h = w * 1.5;
+  return { x: (vw - w) / 2, y: Math.max(24, (vh - h) / 2), w: w, h: h };
+}
+
+async function openBook(book, originCoverEl){
+  if (isAnimating) return;
+  isAnimating = true;
+  currentBook = book;
+  currentOriginCover = originCoverEl;
+
+  const first = originCoverEl.getBoundingClientRect();
+  const final = computeFinalRect();
+
+  flyingBookEl.style.left = final.x + 'px';
+  flyingBookEl.style.top = final.y + 'px';
+  flyingBookEl.style.width = final.w + 'px';
+  flyingBookEl.style.height = final.h + 'px';
+  flyingBookEl.hidden = false;
+  paintCover(flyingCoverEl, book);
+
+  const dx = first.left - final.x, dy = first.top - final.y;
+  const sx = first.width / final.w, sy = first.height / final.h;
+
+  flyingBookEl.style.transition = 'none';
+  flyingBookEl.style.transform = 'translate(' + dx + 'px,' + dy + 'px) scale(' + sx + ',' + sy + ')';
+  flyingCoverEl.style.transition = 'none';
+  flyingCoverEl.style.transform = 'rotateY(0deg)';
+
+  originCoverEl.style.visibility = 'hidden';
+  libraryMain.classList.add('dimmed');
+  document.body.style.overflow = 'hidden';
+
+  void flyingBookEl.offsetWidth; // force reflow
+
+  flyingBookEl.style.transition = 'transform 620ms var(--ease-out-expo)';
+  requestAnimationFrame(() => { flyingBookEl.style.transform = 'translate(0px,0px) scale(1,1)'; });
+  await wait(640);
+
+  flyingCoverEl.style.transition = 'transform 700ms var(--ease-open)';
+  requestAnimationFrame(() => { flyingCoverEl.style.transform = 'rotateY(-108deg)'; });
+  await wait(560);
+
+  prepareReader(book);
+  readerView.hidden = false;
+  requestAnimationFrame(() => { readerView.classList.add('entered'); });
+  await wait(280);
+
+  flyingBookEl.hidden = true;
+  isAnimating = false;
+}
+
+async function closeBook(){
+  if (isAnimating || !currentBook) return;
+  isAnimating = true;
+  const book = currentBook;
+  const originEl = currentOriginCover;
+
+  stopReadAloud();
+  readerView.classList.remove('entered');
+  await wait(260);
+  readerView.hidden = true;
+  hidePopover();
+  closeDrawer();
+
+  let first = null;
+  if (originEl && document.body.contains(originEl)) first = originEl.getBoundingClientRect();
+  if (!first || (first.width === 0 && first.height === 0)){
+    first = { left: window.innerWidth / 2 - 20, top: window.innerHeight - 10, width: 40, height: 60 };
+  }
+  const final = computeFinalRect();
+
+  flyingBookEl.style.left = final.x + 'px';
+  flyingBookEl.style.top = final.y + 'px';
+  flyingBookEl.style.width = final.w + 'px';
+  flyingBookEl.style.height = final.h + 'px';
+  flyingBookEl.hidden = false;
+  paintCover(flyingCoverEl, book);
+
+  flyingBookEl.style.transition = 'none';
+  flyingBookEl.style.transform = 'translate(0px,0px) scale(1,1)';
+  flyingCoverEl.style.transition = 'none';
+  flyingCoverEl.style.transform = 'rotateY(-108deg)';
+  void flyingBookEl.offsetWidth;
+
+  flyingCoverEl.style.transition = 'transform 560ms var(--ease-open)';
+  requestAnimationFrame(() => { flyingCoverEl.style.transform = 'rotateY(0deg)'; });
+  await wait(520);
+
+  const dx = first.left - final.x, dy = first.top - final.y;
+  const sx = first.width / final.w, sy = first.height / final.h;
+  flyingBookEl.style.transition = 'transform 560ms var(--ease-out-expo)';
+  requestAnimationFrame(() => { flyingBookEl.style.transform = 'translate(' + dx + 'px,' + dy + 'px) scale(' + sx + ',' + sy + ')'; });
+  await wait(560);
+
+  flyingBookEl.hidden = true;
+  if (originEl) originEl.style.visibility = '';
+  libraryMain.classList.remove('dimmed');
+  document.body.style.overflow = '';
+  currentBook = null;
+  currentOriginCover = null;
+  isAnimating = false;
+}
+document.getElementById('readerBackBtn').addEventListener('click', closeBook);
+
+/* ================================================================
+   READER CORE
+   ================================================================ */
+function nearestVariant(level){
+  if (level === 'A2' || level === 'A1') return 'A2';
+  if (level === 'B1' || level === 'B2') return 'B1';
+  return 'C1';
+}
+let currentVariant = 'B1';
+let currentPageIndex = 0;
+let isPageAnimating = false;
+
+function prepareReader(book){
+  document.getElementById('readerTitle').textContent = book.title;
+  document.getElementById('readerSub').textContent = book.author + ' · ' + book.level;
+  currentVariant = nearestVariant(book.level);
+  currentPageIndex = 0;
+  updateVariantPillsUI();
+  renderPage(currentPageIndex);
+  renderVocabDrawer();
+  updateVocabCount();
+}
+
+/* Builds every paper-sheet (front+back page-face) for the current variant. */
+function renderSheets(){
+  const pages = STORY[currentVariant];
+  const wrapper = document.getElementById('sheetsWrapper');
+  wrapper.innerHTML = '';
+  const sheetCount = Math.ceil(pages.length / 2);
+  for (let i = 0; i < sheetCount; i++){
+    const frontIdx = i * 2, backIdx = i * 2 + 1;
+    const sheet = document.createElement('div');
+    sheet.className = 'paper-sheet';
+    sheet.id = 'sheet-' + i;
+
+    const front = document.createElement('div');
+    front.className = 'page-face page-front';
+    front.innerHTML = '<div class="page-content">' + pages[frontIdx].map((p) => '<p>' + tokenize(p) + '</p>').join('') + '</div>';
+
+    const back = document.createElement('div');
+    back.className = 'page-face page-back';
+    back.innerHTML = backIdx < pages.length
+      ? '<div class="page-content">' + pages[backIdx].map((p) => '<p>' + tokenize(p) + '</p>').join('') + '</div>'
+      : '<div class="page-content page-end">The End</div>';
+
+    sheet.appendChild(front);
+    sheet.appendChild(back);
+    wrapper.appendChild(sheet);
+  }
+}
+
+/* Flips/unflips every sheet and manages stacking so the correct face is on
+   top — same front/back + z-index math as a real stack of paper sheets. */
+function updateSheetZIndexes(){
+  const pages = STORY[currentVariant];
+  const sheetCount = Math.ceil(pages.length / 2);
+  const activeSheet = Math.floor(currentPageIndex / 2);
+  for (let i = 0; i < sheetCount; i++){
+    const sheet = document.getElementById('sheet-' + i);
+    if (!sheet) continue;
+    const isFlipped = i < activeSheet || (i === activeSheet && currentPageIndex % 2 === 1);
+    sheet.classList.toggle('flipped', isFlipped);
+    sheet.style.zIndex = i < activeSheet ? (i + 1) : (sheetCount - i);
+  }
+}
+
+function getCurrentFaceEl(){
+  const sheetIdx = Math.floor(currentPageIndex / 2);
+  const isBack = currentPageIndex % 2 === 1;
+  const sheet = document.getElementById('sheet-' + sheetIdx);
+  if (!sheet) return null;
+  return sheet.querySelector(isBack ? '.page-back .page-content' : '.page-front .page-content');
+}
+
+function applyWordStatusClasses(){
+  const known = loadKnown();
+  const learning = loadVocab().map((v) => v.word);
+  document.querySelectorAll('#sheetsWrapper .w').forEach((el) => {
+    const key = el.dataset.w;
+    el.classList.toggle('known', known.includes(key));
+    el.classList.toggle('learning', learning.includes(key));
+  });
+}
+
+function updateReaderChrome(idx){
+  const pages = STORY[currentVariant];
+  document.getElementById('progressFill').style.width = (((idx + 1) / pages.length) * 100) + '%';
+  document.getElementById('pageIndicator').textContent = (idx + 1) + ' / ' + pages.length;
+  document.getElementById('prevPageBtn').disabled = idx === 0;
+  document.getElementById('nextPageBtn').disabled = idx === pages.length - 1;
+}
+
+/* Full (re)build — used when opening the reader or switching a simplification
+   level, since the underlying page content changes. */
+function renderPage(idx){
+  currentPageIndex = idx;
+  renderSheets();
+  updateSheetZIndexes();
+  applyWordStatusClasses();
+  updateReaderChrome(idx);
+}
+
+/* Lightweight page turn — content is already rendered, this just flips the
+   right sheet. opts.keepReading skips stopReadAloud() so the read-aloud
+   engine's own auto-advance-to-next-page doesn't cancel itself. */
+async function goToPage(delta, opts){
+  opts = opts || {};
+  const pages = STORY[currentVariant];
+  const next = currentPageIndex + delta;
+  if (next < 0 || next >= pages.length || isPageAnimating) return;
+  isPageAnimating = true;
+  hidePopover();
+  if (!opts.keepReading) stopReadAloud();
+  currentPageIndex = next;
+  updateSheetZIndexes();
+  updateReaderChrome(next);
+  await wait(460);
+  applyWordStatusClasses();
+  isPageAnimating = false;
+}
+document.getElementById('prevPageBtn').addEventListener('click', () => { stopReadAloud(); goToPage(-1); });
+document.getElementById('nextPageBtn').addEventListener('click', () => { stopReadAloud(); goToPage(1); });
+
+function updateVariantPillsUI(){
+  document.querySelectorAll('.variant-pill').forEach((p) => {
+    p.classList.toggle('active', p.dataset.variant === currentVariant);
+  });
+}
+async function setVariant(variant){
+  if (variant === currentVariant || isPageAnimating) return;
+  stopReadAloud();
+  currentVariant = variant;
+  updateVariantPillsUI();
+  const stage = document.getElementById('bookStage');
+  stage.classList.add('shimmer');
+  await wait(650);
+  stage.classList.remove('shimmer');
+  const clampedIndex = Math.min(currentPageIndex, STORY[currentVariant].length - 1);
+  renderPage(clampedIndex);
+}
+document.querySelectorAll('.variant-pill').forEach((p) => {
+  p.addEventListener('click', () => setVariant(p.dataset.variant));
+});
+
+/* ================================================================
+   WORD POPOVER
+   ================================================================ */
+const popoverEl = document.getElementById('wordPopover');
+let activeWordEl = null;
+
+function getTranslation(entry){
+  if (entry && entry.tr && entry.tr[currentLang]) return entry.tr[currentLang];
+  return FALLBACK_MSG[currentLang] || FALLBACK_MSG.sk;
+}
+
+function renderPopoverContent(key, displayWord){
+  const entry = DICTIONARY[key];
+  const isKnown = loadKnown().includes(key);
+  const isLearning = loadVocab().some((v) => v.word === key);
+  return '' +
+    '<div class="wp-head">' +
+      '<span class="wp-word">' + escapeHtml(displayWord) + '</span>' +
+      '<button class="wp-close" data-action="close" aria-label="Close">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>' +
+      '</button>' +
+    '</div>' +
+    '<p class="wp-ipa">' + (entry ? (entry.ipa ? entry.ipa + ' · ' + entry.pos : entry.pos) : '—') + '</p>' +
+    '<p class="wp-translation">' + escapeHtml(getTranslation(entry)) + '</p>' +
+    '<div class="wp-speak-row">' +
+      '<button class="wp-btn" data-action="speak" style="width:100%">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 5V4L8 9H4z"/><path d="M17 8a5 5 0 0 1 0 8"/></svg>' +
+        'Play' +
+      '</button>' +
+    '</div>' +
+    '<div class="wp-status-row">' +
+      '<button class="wp-btn ' + (isKnown ? 'is-known' : '') + '" data-action="known">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>' +
+        'Viem' +
+      '</button>' +
+      '<button class="wp-btn ' + (isLearning ? 'is-learning' : '') + '" data-action="learning">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>' +
+        'Učiť sa' +
+      '</button>' +
+    '</div>';
+}
+
+function showPopover(wordEl){
+  const key = wordEl.dataset.w;
+  activeWordEl = wordEl;
+  document.querySelectorAll('.w.active-word').forEach((w) => w.classList.remove('active-word'));
+  wordEl.classList.add('active-word');
+  popoverEl.dataset.word = key;
+  popoverEl.innerHTML = renderPopoverContent(key, wordEl.textContent);
+  popoverEl.classList.add('visible');
+
+  const r = wordEl.getBoundingClientRect();
+  const pRect = popoverEl.getBoundingClientRect();
+  let left = r.left + r.width / 2 - pRect.width / 2;
+  left = Math.max(12, Math.min(left, window.innerWidth - pRect.width - 12));
+  let top = r.top - pRect.height - 14;
+  let placement = 'top';
+  if (top < 70){ top = r.bottom + 14; placement = 'bottom'; }
+  popoverEl.style.left = left + 'px';
+  popoverEl.style.top = top + 'px';
+  popoverEl.dataset.placement = placement;
+  popoverEl.style.setProperty('--arrow-x', (r.left + r.width / 2 - left) + 'px');
+}
+function hidePopover(){
+  popoverEl.classList.remove('visible');
+  if (activeWordEl) activeWordEl.classList.remove('active-word');
+  activeWordEl = null;
+}
+popoverEl.addEventListener('click', (e) => {
+  const btn = e.target.closest('[data-action]');
+  if (!btn) return;
+  const action = btn.dataset.action;
+  const key = popoverEl.dataset.word;
+  if (action === 'close') hidePopover();
+  if (action === 'speak') speak(key);
+  if (action === 'known' || action === 'learning'){
+    const entry = DICTIONARY[key];
+    const newStatus = setWordStatus(key, getTranslation(entry), action);
+    document.querySelectorAll('.w').forEach((w) => {
+      if (w.dataset.w === key){
+        w.classList.toggle('known', newStatus === 'known');
+        w.classList.toggle('learning', newStatus === 'learning');
+      }
+    });
+    if (activeWordEl) popoverEl.innerHTML = renderPopoverContent(key, activeWordEl.textContent);
+  }
+});
+
+const pageContainer = document.getElementById('sheetsWrapper');
+let hoverTimer = null;
+pageContainer.addEventListener('click', (e) => {
+  const w = e.target.closest('.w');
+  if (w) showPopover(w); else hidePopover();
+});
+if (window.matchMedia('(hover: hover)').matches){
+  pageContainer.addEventListener('mouseover', (e) => {
+    const w = e.target.closest('.w');
+    if (!w) return;
+    clearTimeout(hoverTimer);
+    hoverTimer = setTimeout(() => showPopover(w), 380);
+  });
+  pageContainer.addEventListener('mouseout', () => clearTimeout(hoverTimer));
+}
+
+function pickEnglishVoice(){
+  try{
+    const voices = window.speechSynthesis.getVoices();
+    return voices.find((v) => v.lang && v.lang.toLowerCase().indexOf('en') === 0) || null;
+  }catch(e){ return null; }
+}
+function speak(word){
+  try{
+    if (!('speechSynthesis' in window)) return;
+    stopReadAloud();
+    const u = new SpeechSynthesisUtterance(word);
+    u.lang = 'en-US';
+    u.rate = 0.9;
+    const v = pickEnglishVoice();
+    if (v) u.voice = v;
+    window.speechSynthesis.speak(u);
+  }catch(e){ /* speech synthesis unavailable — fail silently */ }
+}
+
+/* ================================================================
+   READ-ALOUD WITH SYNCED WORD HIGHLIGHTING
+   ("Plynulé Vety + Časované Zvýrazňovanie" — adapted from the reference
+   reader the user shared. Deliberately NOT using utterance.onboundary:
+   that event's support/precision is inconsistent across browsers. Instead,
+   like the reference, we speak one utterance PER SENTENCE and, once it
+   actually starts (onstart), distribute an estimated duration across that
+   sentence's words by their character-length share, using setTimeout —
+   more portable, and it's what a real page in the browser can rely on.
+   When a page's sentences run out, it auto-advances to the next page and
+   keeps reading, same as the reference.)
+   ================================================================ */
+let isReading = false;
+let readSentences = [];
+let readSentenceIndex = 0;
+let readTimers = [];
+const MS_PER_CHAR = 68; // empirical estimate at rate 0.95, matches reference
+
+function setPlayingUI(playing){
+  isReading = playing;
+  document.getElementById('playIcon').style.display = playing ? 'none' : '';
+  document.getElementById('pauseIcon').style.display = playing ? '' : 'none';
+  document.getElementById('playBtn').classList.toggle('is-playing', playing);
+}
+function clearReadingHighlight(){
+  document.querySelectorAll('.w.reading-now').forEach((w) => w.classList.remove('reading-now'));
+}
+function clearReadTimers(){
+  readTimers.forEach((t) => clearTimeout(t));
+  readTimers = [];
+}
+
+/* Groups a page-face's .w spans (words AND phrase-units alike) into
+   sentences, splitting after any span whose text ends in . ! or ? */
+function splitIntoSentenceUnits(faceEl){
+  const wordEls = faceEl ? Array.from(faceEl.querySelectorAll('.w')) : [];
+  const sentences = [];
+  let current = { text: '', words: [] };
+  wordEls.forEach((el) => {
+    const t = el.textContent;
+    current.text += (current.text ? ' ' : '') + t;
+    current.words.push(el);
+    if (/[.!?]$/.test(t.trim())){
+      sentences.push(current);
+      current = { text: '', words: [] };
+    }
+  });
+  if (current.words.length) sentences.push(current);
+  return sentences;
+}
+
+function startReadAloud(){
+  if (!('speechSynthesis' in window)) return;
+  hidePopover();
+  window.speechSynthesis.cancel();
+  const faceEl = getCurrentFaceEl();
+  readSentences = splitIntoSentenceUnits(faceEl);
+  readSentenceIndex = 0;
+  setPlayingUI(true);
+  speakNextSentence();
+}
+
+function speakNextSentence(){
+  if (!isReading) return;
+  if (readSentenceIndex >= readSentences.length){
+    clearReadingHighlight();
+    const pages = STORY[currentVariant];
+    if (currentPageIndex < pages.length - 1){
+      goToPage(1, { keepReading: true }).then(() => {
+        if (!isReading) return;
+        readSentences = splitIntoSentenceUnits(getCurrentFaceEl());
+        readSentenceIndex = 0;
+        speakNextSentence();
+      });
+    } else {
+      stopReadAloud();
+    }
+    return;
+  }
+
+  clearReadTimers();
+  const unit = readSentences[readSentenceIndex];
+  const u = new SpeechSynthesisUtterance(unit.text);
+  u.lang = 'en-US';
+  u.rate = 0.95;
+  const v = pickEnglishVoice();
+  if (v) u.voice = v;
+
+  u.onstart = () => {
+    if (!isReading) return;
+    const totalChars = unit.text.length || 1;
+    const totalEstimatedMs = totalChars * MS_PER_CHAR;
+    let accumulated = 0;
+    unit.words.forEach((el) => {
+      const share = (el.textContent.length + 1) / totalChars;
+      const duration = totalEstimatedMs * share;
+      const t = setTimeout(() => {
+        if (!isReading) return;
+        clearReadingHighlight();
+        el.classList.add('reading-now');
+        el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      }, accumulated);
+      readTimers.push(t);
+      accumulated += duration;
+    });
+  };
+  u.onend = () => {
+    if (!isReading) return;
+    readSentenceIndex++;
+    speakNextSentence();
+  };
+  u.onerror = () => { stopReadAloud(); };
+
+  window.speechSynthesis.speak(u);
+}
+
+function stopReadAloud(){
+  clearReadTimers();
+  try{ if ('speechSynthesis' in window) window.speechSynthesis.cancel(); }catch(e){ /* ignore */ }
+  clearReadingHighlight();
+  setPlayingUI(false);
+}
+
+document.getElementById('playBtn').addEventListener('click', () => {
+  if (isReading){ stopReadAloud(); } else { startReadAloud(); }
+});
+
+/* ================================================================
+   VOCABULARY (localStorage) — 3-state word triage: neutral / known / learning
+   ================================================================ */
+function loadVocab(){
+  try{
+    const raw = localStorage.getItem('lumen_vocab_v1');
+    return raw ? JSON.parse(raw) : [];
+  }catch(e){ return []; }
+}
+function saveVocabList(list){
+  try{ localStorage.setItem('lumen_vocab_v1', JSON.stringify(list)); }catch(e){ /* storage unavailable */ }
+}
+function loadKnown(){
+  try{
+    const raw = localStorage.getItem('lumen_known_v1');
+    return raw ? JSON.parse(raw) : [];
+  }catch(e){ return []; }
+}
+function saveKnownList(list){
+  try{ localStorage.setItem('lumen_known_v1', JSON.stringify(list)); }catch(e){ /* storage unavailable */ }
+}
+/* status: 'known' | 'learning'. Clicking the already-active status resets the
+   word to neutral (removes it from both lists). The two lists are always kept
+   mutually exclusive. Returns the resulting status: 'known' | 'learning' | null. */
+function setWordStatus(word, sk, status){
+  let known = loadKnown();
+  let vocab = loadVocab();
+  const wasKnown = known.includes(word);
+  const wasLearning = vocab.some((v) => v.word === word);
+
+  known = known.filter((k) => k !== word);
+  vocab = vocab.filter((v) => v.word !== word);
+
+  let result = status;
+  if (status === 'known' && wasKnown) result = null;
+  if (status === 'learning' && wasLearning) result = null;
+
+  if (result === 'known') known.push(word);
+  if (result === 'learning') vocab.push({ word: word, sk: sk, ts: Date.now() });
+
+  saveKnownList(known);
+  saveVocabList(vocab);
+  renderVocabDrawer();
+  updateVocabCount();
+  return result;
+}
+function renderVocabDrawer(){
+  const list = loadVocab();
+  const el = document.getElementById('vocabList');
+  if (!list.length){
+    el.innerHTML = '<li class="vocab-empty">Tap a word while reading and choose &ldquo;U&#269;i&#357; sa&rdquo; to add it here.</li>';
+    return;
+  }
+  el.innerHTML = list.slice().reverse().map((v) => (
+    '<li class="vocab-item">' +
+      '<div><p class="vw">' + escapeHtml(v.word) + '</p><p class="vt">' + escapeHtml(v.sk) + '</p></div>' +
+      '<button class="vocab-remove" data-word="' + escapeHtml(v.word) + '" aria-label="Remove ' + escapeHtml(v.word) + '">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>' +
+      '</button>' +
+    '</li>'
+  )).join('');
+}
+document.getElementById('vocabList').addEventListener('click', (e) => {
+  const btn = e.target.closest('.vocab-remove');
+  if (!btn) return;
+  const word = btn.dataset.word;
+  const list = loadVocab().filter((v) => v.word !== word);
+  saveVocabList(list);
+  renderVocabDrawer();
+  updateVocabCount();
+  document.querySelectorAll('.w').forEach((w) => { if (w.dataset.w === word) w.classList.remove('learning'); });
+});
+function updateVocabCount(){
+  const n = loadVocab().length;
+  document.getElementById('navVocabCount').textContent = n;
+  document.getElementById('drawerBadge').textContent = n;
+  document.getElementById('heroVocabStat').textContent = n;
+}
+
+const vocabDrawer = document.getElementById('vocabDrawer');
+function openDrawer(){ vocabDrawer.classList.add('open'); renderVocabDrawer(); }
+function closeDrawer(){ vocabDrawer.classList.remove('open'); }
+document.getElementById('drawerToggleBtn').addEventListener('click', () => {
+  if (vocabDrawer.classList.contains('open')) closeDrawer(); else openDrawer();
+});
+document.getElementById('drawerCloseBtn').addEventListener('click', closeDrawer);
+document.getElementById('navVocabBtn').addEventListener('click', async () => {
+  if (readerView.hidden){
+    const book = BOOKS.find((b) => b.id === HERO_BOOK_ID);
+    await openBook(book, document.getElementById('heroCover'));
+  }
+  openDrawer();
+});
+
+/* ================================================================
+   FONT SIZE CONTROL
+   ================================================================ */
+let fontScale = 1;
+function applyFontScale(){
+  document.getElementById('bookStage').style.setProperty('--font-scale', String(fontScale));
+  try{ localStorage.setItem('lumen_font_scale', String(fontScale)); }catch(e){ /* ignore */ }
+}
+document.getElementById('fontUpBtn').addEventListener('click', () => {
+  fontScale = Math.min(1.35, Math.round((fontScale + 0.08) * 100) / 100);
+  applyFontScale();
+});
+document.getElementById('fontDownBtn').addEventListener('click', () => {
+  fontScale = Math.max(0.85, Math.round((fontScale - 0.08) * 100) / 100);
+  applyFontScale();
+});
+
+/* ================================================================
+   GENRE "SHOW ALL" TOGGLE
+   ================================================================ */
+document.querySelectorAll('.see-all').forEach((btn) => {
+  btn.addEventListener('click', () => {
+    const section = document.getElementById(btn.dataset.target);
+    const expanded = section.classList.toggle('expanded');
+    btn.textContent = expanded ? 'Show less' : 'Show all';
+  });
+});
+
+/* ================================================================
+   LEVEL PILL FILTER
+   ================================================================ */
+document.querySelectorAll('.level-pill').forEach((pill) => {
+  pill.addEventListener('click', () => {
+    document.querySelectorAll('.level-pill').forEach((p) => p.classList.remove('active'));
+    pill.classList.add('active');
+    activeLevel = pill.dataset.level;
+    renderLevelGrid();
+  });
+});
+
+/* ================================================================
+   KEYBOARD SUPPORT
+   ================================================================ */
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape'){
+    if (popoverEl.classList.contains('visible')){ hidePopover(); return; }
+    if (vocabDrawer.classList.contains('open')){ closeDrawer(); return; }
+    if (!readerView.hidden){ closeBook(); return; }
+  }
+  if (!readerView.hidden && !popoverEl.classList.contains('visible')){
+    if (e.key === 'ArrowRight'){ stopReadAloud(); goToPage(1); }
+    if (e.key === 'ArrowLeft'){ stopReadAloud(); goToPage(-1); }
+  }
+});
+
+/* ================================================================
+   INIT
+   ================================================================ */
+(function init(){
+  try{
+    const savedScale = parseFloat(localStorage.getItem('lumen_font_scale'));
+    if (!isNaN(savedScale)) fontScale = savedScale;
+  }catch(e){ /* ignore */ }
+  applyFontScale();
+  renderGenreRows();
+  renderLevelGrid();
+  initHero();
+  updateVocabCount();
+})();
+</script>
+</body>
+</html>
