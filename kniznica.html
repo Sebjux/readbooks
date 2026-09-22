@@ -55,10 +55,12 @@
     --neon-magenta:#F472B6;
     --neon-amber:#FFC876;
 
+    --lvl-A1:#34D399;
     --lvl-A2:#4CF5E0;
     --lvl-B1:#7CACF8;
     --lvl-B2:#9B7BFF;
     --lvl-C1:#F472B6;
+    --lvl-C2:#FB7185;
 
     --genre-scifi:#8B7CFC;
     --genre-business:#FFC876;
@@ -686,6 +688,29 @@
     </div>
   </section>
 
+  <!-- LEVEL SHELF -->
+  <section id="levelShelfSection" style="margin-bottom: 44px;">
+    <div class="genre-head">
+      <div class="genre-head-left">
+        <div class="genre-bar" style="background:linear-gradient(180deg, var(--lvl-A1), var(--lvl-C2))"></div>
+        <div>
+          <h2 class="genre-title">Browse by Level</h2>
+          <p class="genre-sub">Every shelf, sorted the way you learn.</p>
+        </div>
+      </div>
+    </div>
+    <div class="level-pills" id="levelPills">
+      <button class="level-pill active" data-level="all">All levels</button>
+      <button class="level-pill" data-level="A1">A1</button>
+      <button class="level-pill" data-level="A2">A2</button>
+      <button class="level-pill" data-level="B1">B1</button>
+      <button class="level-pill" data-level="B2">B2</button>
+      <button class="level-pill" data-level="C1">C1</button>
+      <button class="level-pill" data-level="C2">C2</button>
+    </div>
+    <div class="level-grid" id="levelGrid"></div>
+  </section>
+
   <!-- SEARCH RESULTS -->
   <section id="searchResultsSection">
     <div class="genre-head">
@@ -759,27 +784,6 @@
     </section>
   </div>
 
-  <!-- LEVEL SHELF -->
-  <section id="levelShelfSection">
-    <div class="genre-head">
-      <div class="genre-head-left">
-        <div class="genre-bar" style="background:linear-gradient(180deg, var(--lvl-A2), var(--lvl-C1))"></div>
-        <div>
-          <h2 class="genre-title">Browse by Level</h2>
-          <p class="genre-sub">Every shelf, sorted the way you learn.</p>
-        </div>
-      </div>
-    </div>
-    <div class="level-pills" id="levelPills">
-      <button class="level-pill active" data-level="all">All levels</button>
-      <button class="level-pill" data-level="A2">A2</button>
-      <button class="level-pill" data-level="B1">B1</button>
-      <button class="level-pill" data-level="B2">B2</button>
-      <button class="level-pill" data-level="C1">C1</button>
-    </div>
-    <div class="level-grid" id="levelGrid"></div>
-  </section>
-
 </main>
 
 <!-- READER VIEW -->
@@ -799,9 +803,11 @@
         <svg id="pauseIcon" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>
       </button>
       <div class="variant-pills" id="variantPills">
+        <button class="variant-pill" data-variant="A1">A1</button>
         <button class="variant-pill" data-variant="A2">A2</button>
         <button class="variant-pill" data-variant="B1">B1</button>
         <button class="variant-pill" data-variant="C1">C1</button>
+        <button class="variant-pill" data-variant="C2">C2</button>
       </div>
       <div class="font-ctrl">
         <button id="fontDownBtn" aria-label="Decrease text size">A−</button>
@@ -855,7 +861,7 @@
 /* ================================================================
    DATA MODEL
    ================================================================ */
-const LEVEL_COLORS = { A2:'#4CF5E0', B1:'#7CACF8', B2:'#9B7BFF', C1:'#F472B6' };
+const LEVEL_COLORS = { A1:'#34D399', A2:'#4CF5E0', B1:'#7CACF8', B2:'#9B7BFF', C1:'#F472B6', C2:'#FB7185' };
 
 const GENRE_ICONS = {
   scifi: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c2.5 2 4 5.5 4 9 0 2-1 4-1 4h-6s-1-2-1-4c0-3.5 1.5-7 4-9z"/><circle cx="12" cy="9" r="1.4"/><path d="M9 15l-2.5 4M15 15l2.5 4M10 19h4"/></svg>',
@@ -870,12 +876,16 @@ const BOOKS = [
   { id:'scifi-3', genre:'scifi', title:'Echoes Beyond Jupiter', author:'Aiden Cole', level:'B2', minutes:100, vocab:3, c1:'#5B3FE0', c2:'#170F3D' },
   { id:'scifi-4', genre:'scifi', title:'Synthetic Dawn', author:'R. J. Okafor', level:'B1', minutes:150, vocab:3, c1:'#6C4CF0', c2:'#1A1140' },
   { id:'scifi-5', genre:'scifi', title:'The Last Signal', author:'Priya Nataraj', level:'C1', minutes:210, vocab:4, c1:'#3A2E8C', c2:'#100B29' },
+  { id:'scifi-6', genre:'scifi', title:'First Star in Space', author:'Leo Vance', level:'A1', minutes:30, vocab:1, c1:'#059669', c2:'#022C22' },
+  { id:'scifi-7', genre:'scifi', title:'Quantum Singularity', author:'Dr. Evelyn Cross', level:'C2', minutes:280, vocab:5, c1:'#BE123C', c2:'#31040D' },
 
   { id:'biz-1', genre:'business', title:'The Focused Founder', author:'Mark Ellison', level:'B2', minutes:165, vocab:3, c1:'#D6A34A', c2:'#2E2008' },
   { id:'biz-2', genre:'business', title:'Negotiate Like a Pro', author:'Laura Bennett', level:'B1', minutes:120, vocab:2, c1:'#B8863B', c2:'#2A1C0A' },
   { id:'biz-3', genre:'business', title:'Small Habits, Big Wins', author:'Tom Reyes', level:'A2', minutes:80, vocab:2, c1:'#E0B563', c2:'#2F2410' },
   { id:'biz-4', genre:'business', title:'The Art of the Pitch', author:'Sophie Lindqvist', level:'B2', minutes:110, vocab:3, c1:'#8C6A2E', c2:'#221806' },
   { id:'biz-5', genre:'business', title:'Leading Remote Teams', author:'Daniel Kwan', level:'B1', minutes:100, vocab:2, c1:'#A67A2E', c2:'#241A08' },
+  { id:'biz-6', genre:'business', title:'My First Job', author:'Sarah Jenkins', level:'A1', minutes:25, vocab:1, c1:'#10B981', c2:'#064E3B' },
+  { id:'biz-7', genre:'business', title:'Macroeconomic Paradigms', author:'Prof. Victor Sterling', level:'C2', minutes:310, vocab:5, c1:'#E11D48', c2:'#4C0519' },
 
   { id:'classic-1', genre:'classic', title:'Pride and Prejudice', author:'Jane Austen', level:'C1', minutes:480, vocab:5, c1:'#B08D5E', c2:'#2A2013' },
   { id:'classic-2', genre:'classic', title:'Frankenstein', author:'Mary Shelley', level:'C1', minutes:360, vocab:5, c1:'#6E5A3E', c2:'#1C1710' },
@@ -883,22 +893,32 @@ const BOOKS = [
   { id:'classic-4', genre:'classic', title:'The Adventures of Sherlock Holmes', author:'Arthur Conan Doyle', level:'B2', minutes:300, vocab:4, c1:'#8C6F4E', c2:'#241C12' },
   { id:'classic-5', genre:'classic', title:'A Christmas Carol', author:'Charles Dickens', level:'B1', minutes:120, vocab:3, c1:'#7A6244', c2:'#1F1810' },
   { id:'classic-6', genre:'classic', title:'The Picture of Dorian Gray', author:'Oscar Wilde', level:'C1', minutes:330, vocab:5, c1:'#A88A5C', c2:'#2B2214' },
+  { id:'classic-7', genre:'classic', title:'Simple Tales for Beginners', author:'Hans Christian Andersen', level:'A1', minutes:35, vocab:1, c1:'#047857', c2:'#022C22' },
+  { id:'classic-8', genre:'classic', title:'Moby Dick (Unabridged)', author:'Herman Melville', level:'C2', minutes:520, vocab:5, c1:'#9F1239', c2:'#280511' },
 
   { id:'daily-1', genre:'daily', title:'Coffee Shop Chats', author:'Emma Wallace', level:'A2', minutes:45, vocab:1, c1:'#2DBEA6', c2:'#0C2A26' },
   { id:'daily-2', genre:'daily', title:'At the Airport', author:'Julia Novak', level:'A2', minutes:40, vocab:1, c1:'#22A896', c2:'#0A2622' },
   { id:'daily-3', genre:'daily', title:'Small Talk, Big Confidence', author:'Chris Adeyemi', level:'B1', minutes:70, vocab:2, c1:'#3FCDB0', c2:'#0E2D28' },
   { id:'daily-4', genre:'daily', title:'Everyday English in Action', author:'Nora Fischer', level:'B1', minutes:90, vocab:2, c1:'#4BD8BE', c2:'#10312B' },
-  { id:'daily-5', genre:'daily', title:'Ordering Without Fear', author:'Liam Torres', level:'A2', minutes:35, vocab:1, c1:'#1F9C8B', c2:'#092220' }
+  { id:'daily-5', genre:'daily', title:'Ordering Without Fear', author:'Liam Torres', level:'A2', minutes:35, vocab:1, c1:'#1F9C8B', c2:'#092220' },
+  { id:'daily-6', genre:'daily', title:'Hello World', author:'Anna Miller', level:'A1', minutes:20, vocab:1, c1:'#059669', c2:'#064E3B' },
+  { id:'daily-7', genre:'daily', title:'Socio-Linguistic Nuances', author:'Dr. Marcus Thorne', level:'C2', minutes:250, vocab:5, c1:'#881337', c2:'#280511' }
 ];
 
 const HERO_BOOK_ID = 'scifi-3';
 
 const STORY = {
+  C2: [
+    ["The nocturnal transmission materialized at precisely 03:14 hours, abruptly shattering the pervasive stillness engulfing the observation deck. Mira had virtually relinquished all expectation regarding the extraterrestrial telemetry — three protracted years characterized by inscrutable static and tenuous hope drifting aimlessly across the cosmic vacuum. Pressing her palm against the frost-delineated viewport, she observed Jupiter's tempestuous atmospheric vortexes churning like crimson ink suspended in fluid, meticulously evaluating the emerging frequency: a cadence far too deliberate to be ascribed to stochastic phenomenon."],
+    ["Her digits quivered imperceptibly while initiating the diagnostic recording apparatus, anticipating that the signal might ephemeralize like its precursors — transient anomalies habitually dismissed by the scientific directorate as mere background cosmic radiation. Yet this phenomenon persisted with unwavering coherence. It fluctuated in rhythm, modulating with an unmistakable teleological impulse. Somewhere in the dark periphery beyond the Jovian moons, an intellect was echoing her presence."],
+    ["By dawn, the mathematical decipherment had rendered the telemetry into a quasi-intelligible paradigm — an abstract lexicon imbued with undeniable imperative. Mira diligently transcribed each resonant pulse, disregarding physical exhaustion and thermal attrition. Should the committee remain entrenched in skepticism, she was determined to construct an incontrovertible empirical thesis, brick by brick."],
+    ["Upon broadcasting the empirical synthesis to global arrays, she anticipated institutional inertia or skepticism. Paradoxically, three autonomous observatories confirmed the identical spatial anomaly within minutes. What transpired beyond the icy satellite orbits was indisputably intentional: a monumental herald of first contact, causing Mira to experience an unprecedented sense of profound awe."]
+  ],
   C1: [
     ["The transmission arrived at 3:14 a.m., fracturing the silence of the observation deck. Mira had almost stopped believing in the signal — three years of static, three years of hollow hope drifting through the void. She pressed her palm against the cold viewport, watching Jupiter's storms churn like ink dropped into water, and listened as the message unspooled: not words, not yet, but a rhythm too deliberate to be chance."],
     ["Mira's fingers trembled as she reached for the recorder, half-expecting the signal to vanish the way all the others had — fleeting anomalies dismissed by the committee as cosmic noise. But this one held. It pulsed, faded, pulsed again, each interval shortening with what could only be described as intention. Somewhere beyond the ice moons, something was listening back."],
     ["By dawn, the pattern had resolved into something almost legible — not language exactly, but the shadow of one, mathematical in its bones yet carrying what felt unmistakably like urgency. Mira transcribed every pulse into her notebook, hands cramping, coffee cold, refusing the sleep her body kept demanding. If the committee wouldn't listen, she would build the case herself, piece by piece."],
-    ["When she finally broadcast her findings, she expected silence, or worse, ridicule. Instead, three observatories replied within the hour, each confirming the same anomaly from a different angle of the sky. Whatever was out there beyond the ice moons was not an accident of physics. It was, unmistakably, a greeting — and for the first time in three years, Mira let herself smile."]
+    ["When she finally broadcast her findings, she expected silence, or worse, ridicule. Instead, three observatories replied within the hour, each confirming the same anomaly from a different angle of the sky. Whatever was out there beyond the ice moons was not an accident of physics. It was, unmistakably, a greeting — and for the first time in three years, Mira let harmlessly smile."]
   ],
   B1: [
     ["The message came at 3:14 a.m. It broke the silence in the control room. Mira had almost stopped believing in it. For three years, she heard only static. She put her hand on the cold window. Outside, she could see Jupiter's storms moving like ink in water. Then she heard the message. It was not words yet. But the rhythm was too clear to be an accident."],
@@ -911,6 +931,12 @@ const STORY = {
     ["Mira's hands shook. She wanted to record the sound before it stopped. Other signals always stopped before. People said those signals were just noise. But this signal did not stop. It became strong, then weak, then strong again. It felt like it had a reason. Far away, past the cold moons, something else was listening."],
     ["In the morning, the pattern became clearer. It was not real words, but it looked planned, like numbers. It also felt important. Mira wrote every signal in her notebook. Her hands hurt. Her coffee was cold. But she did not want to sleep. The committee did not want to listen. So she wanted to prove it herself, piece by piece."],
     ["She shared her results. She thought people would ignore her. But three places answered in one hour. Each one saw the same strange thing. Whatever was out there was not an accident. It was a greeting. For the first time in three years, Mira smiled."]
+  ],
+  A1: [
+    ["The message came at night. It was 3:14 in the morning. The room was very quiet. Mira was tired. She waited for three years. She heard only noise. She looked out the window. She saw the big planet Jupiter. Then, she heard a sound. It was a special sound. It was not a word, but it was nice."],
+    ["Mira was happy. She used a computer to save the sound. She was afraid the sound would stop. But the sound did not stop. It went up and down. It was a good signal. Somewhere far in space, someone was there."],
+    ["In the morning, Mira looked at her book. She wrote down every sound. Her cup of coffee was cold. But Mira did not want to sleep. She wanted to learn more. She worked very hard step by step."],
+    ["Mira sent a note to her friends. Soon, three people wrote back. They heard the same sound! Everyone was happy. It was a hello from space. Mira smiled."]
   ]
 };
 
@@ -1408,8 +1434,10 @@ document.getElementById('readerBackBtn').addEventListener('click', closeBook);
    READER CORE
    ================================================================ */
 function nearestVariant(level){
-  if (level === 'A2' || level === 'A1') return 'A2';
+  if (level === 'A1') return 'A1';
+  if (level === 'A2') return 'A2';
   if (level === 'B1' || level === 'B2') return 'B1';
+  if (level === 'C2') return 'C2';
   return 'C1';
 }
 let currentVariant = 'B1';
