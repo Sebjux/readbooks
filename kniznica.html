@@ -699,7 +699,7 @@
         </div>
       </div>
     </div>
-    <div class="level-pills" id="levelPills">
+    <div class="level-pills" id="levelPills" style="margin-bottom: 8px;">
       <button class="level-pill active" data-level="all">All levels</button>
       <button class="level-pill" data-level="A1">A1</button>
       <button class="level-pill" data-level="A2">A2</button>
@@ -707,6 +707,19 @@
       <button class="level-pill" data-level="B2">B2</button>
       <button class="level-pill" data-level="C1">C1</button>
       <button class="level-pill" data-level="C2">C2</button>
+    </div>
+    <div class="level-pills" id="categoryPills" style="margin-bottom: 8px;">
+      <button class="level-pill active" data-category="all">All categories</button>
+      <button class="level-pill" data-category="scifi">Sci-Fi &amp; Future Worlds</button>
+      <button class="level-pill" data-category="business">Business &amp; Growth</button>
+      <button class="level-pill" data-category="classic">Classic Literature</button>
+      <button class="level-pill" data-category="daily">Daily Conversations</button>
+    </div>
+    <div class="level-pills" id="statusPills" style="margin-bottom: 18px;">
+      <button class="level-pill active" data-status="all">All statuses</button>
+      <button class="level-pill" data-status="unread">Unread</button>
+      <button class="level-pill" data-status="in-progress">In Progress</button>
+      <button class="level-pill" data-status="read">Read</button>
     </div>
     <div class="level-grid" id="levelGrid"></div>
   </section>
@@ -1359,12 +1372,28 @@ function renderGenreRows(){
 }
 
 let activeLevel = 'all';
+let activeCategory = 'all';
+let activeStatus = 'all';
+
 function renderLevelGrid(){
   const grid = document.getElementById('levelGrid');
   grid.innerHTML = '';
   const sorted = getSortedBooks(BOOKS);
-  const list = activeLevel === 'all' ? sorted : sorted.filter((b) => b.level === activeLevel);
-  list.forEach((b) => grid.appendChild(createBookCardEl(b)));
+
+  const filtered = sorted.filter((b) => {
+    const matchLevel = (activeLevel === 'all' || b.level === activeLevel);
+    const matchCategory = (activeCategory === 'all' || b.genre === activeCategory);
+    const status = getBookStatus(b.id);
+    const matchStatus = (activeStatus === 'all' || status === activeStatus);
+    return matchLevel && matchCategory && matchStatus;
+  });
+
+  if (!filtered.length) {
+    grid.innerHTML = '<div style="grid-column: 1 / -1; padding: 36px 20px; text-align: center; color: var(--text-tertiary); font-size: .92rem;">No books found for these filters.</div>';
+    return;
+  }
+
+  filtered.forEach((b) => grid.appendChild(createBookCardEl(b)));
 }
 
 function initHero(){
@@ -2256,13 +2285,31 @@ document.querySelectorAll('.see-all').forEach((btn) => {
 });
 
 /* ================================================================
-   LEVEL PILL FILTER
+   MULTI-CRITERIA PILL FILTERS
    ================================================================ */
-document.querySelectorAll('.level-pill').forEach((pill) => {
+document.querySelectorAll('#levelPills .level-pill').forEach((pill) => {
   pill.addEventListener('click', () => {
-    document.querySelectorAll('.level-pill').forEach((p) => p.classList.remove('active'));
+    document.querySelectorAll('#levelPills .level-pill').forEach((p) => p.classList.remove('active'));
     pill.classList.add('active');
     activeLevel = pill.dataset.level;
+    renderLevelGrid();
+  });
+});
+
+document.querySelectorAll('#categoryPills .level-pill').forEach((pill) => {
+  pill.addEventListener('click', () => {
+    document.querySelectorAll('#categoryPills .level-pill').forEach((p) => p.classList.remove('active'));
+    pill.classList.add('active');
+    activeCategory = pill.dataset.category;
+    renderLevelGrid();
+  });
+});
+
+document.querySelectorAll('#statusPills .level-pill').forEach((pill) => {
+  pill.addEventListener('click', () => {
+    document.querySelectorAll('#statusPills .level-pill').forEach((p) => p.classList.remove('active'));
+    pill.classList.add('active');
+    activeStatus = pill.dataset.status;
     renderLevelGrid();
   });
 });
