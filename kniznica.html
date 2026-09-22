@@ -1675,9 +1675,27 @@ async function fetchWordData(textToProcess, targetLang) {
     return cacheObj;
 }
 
+const POPOVER_LABELS = {
+  sk: { play: 'Prehrať', known: 'Viem', learning: 'Učiť sa', loading: 'Načítavam preklad...' },
+  cs: { play: 'Přehrát', known: 'Znám', learning: 'Učit se', loading: 'Načítám překlad...' },
+  de: { play: 'Abspielen', known: 'Ich weiß', learning: 'Lernen', loading: 'Übersetzung wird geladen...' },
+  fr: { play: 'Jouer', known: 'Je sais', learning: 'Apprendre', loading: 'Chargement de la traduction...' },
+  es: { play: 'Reproducir', known: 'Lo sé', learning: 'Aprender', loading: 'Cargando traducción...' },
+  it: { play: 'Riproduci', known: 'Lo so', learning: 'Imparare', loading: 'Caricamento traduzione...' },
+  pl: { play: 'Odtwórz', known: 'Znam', learning: 'Ucz się', loading: 'Ładowanie tłumaczenia...' },
+  ru: { play: 'Воспроизвести', known: 'Знаю', learning: 'Учить', loading: 'Загрузка перевода...' },
+  uk: { play: 'Відтворити', known: 'Знаю', learning: 'Вчити', loading: 'Завантаження перекладу...' },
+  en: { play: 'Play', known: 'I know', learning: 'Learn', loading: 'Loading translation...' }
+};
+
+function getPopoverLabels(lang) {
+  return POPOVER_LABELS[lang] || POPOVER_LABELS['sk'] || { play: 'Play', known: 'Viem', learning: 'Učiť sa', loading: 'Načítavam preklad...' };
+}
+
 function renderPopoverContent(key, displayWord){
   const isKnown = loadKnown().includes(key);
   const isLearning = loadVocab().some((v) => v.word === key);
+  const labels = getPopoverLabels(currentLang || 'sk');
   return '' +
     '<div class="wp-head">' +
       '<span class="wp-word">' + escapeHtml(displayWord) + '</span>' +
@@ -1686,21 +1704,21 @@ function renderPopoverContent(key, displayWord){
       '</button>' +
     '</div>' +
     '<p class="wp-ipa" id="pop-ipa">| ... |</p>' +
-    '<p class="wp-translation" id="pop-translation">Načítavam preklad...</p>' +
+    '<p class="wp-translation" id="pop-translation">' + escapeHtml(labels.loading) + '</p>' +
     '<div class="wp-speak-row">' +
       '<button class="wp-btn" data-action="speak" style="width:100%">' +
         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 5V4L8 9H4z"/><path d="M17 8a5 5 0 0 1 0 8"/></svg>' +
-        'Play' +
+        escapeHtml(labels.play) +
       '</button>' +
     '</div>' +
     '<div class="wp-status-row">' +
       '<button class="wp-btn ' + (isKnown ? 'is-known' : '') + '" data-action="known">' +
         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>' +
-        'Viem' +
+        escapeHtml(labels.known) +
       '</button>' +
       '<button class="wp-btn ' + (isLearning ? 'is-learning' : '') + '" data-action="learning">' +
         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>' +
-        'Učiť sa' +
+        escapeHtml(labels.learning) +
       '</button>' +
     '</div>';
 }
