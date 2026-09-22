@@ -1315,11 +1315,14 @@ function createBookCardEl(book){
 
   statusRow.appendChild(statusSelect);
 
+  const LEVEL_SEGMENTS = { A1: 1, A2: 2, B1: 3, B2: 4, C1: 5, C2: 6 };
+  const filledCount = LEVEL_SEGMENTS[book.level] || 1;
+
   const meter = document.createElement('div');
   meter.className = 'vocab-meter';
-  meter.setAttribute('aria-label', 'Vocabulary difficulty ' + book.vocab + ' of 5');
+  meter.setAttribute('aria-label', 'Difficulty ' + filledCount + ' of 6');
   let segs = '';
-  for (let i = 0; i < 5; i++){ segs += '<i class="' + (i < book.vocab ? 'on' : '') + '"></i>'; }
+  for (let i = 0; i < 6; i++){ segs += '<i class="' + (i < filledCount ? 'on' : '') + '"></i>'; }
   meter.innerHTML = segs;
 
   card.appendChild(cover);
