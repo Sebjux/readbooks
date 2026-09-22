@@ -2181,8 +2181,14 @@ function speakNextSentence(){
   };
   u.onend = () => {
     if (!isReading) return;
-    readSentenceIndex++;
-    speakNextSentence();
+    clearReadingHighlight();
+    const pauseMs = 350;
+    const pauseTimer = setTimeout(() => {
+      if (!isReading) return;
+      readSentenceIndex++;
+      speakNextSentence();
+    }, pauseMs);
+    readTimers.push(pauseTimer);
   };
   u.onerror = () => { stopReadAloud(); };
 
