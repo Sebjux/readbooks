@@ -1202,9 +1202,13 @@ function updateBookProgress(bookId, pageIndex, totalPages){
   // Auto-update reading status when starting or finishing
   const currentStatus = getBookStatus(bookId);
   if (completed) {
-    setBookStatus(bookId, 'read');
+    if (currentStatus !== 'read') {
+      setBookStatus(bookId, 'read');
+      refreshAllBookDisplays();
+    }
   } else if (currentStatus === 'unread') {
     setBookStatus(bookId, 'in-progress');
+    refreshAllBookDisplays();
   }
 }
 
@@ -1446,6 +1450,15 @@ async function openBook(book, originCoverEl, startPosition){
       targetPos = data.books[book.id].lastPosition;
     } else {
       targetPos = 0;
+    }
+  }
+
+  // Auto transition Unread -> In Progress on opening
+  if (book && book.id) {
+    const status = getBookStatus(book.id);
+    if (status === 'unread') {
+      setBookStatus(book.id, 'in-progress');
+      refreshAllBookDisplays();
     }
   }
 
