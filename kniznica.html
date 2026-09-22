@@ -1003,8 +1003,10 @@ langMenuEl.addEventListener('click', (e) => {
   const picked = LANGUAGES.find((l) => l.code === currentLang);
   if (picked) langTriggerFlagEl.textContent = picked.flag;
   closeLangMenu();
+  renderVocabDrawer();
   if (activeWordEl && popoverEl.classList.contains('visible')){
     popoverEl.innerHTML = renderPopoverContent(popoverEl.dataset.word, activeWordEl.textContent);
+    fetchWordData(activeWordEl.textContent.trim(), currentLang);
   }
 });
 document.addEventListener('click', (e) => {
@@ -1568,20 +1570,26 @@ let activeWordEl = null;
 let currentAudioUrl = null;
 const wordCache = {};
 
-async function fetchWordData(textToProcess) {
+async function fetchWordData(textToProcess, targetLang) {
+    const lang = targetLang || currentLang || 'sk';
+    const cacheKey = `${lang}:${textToProcess.trim().toLowerCase()}`;
     const ipaElem = document.getElementById('pop-ipa');
     const transElem = document.getElementById('pop-translation');
 
-    if (wordCache[textToProcess]) {
-        const cached = wordCache[textToProcess];
-        if (ipaElem) ipaElem.innerText = cached.ipa;
-        if (transElem) transElem.innerText = cached.translation;
+    if (wordCache[cacheKey]) {
+        const cached = wordCache[cacheKey];
+        if (ipaElem && popoverEl && popoverEl.dataset.word === textToProcess.toLowerCase()) {
+          ipaElem.innerText = cached.ipa;
+          transElem.innerText = cached.translation;
+        }
         currentAudioUrl = cached.audioUrl;
         return cached;
     }
 
-    if (ipaElem) ipaElem.innerText = "| ... |";
-    if (transElem) transElem.innerText = "Načítavam preklad...";
+    if (ipaElem && popoverEl && popoverEl.dataset.word === textToProcess.toLowerCase()) {
+      ipaElem.innerText = "| ... |";
+      transElem.innerText = "Načítavam preklad...";
+    }
     currentAudioUrl = null;
 
     const isPhrase = textToProcess.trim().includes(' ');
@@ -1592,26 +1600,37 @@ async function fetchWordData(textToProcess) {
         audioUrl: null
     };
 
-    const translationPromise = fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(textToProcess)}&langpair=en|sk`)
-      .then(res => res.json())
-      .then(data => {
-        if (data && data.responseData && data.responseData.translatedText) {
-          const rawTrans = data.responseData.translatedText;
-          if (rawTrans.toUpperCase().includes("MYMEMORY WARNING")) {
-            if (transElem) transElem.innerText = "Preklad zatiaľ nedostupný (limit API)";
-            cacheObj.translation = "Preklad zatiaľ nedostupný (limit API)";
+    let translationPromise = Promise.resolve();
+
+    if (lang === 'en') {
+      const selfTrans = textToProcess.toLowerCase();
+      if (transElem && popoverEl && popoverEl.dataset.word === textToProcess.toLowerCase()) {
+        transElem.innerText = selfTrans;
+      }
+      cacheObj.translation = selfTrans;
+    } else {
+      translationPromise = fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(textToProcess)}&langpair=en|${lang}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.responseData && data.responseData.translatedText) {
+            const rawTrans = data.responseData.translatedText;
+            if (rawTrans.toUpperCase().includes("MYMEMORY WARNING")) {
+              const warnMsg = "Preklad zatiaľ nedostupný (limit API)";
+              if (transElem && popoverEl && popoverEl.dataset.word === textToProcess.toLowerCase()) transElem.innerText = warnMsg;
+              cacheObj.translation = warnMsg;
+            } else {
+              const transText = rawTrans.toLowerCase();
+              if (transElem && popoverEl && popoverEl.dataset.word === textToProcess.toLowerCase()) transElem.innerText = transText;
+              cacheObj.translation = transText;
+            }
           } else {
-            const transText = rawTrans.toLowerCase();
-            if (transElem) transElem.innerText = transText;
-            cacheObj.translation = transText;
+            if (transElem && popoverEl && popoverEl.dataset.word === textToProcess.toLowerCase()) transElem.innerText = "Preklad nedostupný";
           }
-        } else {
-          if (transElem) transElem.innerText = "Preklad nedostupný";
-        }
-      })
-      .catch(err => {
-        if (transElem) transElem.innerText = "Preklad nedostupný";
-      });
+        })
+        .catch(err => {
+          if (transElem && popoverEl && popoverEl.dataset.word === textToProcess.toLowerCase()) transElem.innerText = "Preklad nedostupný";
+        });
+    }
 
     let dictionaryPromise = Promise.resolve();
 
@@ -1625,7 +1644,7 @@ async function fetchWordData(textToProcess) {
               (data[0].phonetics && data[0].phonetics.find(p => p.text)?.text) || '';
 
             const ipaText = phonetic ? `| ${phonetic} |` : '| - |';
-            if (ipaElem) ipaElem.innerText = ipaText;
+            if (ipaElem && popoverEl && popoverEl.dataset.word === textToProcess.toLowerCase()) ipaElem.innerText = ipaText;
             cacheObj.ipa = ipaText;
 
             const audioObj = data[0].phonetics && data[0].phonetics.find(
@@ -1637,22 +1656,22 @@ async function fetchWordData(textToProcess) {
               cacheObj.audioUrl = audioObj.audio;
             }
           } else {
-            if (ipaElem) ipaElem.innerText = '| - |';
+            if (ipaElem && popoverEl && popoverEl.dataset.word === textToProcess.toLowerCase()) ipaElem.innerText = '| - |';
             cacheObj.ipa = '| - |';
           }
         })
         .catch(err => {
-          if (ipaElem) ipaElem.innerText = '| - |';
+          if (ipaElem && popoverEl && popoverEl.dataset.word === textToProcess.toLowerCase()) ipaElem.innerText = '| - |';
           cacheObj.ipa = '| - |';
         });
     } else {
       const ipaText = '| fráza |';
-      if (ipaElem) ipaElem.innerText = ipaText;
+      if (ipaElem && popoverEl && popoverEl.dataset.word === textToProcess.toLowerCase()) ipaElem.innerText = ipaText;
       cacheObj.ipa = ipaText;
     }
 
     await Promise.all([translationPromise, dictionaryPromise]);
-    wordCache[textToProcess] = cacheObj;
+    wordCache[cacheKey] = cacheObj;
     return cacheObj;
 }
 
@@ -1969,14 +1988,33 @@ function renderVocabDrawer(){
     el.innerHTML = '<li class="vocab-empty">Tap a word while reading and choose &ldquo;U&#269;i&#357; sa&rdquo; to add it here.</li>';
     return;
   }
-  el.innerHTML = list.slice().reverse().map((v) => (
-    '<li class="vocab-item">' +
-      '<div><p class="vw">' + escapeHtml(v.word) + '</p><p class="vt">' + escapeHtml(v.sk) + '</p></div>' +
-      '<button class="vocab-remove" data-word="' + escapeHtml(v.word) + '" aria-label="Remove ' + escapeHtml(v.word) + '">' +
-        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>' +
-      '</button>' +
-    '</li>'
-  )).join('');
+
+  const lang = currentLang || 'sk';
+
+  el.innerHTML = list.slice().reverse().map((v) => {
+    const cacheKey = `${lang}:${v.word.trim().toLowerCase()}`;
+    const cachedTrans = wordCache[cacheKey] ? wordCache[cacheKey].translation : (lang === 'sk' ? v.sk : '...');
+    return (
+      '<li class="vocab-item" data-word="' + escapeHtml(v.word) + '">' +
+        '<div><p class="vw">' + escapeHtml(v.word) + '</p><p class="vt" data-vt-word="' + escapeHtml(v.word) + '">' + escapeHtml(cachedTrans) + '</p></div>' +
+        '<button class="vocab-remove" data-word="' + escapeHtml(v.word) + '" aria-label="Remove ' + escapeHtml(v.word) + '">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>' +
+        '</button>' +
+      '</li>'
+    );
+  }).join('');
+
+  list.forEach(v => {
+    const cacheKey = `${lang}:${v.word.trim().toLowerCase()}`;
+    if (!wordCache[cacheKey]) {
+      fetchWordData(v.word, lang).then(data => {
+        const vtElem = el.querySelector(`.vt[data-vt-word="${CSS.escape(v.word)}"]`);
+        if (vtElem && data && data.translation) {
+          vtElem.textContent = data.translation;
+        }
+      });
+    }
+  });
 }
 document.getElementById('vocabList').addEventListener('click', (e) => {
   const btn = e.target.closest('.vocab-remove');
