@@ -511,10 +511,24 @@
   .w.known{ border-bottom-color:transparent; }
   .w.phrase{ border-bottom-style:solid; border-bottom-color:rgba(255,200,118,.5); background:rgba(255,200,118,.09); border-radius:4px; padding:0 3px; }
   .w.phrase:hover{ background:rgba(255,200,118,.2); }
-  .w.reading-now{
-    background:rgba(76,245,224,.22);
-    border-radius:5px; border-bottom-color:transparent;
-    box-shadow:0 0 0 1px rgba(76,245,224,.3);
+  .w.reading-now, .word-reading{
+    background-color: #ff7675 !important;
+    color: #ffffff !important;
+    border-radius: 4px;
+    padding: 2px 4px;
+    border-bottom-color: transparent !important;
+  }
+  .phrase-highlight{
+    background-color: rgba(255, 202, 40, 0.2);
+    border-bottom: 2px solid #ffca28;
+    font-weight: 500;
+  }
+  .word{
+    cursor: pointer;
+    border-bottom: 1px dotted #bdc3c7;
+    transition: background-color 0.1s ease;
+    border-radius: 3px;
+    padding: 0 2px;
   }
 
   .reader-bottom{
@@ -1582,9 +1596,15 @@ async function fetchWordData(textToProcess) {
       .then(res => res.json())
       .then(data => {
         if (data && data.responseData && data.responseData.translatedText) {
-          const transText = data.responseData.translatedText.toLowerCase();
-          if (transElem) transElem.innerText = transText;
-          cacheObj.translation = transText;
+          const rawTrans = data.responseData.translatedText;
+          if (rawTrans.toUpperCase().includes("MYMEMORY WARNING")) {
+            if (transElem) transElem.innerText = "Preklad zatiaľ nedostupný (limit API)";
+            cacheObj.translation = "Preklad zatiaľ nedostupný (limit API)";
+          } else {
+            const transText = rawTrans.toLowerCase();
+            if (transElem) transElem.innerText = transText;
+            cacheObj.translation = transText;
+          }
         } else {
           if (transElem) transElem.innerText = "Preklad nedostupný";
         }
