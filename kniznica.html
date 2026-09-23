@@ -162,6 +162,18 @@
   .brand-mark svg{width:18px; height:18px; color:#04050A;}
   .brand-name{font-family:'Space Grotesk'; font-weight:600; font-size:1.05rem; letter-spacing:-.01em;}
 
+  .nav-tabs{
+    display:flex; gap:4px; padding:3px; border-radius:var(--radius-pill);
+    background:var(--glass-fill-soft); border:1px solid var(--glass-border);
+    flex-shrink:0;
+  }
+  .nav-tab-btn{
+    padding:6px 14px; border-radius:var(--radius-pill); font-size:.82rem; font-weight:500;
+    color:var(--text-secondary); transition:all 180ms var(--ease-out-expo);
+  }
+  .nav-tab-btn:hover{ color:var(--text-primary); }
+  .nav-tab-btn.active{ background:var(--text-primary); color:var(--bg-void); font-weight:600; }
+
   .search-wrap{
     flex:1; max-width:420px; display:flex; align-items:center; gap:10px;
     padding:9px 16px; border-radius:var(--radius-pill);
@@ -721,6 +733,10 @@
     </div>
     <span class="brand-name">Lumen</span>
   </div>
+  <nav class="nav-tabs" id="pageNavTabs">
+    <button class="nav-tab-btn active" id="tabDiscoverBtn" data-tab="discover">Discover</button>
+    <button class="nav-tab-btn" id="tabLibraryBtn" data-tab="library">Library / Search</button>
+  </nav>
   <label class="search-wrap">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
     <input id="searchInput" type="text" placeholder="Search titles or authors…" autocomplete="off">
@@ -738,7 +754,47 @@
   </div>
 </header>
 
-<main id="libraryMain">
+<main id="discoverMain">
+
+  <!-- DISCOVER CONTINUE READING -->
+  <section class="genre-section" id="discoverContinueSection" style="display:none; margin-bottom: 40px;">
+    <div class="genre-head">
+      <div class="genre-head-left">
+        <div class="genre-bar" style="background:linear-gradient(180deg, var(--neon-cyan), var(--neon-violet))"></div>
+        <div>
+          <h2 class="genre-title">Continue Reading</h2>
+          <p class="genre-sub">Pick up right where you left off.</p>
+        </div>
+      </div>
+    </div>
+    <div class="row-track" id="discoverContinueTrack"></div>
+  </section>
+
+  <!-- BROWSE BY GENRE (NETFLIX ROWS) -->
+  <section style="margin-bottom: 40px;">
+    <div class="genre-head" style="margin-bottom: 20px;">
+      <div>
+        <h2 class="genre-title" style="font-size: 1.5rem;">Browse by Genre</h2>
+        <p class="genre-sub">Explore stories tailored across popular categories.</p>
+      </div>
+    </div>
+    <div id="discoverGenreRows"></div>
+  </section>
+
+  <!-- BROWSE BY CEFR LEVEL (NETFLIX ROWS) -->
+  <section style="margin-bottom: 40px;">
+    <div class="genre-head" style="margin-bottom: 20px;">
+      <div>
+        <h2 class="genre-title" style="font-size: 1.5rem;">Browse by English Level</h2>
+        <p class="genre-sub">Find stories perfectly matched to your CEFR proficiency.</p>
+      </div>
+    </div>
+    <div id="discoverLevelRows"></div>
+  </section>
+
+</main>
+
+<main id="libraryMain" style="display:none;">
 
   <!-- HERO — Continue Reading -->
   <section class="hero glass">
@@ -2409,6 +2465,163 @@ document.addEventListener('keydown', (e) => {
 });
 
 /* ================================================================
+   DISCOVER PAGE RENDERING & NAVIGATION LOGIC
+   ================================================================ */
+let currentTab = 'discover';
+
+function switchPageTab(tabName, filterConfig) {
+  currentTab = tabName;
+  const discoverMain = document.getElementById('discoverMain');
+  const libraryMain = document.getElementById('libraryMain');
+  const tabDiscoverBtn = document.getElementById('tabDiscoverBtn');
+  const tabLibraryBtn = document.getElementById('tabLibraryBtn');
+
+  if (tabName === 'discover') {
+    discoverMain.style.display = 'block';
+    libraryMain.style.display = 'none';
+    tabDiscoverBtn.classList.add('active');
+    tabLibraryBtn.classList.remove('active');
+    renderDiscoverPage();
+  } else {
+    discoverMain.style.display = 'none';
+    libraryMain.style.display = 'block';
+    tabDiscoverBtn.classList.remove('active');
+    tabLibraryBtn.classList.add('active');
+
+    if (filterConfig) {
+      if (filterConfig.genre) {
+        activeCategory = filterConfig.genre;
+        document.querySelectorAll('#categoryPills .level-pill').forEach(p => {
+          p.classList.toggle('active', p.dataset.category === filterConfig.genre);
+        });
+      }
+      if (filterConfig.level) {
+        activeLevel = filterConfig.level;
+        document.querySelectorAll('#levelPills .level-pill').forEach(p => {
+          p.classList.toggle('active', p.dataset.level === filterConfig.level);
+        });
+      }
+      renderLevelGrid();
+    }
+  }
+}
+
+document.getElementById('tabDiscoverBtn').addEventListener('click', () => switchPageTab('discover'));
+document.getElementById('tabLibraryBtn').addEventListener('click', () => switchPageTab('library'));
+
+function renderDiscoverPage() {
+  const sorted = getSortedBooks(BOOKS);
+
+  // 1. Render Continue Reading if user has in-progress books
+  const continueSection = document.getElementById('discoverContinueSection');
+  const continueTrack = document.getElementById('discoverContinueTrack');
+  continueTrack.innerHTML = '';
+
+  const inProgressBooks = sorted.filter(b => getBookStatus(b.id) === 'in-progress');
+  if (inProgressBooks.length > 0) {
+    continueSection.style.display = 'block';
+    inProgressBooks.forEach(b => continueTrack.appendChild(createBookCardEl(b)));
+  } else {
+    continueSection.style.display = 'none';
+  }
+
+  // 2. Render Browse by Genre rows
+  const genreRowsContainer = document.getElementById('discoverGenreRows');
+  genreRowsContainer.innerHTML = '';
+
+  const genres = [
+    { id: 'scifi', name: 'Sci-Fi & Future Worlds', sub: 'Distant futures and cosmic questions.' },
+    { id: 'business', name: 'Business & Growth', sub: 'Sharpen skills for your career.' },
+    { id: 'classic', name: 'Classic Literature', sub: 'Timeless masterpieces adapted for learners.' },
+    { id: 'daily', name: 'Daily Conversations', sub: 'Practical everyday English.' }
+  ];
+
+  genres.forEach(g => {
+    const genreBooks = sorted.filter(b => b.genre === g.id);
+    if (!genreBooks.length) return;
+
+    const section = document.createElement('section');
+    section.className = 'genre-section';
+    section.style.marginBottom = '32px';
+
+    const head = document.createElement('div');
+    head.className = 'genre-head';
+    head.innerHTML = `
+      <div class="genre-head-left">
+        <div class="genre-bar" style="background:var(--genre-${g.id})"></div>
+        <div>
+          <h3 class="genre-title">${escapeHtml(g.name)}</h3>
+          <p class="genre-sub">${escapeHtml(g.sub)}</p>
+        </div>
+      </div>
+      <button class="see-all discover-view-all" data-genre="${g.id}">View all &rarr;</button>
+    `;
+
+    const track = document.createElement('div');
+    track.className = 'row-track';
+    genreBooks.forEach(b => track.appendChild(createBookCardEl(b)));
+
+    section.appendChild(head);
+    section.appendChild(track);
+    genreRowsContainer.appendChild(section);
+  });
+
+  // 3. Render Browse by English Level rows
+  const levelRowsContainer = document.getElementById('discoverLevelRows');
+  levelRowsContainer.innerHTML = '';
+
+  const levels = [
+    { code: 'A1', label: 'A1 — Beginner' },
+    { code: 'A2', label: 'A2 — Elementary' },
+    { code: 'B1', label: 'B1 — Intermediate' },
+    { code: 'B2', label: 'B2 — Upper-Intermediate' },
+    { code: 'C1', label: 'C1 — Advanced' },
+    { code: 'C2', label: 'C2 — Proficiency' }
+  ];
+
+  levels.forEach(lvl => {
+    const lvlBooks = sorted.filter(b => b.level === lvl.code);
+    if (!lvlBooks.length) return;
+
+    const section = document.createElement('section');
+    section.className = 'genre-section';
+    section.style.marginBottom = '32px';
+
+    const head = document.createElement('div');
+    head.className = 'genre-head';
+    head.innerHTML = `
+      <div class="genre-head-left">
+        <div class="genre-bar" style="background:var(--lvl-${lvl.code})"></div>
+        <div>
+          <h3 class="genre-title">${escapeHtml(lvl.label)}</h3>
+          <p class="genre-sub">Curated stories at the ${lvl.code} level.</p>
+        </div>
+      </div>
+      <button class="see-all discover-view-all" data-level="${lvl.code}">View all &rarr;</button>
+    `;
+
+    const track = document.createElement('div');
+    track.className = 'row-track';
+    lvlBooks.forEach(b => track.appendChild(createBookCardEl(b)));
+
+    section.appendChild(head);
+    section.appendChild(track);
+    levelRowsContainer.appendChild(section);
+  });
+
+  // Attach event listeners to View All buttons
+  document.querySelectorAll('.discover-view-all').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (btn.dataset.genre) {
+        switchPageTab('library', { genre: btn.dataset.genre });
+      } else if (btn.dataset.level) {
+        switchPageTab('library', { level: btn.dataset.level });
+      }
+    });
+  });
+}
+
+/* ================================================================
    INIT
    ================================================================ */
 (async function init(){
@@ -2421,6 +2634,7 @@ document.addEventListener('keydown', (e) => {
   renderGenreRows();
   renderLevelGrid();
   initHero();
+  renderDiscoverPage();
   updateVocabCount();
 })();
 </script>
