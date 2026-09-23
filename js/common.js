@@ -139,10 +139,17 @@ function closeLangMenu(){
 }
 
 function initLangTrigger(){
+  currentLang = loadLang();
   const langTriggerEl = document.getElementById('langTrigger');
   const langMenuEl = document.getElementById('langMenu');
   const langTriggerFlagEl = document.getElementById('langTriggerFlag');
   if (!langTriggerEl) return;
+
+  const picked = LANGUAGES.find((l) => l.code === currentLang) || LANGUAGES[0];
+  if (langTriggerFlagEl) langTriggerFlagEl.textContent = picked.flag;
+
+  if (langTriggerEl.dataset.initialized) return;
+  langTriggerEl.dataset.initialized = "true";
 
   langTriggerEl.addEventListener('click', (e) => {
     e.stopPropagation();
@@ -167,9 +174,12 @@ function initLangTrigger(){
     const langPicker = document.getElementById('langPicker');
     if (langPicker && !langPicker.contains(e.target)) closeLangMenu();
   });
+}
 
-  const picked = LANGUAGES.find((l) => l.code === currentLang) || LANGUAGES[0];
-  if (langTriggerFlagEl) langTriggerFlagEl.textContent = picked.flag;
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initLangTrigger);
+} else {
+  initLangTrigger();
 }
 
 const PHRASE_LIST = [
