@@ -836,13 +836,6 @@
       <button class="level-pill" data-level="C1">C1</button>
       <button class="level-pill" data-level="C2">C2</button>
     </div>
-    <div class="level-pills" id="categoryPills" style="margin-bottom: 8px;">
-      <button class="level-pill active" data-category="all">All categories</button>
-      <button class="level-pill" data-category="scifi">Sci-Fi &amp; Future Worlds</button>
-      <button class="level-pill" data-category="business">Business &amp; Growth</button>
-      <button class="level-pill" data-category="classic">Classic Literature</button>
-      <button class="level-pill" data-category="daily">Daily Conversations</button>
-    </div>
     <div class="level-pills" id="statusPills" style="margin-bottom: 18px;">
       <button class="level-pill active" data-status="all">All statuses</button>
       <button class="level-pill" data-status="unread">Unread</button>
@@ -866,64 +859,6 @@
     <div class="level-grid" id="searchGrid"></div>
   </section>
 
-  <!-- GENRE ROWS -->
-  <div id="genreRows">
-    <section class="genre-section" id="genre-scifi" data-genre="scifi">
-      <div class="genre-head">
-        <div class="genre-head-left">
-          <div class="genre-bar" style="background:var(--genre-scifi)"></div>
-          <div>
-            <h2 class="genre-title">Sci-Fi &amp; Future Worlds</h2>
-            <p class="genre-sub">Distant futures and the questions they raise.</p>
-          </div>
-        </div>
-        <button class="see-all" data-target="genre-scifi">Show all</button>
-      </div>
-      <div class="row-track" data-track="scifi"></div>
-    </section>
-
-    <section class="genre-section" id="genre-business" data-genre="business">
-      <div class="genre-head">
-        <div class="genre-head-left">
-          <div class="genre-bar" style="background:var(--genre-business)"></div>
-          <div>
-            <h2 class="genre-title">Business &amp; Growth</h2>
-            <p class="genre-sub">Sharpen the skills behind the job title.</p>
-          </div>
-        </div>
-        <button class="see-all" data-target="genre-business">Show all</button>
-      </div>
-      <div class="row-track" data-track="business"></div>
-    </section>
-
-    <section class="genre-section" id="genre-classic" data-genre="classic">
-      <div class="genre-head">
-        <div class="genre-head-left">
-          <div class="genre-bar" style="background:var(--genre-classic)"></div>
-          <div>
-            <h2 class="genre-title">Classic Literature</h2>
-            <p class="genre-sub">Timeless stories, adapted for every level.</p>
-          </div>
-        </div>
-        <button class="see-all" data-target="genre-classic">Show all</button>
-      </div>
-      <div class="row-track" data-track="classic"></div>
-    </section>
-
-    <section class="genre-section" id="genre-daily" data-genre="daily">
-      <div class="genre-head">
-        <div class="genre-head-left">
-          <div class="genre-bar" style="background:var(--genre-daily)"></div>
-          <div>
-            <h2 class="genre-title">Daily Conversations</h2>
-            <p class="genre-sub">The English you'll actually use today.</p>
-          </div>
-        </div>
-        <button class="see-all" data-target="genre-daily">Show all</button>
-      </div>
-      <div class="row-track" data-track="daily"></div>
-    </section>
-  </div>
 
 </main>
 
@@ -1017,18 +952,7 @@
 <script src="js/common.js"></script>
 <script>
 let activeLevel = 'all';
-let activeCategory = 'all';
 let activeStatus = 'all';
-
-function renderGenreRows(){
-  const sorted = getSortedBooks(BOOKS);
-  ['scifi','business','classic','daily'].forEach((g) => {
-    const track = document.querySelector('.row-track[data-track="' + g + '"]');
-    if (!track) return;
-    track.innerHTML = '';
-    sorted.filter((b) => b.genre === g).forEach((b) => track.appendChild(createBookCardEl(b)));
-  });
-}
 
 function renderLevelGrid(){
   const grid = document.getElementById('levelGrid');
@@ -1038,10 +962,9 @@ function renderLevelGrid(){
 
   const filtered = sorted.filter((b) => {
     const matchLevel = (activeLevel === 'all' || b.level === activeLevel);
-    const matchCategory = (activeCategory === 'all' || b.genre === activeCategory);
     const status = getBookStatus(b.id);
     const matchStatus = (activeStatus === 'all' || status === activeStatus);
-    return matchLevel && matchCategory && matchStatus;
+    return matchLevel && matchStatus;
   });
 
   if (!filtered.length) {
@@ -1090,24 +1013,16 @@ function initHero(){
 }
 
 function refreshAllBookDisplays(){
-  renderGenreRows();
   renderLevelGrid();
   initHero();
 }
 
 function parseUrlFilters(){
   const params = new URLSearchParams(window.location.search);
-  const genre = params.get('genre');
   const level = params.get('level');
   const status = params.get('status');
   const query = params.get('search') || params.get('q');
 
-  if (genre) {
-    activeCategory = genre;
-    document.querySelectorAll('#categoryPills .level-pill').forEach(p => {
-      p.classList.toggle('active', p.dataset.category === genre);
-    });
-  }
   if (level) {
     activeLevel = level;
     document.querySelectorAll('#levelPills .level-pill').forEach(p => {
@@ -1163,15 +1078,6 @@ document.querySelectorAll('#levelPills .level-pill').forEach((pill) => {
   });
 });
 
-document.querySelectorAll('#categoryPills .level-pill').forEach((pill) => {
-  pill.addEventListener('click', () => {
-    document.querySelectorAll('#categoryPills .level-pill').forEach((p) => p.classList.remove('active'));
-    pill.classList.add('active');
-    activeCategory = pill.dataset.category;
-    renderLevelGrid();
-  });
-});
-
 document.querySelectorAll('#statusPills .level-pill').forEach((pill) => {
   pill.addEventListener('click', () => {
     document.querySelectorAll('#statusPills .level-pill').forEach((p) => p.classList.remove('active'));
@@ -1181,23 +1087,9 @@ document.querySelectorAll('#statusPills .level-pill').forEach((pill) => {
   });
 });
 
-document.querySelectorAll('.see-all').forEach((btn) => {
-  btn.addEventListener('click', () => {
-    const target = btn.dataset.target;
-    if (target) {
-      const section = document.getElementById(target);
-      if (section) {
-        const expanded = section.classList.toggle('expanded');
-        btn.textContent = expanded ? 'Show less' : 'Show all';
-      }
-    }
-  });
-});
-
 (async function init(){
   await loadAllBooks();
   parseUrlFilters();
-  renderGenreRows();
   renderLevelGrid();
   initHero();
   initCommonListeners();
