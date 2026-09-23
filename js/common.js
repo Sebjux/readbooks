@@ -138,6 +138,26 @@ function closeLangMenu(){
   setTimeout(() => { langMenuEl.hidden = true; }, 170);
 }
 
+const SEARCH_PLACEHOLDERS = {
+  sk: 'Hľadať názvy alebo autorov…',
+  cs: 'Hledat názvy nebo autory…',
+  de: 'Titel oder Autoren suchen…',
+  fr: 'Rechercher des titres ou des auteurs…',
+  es: 'Buscar títulos o autores…',
+  it: 'Cerca titoli o autori…',
+  pl: 'Szukaj tytułów lub autorów…',
+  ru: 'Поиск названий или авторов…',
+  uk: 'Шукати назви або авторів…',
+  en: 'Search titles or authors…'
+};
+
+function updateSearchPlaceholder() {
+  const input = document.getElementById('searchInput');
+  if (!input) return;
+  const lang = currentLang || 'en';
+  input.placeholder = SEARCH_PLACEHOLDERS[lang] || SEARCH_PLACEHOLDERS['en'];
+}
+
 function initLangTrigger(){
   currentLang = loadLang();
   const langTriggerEl = document.getElementById('langTrigger');
@@ -147,6 +167,7 @@ function initLangTrigger(){
 
   const picked = LANGUAGES.find((l) => l.code === currentLang) || LANGUAGES[0];
   if (langTriggerFlagEl) langTriggerFlagEl.textContent = picked.flag;
+  updateSearchPlaceholder();
 
   if (langTriggerEl.dataset.initialized) return;
   langTriggerEl.dataset.initialized = "true";
@@ -162,6 +183,7 @@ function initLangTrigger(){
     saveLang(currentLang);
     const picked = LANGUAGES.find((l) => l.code === currentLang);
     if (picked && langTriggerFlagEl) langTriggerFlagEl.textContent = picked.flag;
+    updateSearchPlaceholder();
     closeLangMenu();
     renderVocabDrawer();
     const popoverEl = document.getElementById('wordPopover');

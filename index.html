@@ -1100,6 +1100,7 @@ function parseUrlFilters(){
   const genre = params.get('genre');
   const level = params.get('level');
   const status = params.get('status');
+  const query = params.get('search') || params.get('q');
 
   if (genre) {
     activeCategory = genre;
@@ -1118,6 +1119,10 @@ function parseUrlFilters(){
     document.querySelectorAll('#statusPills .level-pill').forEach(p => {
       p.classList.toggle('active', p.dataset.status === status);
     });
+  }
+  if (query && searchInput) {
+    searchInput.value = query;
+    searchInput.dispatchEvent(new Event('input'));
   }
 }
 

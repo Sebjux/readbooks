@@ -150,6 +150,20 @@
   .nav-tab-btn:hover{ color:var(--text-primary); }
   .nav-tab-btn.active{ background:var(--text-primary); color:var(--bg-void); font-weight:600; }
 
+  .search-wrap{
+    flex:1; max-width:420px; display:flex; align-items:center; gap:10px;
+    padding:9px 16px; border-radius:var(--radius-pill);
+    background:var(--glass-fill-soft); border:1px solid var(--glass-border);
+    transition:border-color 200ms var(--ease-out-expo), background 200ms var(--ease-out-expo);
+  }
+  .search-wrap:focus-within{ border-color:var(--glass-border-hi); background:var(--glass-fill); }
+  .search-wrap svg{width:16px; height:16px; color:var(--text-tertiary); flex-shrink:0;}
+  .search-wrap input{
+    background:none; border:none; outline:none; color:var(--text-primary);
+    font-size:.9rem; width:100%;
+  }
+  .search-wrap input::placeholder{color:var(--text-tertiary);}
+
   .vocab-toggle-nav{
     display:flex; align-items:center; gap:6px; flex-shrink:0;
     padding:8px 14px; border-radius:var(--radius-pill);
@@ -506,6 +520,10 @@
     <a href="index.html" class="nav-tab-btn" id="tabLibraryBtn">Library / Search</a>
     <a href="discover.html" class="nav-tab-btn active" id="tabDiscoverBtn">Discover</a>
   </nav>
+  <label class="search-wrap">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+    <input id="searchInput" type="text" placeholder="Search titles or authors…" autocomplete="off">
+  </label>
   <button class="vocab-toggle-nav" id="navVocabBtn">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-6-4-6 4V3z"/></svg>
     My words <span class="vocab-count" id="navVocabCount">0</span>
@@ -776,6 +794,27 @@ function renderDiscoverPage() {
     // Insert an ad slot between level sections (after 3rd level section)
     if (idx === 2) {
       levelRowsContainer.appendChild(createAdSlotEl());
+    }
+  });
+}
+
+const searchInput = document.getElementById('searchInput');
+if (searchInput) {
+  let searchTimeout = null;
+  searchInput.addEventListener('input', () => {
+    const raw = searchInput.value.trim();
+    if (!raw) return;
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+      window.location.href = 'index.html?search=' + encodeURIComponent(raw);
+    }, 350);
+  });
+  searchInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      const raw = searchInput.value.trim();
+      if (raw) {
+        window.location.href = 'index.html?search=' + encodeURIComponent(raw);
+      }
     }
   });
 }
