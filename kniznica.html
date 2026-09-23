@@ -1116,9 +1116,12 @@ function formatTime(mins){
   return h + 'h ' + m + 'm';
 }
 function tokenizeWord(segment){
-  if (/^[A-Za-z']+$/.test(segment)){
-    const key = segment.toLowerCase();
-    return '<span class="w" data-w="' + key + '">' + escapeHtml(segment) + '</span>';
+  const match = segment.match(/^([A-Za-z']+)([.!?]*)$/);
+  if (match){
+    const wordPart = match[1];
+    const punctPart = match[2];
+    const key = wordPart.toLowerCase();
+    return '<span class="w" data-w="' + key + '">' + escapeHtml(wordPart) + '</span>' + escapeHtml(punctPart);
   }
   return escapeHtml(segment);
 }
@@ -2070,21 +2073,39 @@ function clearReadTimers(){
   readTimers = [];
 }
 
-/* Groups a page-face's .w spans (words AND phrase-units alike) into
-   sentences, splitting after any span whose text ends in . ! or ? */
 function splitIntoSentenceUnits(faceEl){
   const wordEls = faceEl ? Array.from(faceEl.querySelectorAll('.w')) : [];
   const sentences = [];
   let current = { text: '', words: [] };
+
   wordEls.forEach((el) => {
-    const t = el.textContent;
-    current.text += (current.text ? ' ' : '') + t;
+    const wordText = el.textContent.trim();
+    let trailingPunct = '';
+
+    if (el.nextSibling && el.nextSibling.nodeType === Node.TEXT_NODE) {
+      const sibText = el.nextSibling.textContent;
+      const pMatch = sibText.match(/^[.!?]+/);
+      if (pMatch) {
+        trailingPunct = pMatch[0];
+      }
+    }
+
+    const fullToken = wordText + trailingPunct;
+    current.text += (current.text ? ' ' : '') + fullToken;
     current.words.push(el);
-    if (/[.!?]$/.test(t.trim())){
-      sentences.push(current);
-      current = { text: '', words: [] };
+
+    // Treat as sentence end if token has sentence-ending punctuation AND
+    // is not a standalone abbreviation token like 'a.' or 'm.' or 'Dr.'
+    if (/[.!?]$/.test(fullToken)) {
+      const cleanWord = wordText.toLowerCase().replace(/[^a-z]/g, '');
+      const isShortAbbrev = (cleanWord.length <= 2) || ['mr','mrs','ms','dr','prof','sr','jr','capt','col','st','vs','etc','inc','ltd'].includes(cleanWord);
+      if (!isShortAbbrev) {
+        sentences.push(current);
+        current = { text: '', words: [] };
+      }
     }
   });
+
   if (current.words.length) sentences.push(current);
   return sentences;
 }
@@ -2128,21 +2149,12 @@ function speakNextSentence(){
 
   u.onstart = () => {
     if (!isReading) return;
-    const totalChars = unit.text.length || 1;
-    const totalEstimatedMs = totalChars * MS_PER_CHAR;
-    let accumulated = 0;
-    unit.words.forEach((el) => {
-      const share = (el.textContent.length + 1) / totalChars;
-      const duration = totalEstimatedMs * share;
-      const t = setTimeout(() => {
-        if (!isReading) return;
-        clearReadingHighlight();
-        el.classList.add('reading-now');
-        el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-      }, accumulated);
-      readTimers.push(t);
-      accumulated += duration;
-    });
+    clearReadingHighlight();
+    // Highlight the entire current sentence unit
+    unit.words.forEach((el) => el.classList.add('reading-now'));
+    if (unit.words[0]) {
+      unit.words[0].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
   };
   u.onend = () => {
     if (!isReading) return;
