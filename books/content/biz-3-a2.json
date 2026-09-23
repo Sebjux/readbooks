@@ -1,0 +1,22 @@
+{
+  "id": "biz-3",
+  "title": "Small Habits, Big Wins",
+  "author": "Tom Reyes",
+  "level": "A2",
+  "genre": "business",
+  "minutes": 80,
+  "vocab": 2,
+  "dateAdded": "2026-09-04",
+  "c1": "#E0B563",
+  "c2": "#2F2410",
+  "story": {
+    "A2": [
+      [
+        "Tom Reyes implemented ten-minute daily retrospectives with his engineering team. By making micro-adjustments each morning, project completion speed improved by thirty percent."
+      ],
+      [
+        "This chapter explores the core story at the A2 proficiency level, providing natural vocabulary and clear sentence structure."
+      ]
+    ]
+  }
+}

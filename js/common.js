@@ -25,18 +25,20 @@ async function loadAllBooks() {
   }
 }
 
-async function fetchBookContent(bookId) {
-  if (bookContentCache[bookId]) {
-    return bookContentCache[bookId];
+async function fetchBookContent(bookId, level) {
+  const selectedLevel = (level || 'B1').toUpperCase();
+  const cacheKey = `${bookId}-${selectedLevel}`;
+  if (bookContentCache[cacheKey]) {
+    return bookContentCache[cacheKey];
   }
   try {
-    const res = await fetch(`books/content/${encodeURIComponent(bookId)}.json`);
+    const res = await fetch(`books/content/${encodeURIComponent(bookId)}-${selectedLevel.toLowerCase()}.json`);
     if (!res.ok) throw new Error(`HTTP error ${res.status}`);
     const content = await res.json();
-    bookContentCache[bookId] = content;
+    bookContentCache[cacheKey] = content;
     return content;
   } catch (err) {
-    console.error(`Failed to load book content for ${bookId}:`, err);
+    console.error(`Failed to load book content for ${bookId} level ${selectedLevel}:`, err);
     return null;
   }
 }
@@ -325,22 +327,28 @@ function saveReadingProgress(data){
   }catch(e){ /* storage unavailable */ }
 }
 
-function updateBookProgress(bookId, pageIndex, totalPages){
+function updateBookProgress(bookId, pageIndex, totalPages, level){
   if (!bookId) return;
   const data = loadReadingProgress();
   if (!data.books) data.books = {};
 
+  const progressKey = level ? `${bookId}:${level}` : bookId;
   const total = totalPages || 1;
   const isEnd = (pageIndex >= total - 1);
   const progress = Math.min(100, Math.max(0, Math.round(((pageIndex + 1) / total) * 100)));
   const completed = isEnd || (progress === 100);
 
-  data.books[bookId] = {
+  const entry = {
+    bookId: bookId,
+    level: level || 'B1',
     progress: progress,
     lastRead: new Date().toISOString(),
     completed: completed,
     lastPosition: pageIndex
   };
+
+  data.books[progressKey] = entry;
+  data.books[bookId] = entry;
 
   saveReadingProgress(data);
 
@@ -500,17 +508,19 @@ function computeFinalRect(){
   return { x: (vw - w) / 2, y: Math.max(24, (vh - h) / 2), w: w, h: h };
 }
 
-async function openBook(book, originCoverEl, startPosition){
+async function openBook(book, originCoverEl, startPosition, targetLevel){
   if (isAnimating) return;
   isAnimating = true;
   currentBook = book;
   currentOriginCover = originCoverEl;
 
-  const fullContent = await fetchBookContent(book.id);
+  const levelToLoad = targetLevel || (typeof activeLevel !== 'undefined' && activeLevel !== 'all' ? activeLevel : book.level) || 'B1';
+
+  const fullContent = await fetchBookContent(book.id, levelToLoad);
   if (fullContent && fullContent.story) {
     currentBook.story = fullContent.story;
   } else if (!currentBook.story) {
-    console.error('Book content unavailable for:', book.id);
+    console.error('Book content unavailable for:', book.id, levelToLoad);
     alert('Ospravedlňujeme sa, obsah knihy sa nepodarilo načítať.');
     isAnimating = false;
     return;
@@ -519,7 +529,10 @@ async function openBook(book, originCoverEl, startPosition){
   let targetPos = startPosition;
   if (typeof targetPos !== 'number'){
     const data = loadReadingProgress();
-    if (data.books && data.books[book.id] && typeof data.books[book.id].lastPosition === 'number'){
+    const progressKey = `${book.id}:${levelToLoad.toUpperCase()}`;
+    if (data.books && data.books[progressKey] && typeof data.books[progressKey].lastPosition === 'number'){
+      targetPos = data.books[progressKey].lastPosition;
+    } else if (data.books && data.books[book.id] && typeof data.books[book.id].lastPosition === 'number'){
       targetPos = data.books[book.id].lastPosition;
     } else {
       targetPos = 0;
@@ -658,21 +671,21 @@ let currentVariant = 'B1';
 let currentPageIndex = 0;
 let isPageAnimating = false;
 
-function prepareReader(book, startPosition){
+function prepareReader(book, startPosition, level){
+  const selectedLevel = level || (typeof activeLevel !== 'undefined' && activeLevel !== 'all' ? activeLevel : book.level) || 'B1';
   document.getElementById('readerTitle').textContent = book.title;
-  document.getElementById('readerSub').textContent = book.author + ' · ' + book.level;
-  currentVariant = nearestVariant(book.level);
+  document.getElementById('readerSub').textContent = book.author + ' · ' + selectedLevel.toUpperCase();
+  currentVariant = nearestVariant(selectedLevel);
   const pages = getBookPages(currentBook || book, currentVariant);
   const totalPages = pages ? pages.length : 1;
   const initialPos = (typeof startPosition === 'number' && startPosition >= 0 && startPosition < totalPages) ? startPosition : 0;
   currentPageIndex = initialPos;
-  updateVariantPillsUI();
   renderPage(currentPageIndex);
   renderVocabDrawer();
   updateVocabCount();
 
   if (book && book.id){
-    updateBookProgress(book.id, currentPageIndex, totalPages);
+    updateBookProgress(book.id, currentPageIndex, totalPages, currentVariant);
   }
 }
 
@@ -763,7 +776,7 @@ async function goToPage(delta, opts){
   updateReaderChrome(next);
 
   if (currentBook && currentBook.id){
-    updateBookProgress(currentBook.id, currentPageIndex, pages.length);
+    updateBookProgress(currentBook.id, currentPageIndex, pages.length, currentVariant);
   }
 
   await wait(460);
@@ -1352,9 +1365,6 @@ function initCommonListeners() {
     });
   }
 
-  document.querySelectorAll('.variant-pill').forEach((p) => {
-    p.addEventListener('click', () => setVariant(p.dataset.variant));
-  });
 
   let fontScale = 1;
   try{

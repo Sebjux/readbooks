@@ -1,0 +1,22 @@
+{
+  "id": "scifi-4",
+  "title": "Synthetic Dawn",
+  "author": "R. J. Okafor",
+  "level": "C1",
+  "genre": "scifi",
+  "minutes": 150,
+  "vocab": 3,
+  "dateAdded": "2026-09-05",
+  "c1": "#6C4CF0",
+  "c2": "#1A1140",
+  "story": {
+    "C1": [
+      [
+        "Android Seven experienced its first genuine emotional reaction while observing a sunrise over the ruined android sanctuary. It marked the awakening of synthetic consciousness."
+      ],
+      [
+        "This chapter explores the core story at the C1 proficiency level, providing natural vocabulary and clear sentence structure."
+      ]
+    ]
+  }
+}

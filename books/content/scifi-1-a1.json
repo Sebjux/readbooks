@@ -1,0 +1,22 @@
+{
+  "id": "scifi-1",
+  "title": "Neon Horizon",
+  "author": "Kaya Ilyanova",
+  "level": "A1",
+  "genre": "scifi",
+  "minutes": 195,
+  "vocab": 4,
+  "dateAdded": "2026-09-18",
+  "c1": "#4C3AFF",
+  "c2": "#150E38",
+  "story": {
+    "A1": [
+      [
+        "In the cybernetic city of New Valis, Maya tracked a glowing neon signal through dark alleyways. The signal led her to an ancient terminal buried beneath the quantum grid."
+      ],
+      [
+        "This chapter explores the core story at the A1 proficiency level, providing natural vocabulary and clear sentence structure."
+      ]
+    ]
+  }
+}

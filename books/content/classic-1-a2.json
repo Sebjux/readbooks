@@ -1,0 +1,22 @@
+{
+  "id": "classic-1",
+  "title": "Pride and Prejudice",
+  "author": "Jane Austen",
+  "level": "A2",
+  "genre": "classic",
+  "minutes": 480,
+  "vocab": 5,
+  "dateAdded": "2026-09-19",
+  "c1": "#B08D5E",
+  "c2": "#2A2013",
+  "story": {
+    "A2": [
+      [
+        "Elizabeth Bennet observed Mr. Darcy across the ballroom at Netherfield. Initial impressions and social pride created misunderstandings, but honest conversation revealed true nobility."
+      ],
+      [
+        "This chapter explores the core story at the A2 proficiency level, providing natural vocabulary and clear sentence structure."
+      ]
+    ]
+  }
+}

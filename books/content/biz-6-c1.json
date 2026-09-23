@@ -1,0 +1,22 @@
+{
+  "id": "biz-6",
+  "title": "My First Job",
+  "author": "Sarah Jenkins",
+  "level": "C1",
+  "genre": "business",
+  "minutes": 25,
+  "vocab": 1,
+  "dateAdded": "2026-09-01",
+  "c1": "#10B981",
+  "c2": "#064E3B",
+  "story": {
+    "C1": [
+      [
+        "Sarah Jenkins started her career as a junior marketing assistant. Through proactive listening, taking detailed notes, and seeking feedback, she rapidly earned her first promotion."
+      ],
+      [
+        "This chapter explores the core story at the C1 proficiency level, providing natural vocabulary and clear sentence structure."
+      ]
+    ]
+  }
+}

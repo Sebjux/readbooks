@@ -1,0 +1,22 @@
+{
+  "id": "daily-2",
+  "title": "At the Airport",
+  "author": "Julia Novak",
+  "level": "C1",
+  "genre": "daily",
+  "minutes": 40,
+  "vocab": 1,
+  "dateAdded": "2026-09-05",
+  "c1": "#22A896",
+  "c2": "#0A2622",
+  "story": {
+    "C1": [
+      [
+        "Julia navigated flight check-in, security screening, and gate boarding announcements effortlessly, keeping her passport and travel documents organized."
+      ],
+      [
+        "This chapter explores the core story at the C1 proficiency level, providing natural vocabulary and clear sentence structure."
+      ]
+    ]
+  }
+}

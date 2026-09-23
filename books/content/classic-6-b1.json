@@ -1,0 +1,22 @@
+{
+  "id": "classic-6",
+  "title": "The Picture of Dorian Gray",
+  "author": "Oscar Wilde",
+  "level": "B1",
+  "genre": "classic",
+  "minutes": 330,
+  "vocab": 5,
+  "dateAdded": "2026-09-15",
+  "c1": "#A88A5C",
+  "c2": "#2B2214",
+  "story": {
+    "B1": [
+      [
+        "Dorian Gray remained youthful while his painted portrait aged and recorded every moral flaw. Surrounded by Victorian aestheticism, he eventually realized the cost of his secret."
+      ],
+      [
+        "This chapter explores the core story at the B1 proficiency level, providing natural vocabulary and clear sentence structure."
+      ]
+    ]
+  }
+}

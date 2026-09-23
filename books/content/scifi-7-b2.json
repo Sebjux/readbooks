@@ -1,0 +1,22 @@
+{
+  "id": "scifi-7",
+  "title": "Quantum Singularity",
+  "author": "Dr. Evelyn Cross",
+  "level": "B2",
+  "genre": "scifi",
+  "minutes": 280,
+  "vocab": 5,
+  "dateAdded": "2026-09-22",
+  "c1": "#BE123C",
+  "c2": "#31040D",
+  "story": {
+    "B2": [
+      [
+        "Dr. Evelyn Cross stabilized a microscopic singularity inside the particle collider, opening a temporary rift into an adjacent parallel dimension."
+      ],
+      [
+        "This chapter explores the core story at the B2 proficiency level, providing natural vocabulary and clear sentence structure."
+      ]
+    ]
+  }
+}

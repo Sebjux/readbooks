@@ -10,19 +10,23 @@ if (!fs.existsSync(contentDir)) {
 }
 
 const files = fs.readdirSync(contentDir).filter(f => f.endsWith('.json'));
-const catalog = [];
+const catalogMap = {};
 
 files.forEach(file => {
   try {
     const fullPath = path.join(contentDir, file);
     const data = JSON.parse(fs.readFileSync(fullPath, 'utf8'));
-    const meta = { ...data };
-    delete meta.story;
-    catalog.push(meta);
+    if (!catalogMap[data.id]) {
+      const meta = { ...data };
+      delete meta.story;
+      catalogMap[data.id] = meta;
+    }
   } catch (err) {
     console.warn(`Warning: Could not parse ${file}:`, err.message);
   }
 });
+
+const catalog = Object.values(catalogMap);
 
 // Sort by dateAdded descending
 catalog.sort((a, b) => {

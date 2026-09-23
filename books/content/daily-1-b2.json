@@ -1,0 +1,22 @@
+{
+  "id": "daily-1",
+  "title": "Coffee Shop Chats",
+  "author": "Emma Wallace",
+  "level": "B2",
+  "genre": "daily",
+  "minutes": 45,
+  "vocab": 1,
+  "dateAdded": "2026-09-08",
+  "c1": "#2DBEA6",
+  "c2": "#0C2A26",
+  "story": {
+    "B2": [
+      [
+        "Emma ordered a latte at her local corner café and struck up a pleasant conversation with the barista about seasonal espresso blends and neighborhood news."
+      ],
+      [
+        "This chapter explores the core story at the B2 proficiency level, providing natural vocabulary and clear sentence structure."
+      ]
+    ]
+  }
+}

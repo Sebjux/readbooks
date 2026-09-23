@@ -1,0 +1,22 @@
+{
+  "id": "daily-6",
+  "title": "Hello World",
+  "author": "Anna Miller",
+  "level": "C1",
+  "genre": "daily",
+  "minutes": 20,
+  "vocab": 1,
+  "dateAdded": "2026-09-01",
+  "c1": "#059669",
+  "c2": "#064E3B",
+  "story": {
+    "C1": [
+      [
+        "Anna introduced herself to her new neighbors, sharing details about her family, work, and favorite weekend hobbies in simple, clear English."
+      ],
+      [
+        "This chapter explores the core story at the C1 proficiency level, providing natural vocabulary and clear sentence structure."
+      ]
+    ]
+  }
+}
