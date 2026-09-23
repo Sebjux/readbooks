@@ -1,0 +1,62 @@
+{
+  "id": "scifi-8",
+  "title": "Starlight Odyssey",
+  "author": "Elena Vance",
+  "level": "B2",
+  "genre": "scifi",
+  "minutes": 120,
+  "vocab": 3,
+  "dateAdded": "2026-09-23",
+  "c1": "#7C3AED",
+  "c2": "#1E1B4B",
+  "story": {
+    "C2": [
+      [
+        "The celestial vessel, Odyssey, cut through the impenetrable interstellar void, her ion thrusters emitting an ethereal violet phosphorescence against the backdrop of distant galaxies."
+      ],
+      [
+        "Commander Elena Vance monitored the navigational matrix, identifying a spatial harmonic resonating from the uncharted binary star system."
+      ]
+    ],
+    "C1": [
+      [
+        "The starship Odyssey glided smoothly through the dark expanse of space, her engines glowing with a brilliant purple light."
+      ],
+      [
+        "Commander Elena Vance checked the navigation screens, discovering a clear signal coming from an unexplored twin star system."
+      ]
+    ],
+    "B2": [
+      [
+        "The starship Odyssey traveled quietly through dark space, its engines showing a soft purple light against distant stars."
+      ],
+      [
+        "Commander Elena Vance looked at the navigation system and found a strange signal coming from an unexplored star system."
+      ]
+    ],
+    "B1": [
+      [
+        "The spaceship Odyssey moved through dark space. Its engines had a soft purple light."
+      ],
+      [
+        "Commander Elena Vance checked the instruments. She found a new signal from far away stars."
+      ]
+    ],
+    "A2": [
+      [
+        "The ship Odyssey was in space. It had a nice purple light."
+      ],
+      [
+        "Elena Vance was the captain. She saw a new signal on her screen."
+      ]
+    ],
+    "A1": [
+      [
+        "The big ship was in space. It was very quiet."
+      ],
+      [
+        "Elena looked at her screen. She saw a new light."
+      ]
+    ]
+  }
+}
