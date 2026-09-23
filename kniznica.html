@@ -734,8 +734,8 @@
     <span class="brand-name">Lumen</span>
   </div>
   <nav class="nav-tabs" id="pageNavTabs">
-    <button class="nav-tab-btn active" id="tabDiscoverBtn" data-tab="discover">Discover</button>
-    <button class="nav-tab-btn" id="tabLibraryBtn" data-tab="library">Library / Search</button>
+    <button class="nav-tab-btn active" id="tabLibraryBtn" data-tab="library">Library / Search</button>
+    <button class="nav-tab-btn" id="tabDiscoverBtn" data-tab="discover">Discover</button>
   </nav>
   <label class="search-wrap">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
@@ -754,7 +754,7 @@
   </div>
 </header>
 
-<main id="discoverMain">
+<main id="discoverMain" style="display:none;">
 
   <!-- DISCOVER CONTINUE READING -->
   <section class="genre-section" id="discoverContinueSection" style="display:none; margin-bottom: 40px;">
@@ -794,7 +794,7 @@
 
 </main>
 
-<main id="libraryMain" style="display:none;">
+<main id="libraryMain">
 
   <!-- HERO — Continue Reading -->
   <section class="hero glass">
@@ -1209,7 +1209,7 @@ function formatTime(mins){
   return h + 'h ' + m + 'm';
 }
 function tokenizeWord(segment){
-  const match = segment.match(/^([A-Za-z']+)([.!?]*)$/);
+  const match = segment.match(/^([A-Za-z']+)([^A-Za-z']*)$/);
   if (match){
     const wordPart = match[1];
     const punctPart = match[2];
@@ -2467,7 +2467,7 @@ document.addEventListener('keydown', (e) => {
 /* ================================================================
    DISCOVER PAGE RENDERING & NAVIGATION LOGIC
    ================================================================ */
-let currentTab = 'discover';
+let currentTab = 'library';
 
 function switchPageTab(tabName, filterConfig) {
   currentTab = tabName;
@@ -2634,7 +2634,7 @@ function renderDiscoverPage() {
   renderGenreRows();
   renderLevelGrid();
   initHero();
-  renderDiscoverPage();
+  switchPageTab('library');
   updateVocabCount();
 })();
 </script>
