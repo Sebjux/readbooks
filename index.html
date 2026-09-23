@@ -1019,7 +1019,7 @@ function initHero(){
 
   const variant = nearestVariant(book.level);
   const pages = getBookPages(book, variant);
-  const totalPages = pages ? pages.length : 4;
+  const totalPages = (pages && pages.length > 0) ? pages.length : 4;
 
   const cover = document.getElementById('heroCover');
   if (cover) {
