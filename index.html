@@ -851,6 +851,9 @@
       <button class="level-pill" data-status="read">Read</button>
     </div>
     <div class="level-grid" id="levelGrid"></div>
+    <div id="loadMoreWrap" style="text-align: center; margin-top: 28px; display: none;">
+      <button class="btn-primary" id="loadMoreBtn" style="margin: 0 auto;">Load 30 more</button>
+    </div>
   </section>
 
   <!-- SEARCH RESULTS -->
@@ -962,9 +965,11 @@
 let activeLevel = 'all';
 let activeCategory = 'all';
 let activeStatus = 'all';
+let visibleBookLimit = 30;
 
 function renderLevelGrid(){
   const grid = document.getElementById('levelGrid');
+  const loadMoreWrap = document.getElementById('loadMoreWrap');
   if (!grid) return;
   grid.innerHTML = '';
   const sorted = getSortedBooks(BOOKS);
@@ -983,10 +988,25 @@ function renderLevelGrid(){
 
   if (!filtered.length) {
     grid.innerHTML = '<div style="grid-column: 1 / -1; padding: 36px 20px; text-align: center; color: var(--text-tertiary); font-size: .92rem;">No books found for these filters.</div>';
+    if (loadMoreWrap) loadMoreWrap.style.display = 'none';
     return;
   }
 
-  filtered.forEach((b) => grid.appendChild(createBookCardEl(b)));
+  const batch = filtered.slice(0, visibleBookLimit);
+  batch.forEach((b) => grid.appendChild(createBookCardEl(b)));
+
+  if (loadMoreWrap) {
+    if (filtered.length > visibleBookLimit) {
+      loadMoreWrap.style.display = 'block';
+    } else {
+      loadMoreWrap.style.display = 'none';
+    }
+  }
+}
+
+function resetLimitAndRender() {
+  visibleBookLimit = 30;
+  renderLevelGrid();
 }
 
 function initHero(){
@@ -1065,6 +1085,14 @@ function parseUrlFilters(){
 const searchInput = document.getElementById('searchInput');
 if (searchInput) {
   searchInput.addEventListener('input', () => {
+    resetLimitAndRender();
+  });
+}
+
+const loadMoreBtn = document.getElementById('loadMoreBtn');
+if (loadMoreBtn) {
+  loadMoreBtn.addEventListener('click', () => {
+    visibleBookLimit += 30;
     renderLevelGrid();
   });
 }
@@ -1074,7 +1102,7 @@ document.querySelectorAll('#levelPills .level-pill').forEach((pill) => {
     document.querySelectorAll('#levelPills .level-pill').forEach((p) => p.classList.remove('active'));
     pill.classList.add('active');
     activeLevel = pill.dataset.level;
-    renderLevelGrid();
+    resetLimitAndRender();
   });
 });
 
@@ -1083,7 +1111,7 @@ document.querySelectorAll('#categoryPills .level-pill').forEach((pill) => {
     document.querySelectorAll('#categoryPills .level-pill').forEach((p) => p.classList.remove('active'));
     pill.classList.add('active');
     activeCategory = pill.dataset.category;
-    renderLevelGrid();
+    resetLimitAndRender();
   });
 });
 
@@ -1092,7 +1120,7 @@ document.querySelectorAll('#statusPills .level-pill').forEach((pill) => {
     document.querySelectorAll('#statusPills .level-pill').forEach((p) => p.classList.remove('active'));
     pill.classList.add('active');
     activeStatus = pill.dataset.status;
-    renderLevelGrid();
+    resetLimitAndRender();
   });
 });
 
