@@ -436,6 +436,12 @@
   }
 
   @media (max-width:768px){
+    .topbar{
+      flex-wrap:wrap;
+      gap:10px 8px;
+      padding:12px 14px;
+      padding-top:calc(12px + env(safe-area-inset-top,0px));
+    }
     .ad-container{
       width:100%;
       margin:16px auto;
@@ -468,6 +474,18 @@
 
   @media (max-width:640px){
     .book-card{ flex-basis:132px; }
+  }
+  @media (max-width:480px){
+    .topbar{
+      gap:8px 6px;
+      padding:10px 10px;
+      padding-top:calc(10px + env(safe-area-inset-top,0px));
+    }
+    .brand-name{ font-size:.95rem; }
+    .brand-mark{ width:28px; height:28px; }
+    .nav-tab-btn{ padding:5px 9px; font-size:.75rem; }
+    .vocab-toggle-nav{ padding:6px 8px; font-size:.75rem; }
+    .lang-trigger{ padding:6px 8px; font-size:.92rem; }
   }
 </style>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
