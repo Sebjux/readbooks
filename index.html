@@ -837,6 +837,13 @@
       <button class="level-pill" data-level="C1">C1</button>
       <button class="level-pill" data-level="C2">C2</button>
     </div>
+    <div class="level-pills" id="categoryPills" style="margin-bottom: 8px;">
+      <button class="level-pill active" data-category="all">All categories</button>
+      <button class="level-pill" data-category="scifi">Sci-Fi &amp; Future Worlds</button>
+      <button class="level-pill" data-category="business">Business &amp; Growth</button>
+      <button class="level-pill" data-category="classic">Classic Literature</button>
+      <button class="level-pill" data-category="daily">Daily Conversations</button>
+    </div>
     <div class="level-pills" id="statusPills" style="margin-bottom: 18px;">
       <button class="level-pill active" data-status="all">All statuses</button>
       <button class="level-pill" data-status="unread">Unread</button>
@@ -953,6 +960,7 @@
 <script src="js/common.js"></script>
 <script>
 let activeLevel = 'all';
+let activeCategory = 'all';
 let activeStatus = 'all';
 
 function renderLevelGrid(){
@@ -961,11 +969,16 @@ function renderLevelGrid(){
   grid.innerHTML = '';
   const sorted = getSortedBooks(BOOKS);
 
+  const searchInput = document.getElementById('searchInput');
+  const rawSearch = searchInput ? searchInput.value.trim().toLowerCase() : '';
+
   const filtered = sorted.filter((b) => {
     const matchLevel = (activeLevel === 'all' || b.level === activeLevel);
+    const matchCategory = (activeCategory === 'all' || b.genre === activeCategory);
     const status = getBookStatus(b.id);
     const matchStatus = (activeStatus === 'all' || status === activeStatus);
-    return matchLevel && matchStatus;
+    const matchSearch = (!rawSearch || b.title.toLowerCase().includes(rawSearch) || b.author.toLowerCase().includes(rawSearch));
+    return matchLevel && matchCategory && matchStatus && matchSearch;
   });
 
   if (!filtered.length) {
@@ -1020,10 +1033,17 @@ function refreshAllBookDisplays(){
 
 function parseUrlFilters(){
   const params = new URLSearchParams(window.location.search);
+  const genre = params.get('genre') || params.get('category');
   const level = params.get('level');
   const status = params.get('status');
   const query = params.get('search') || params.get('q');
 
+  if (genre) {
+    activeCategory = genre;
+    document.querySelectorAll('#categoryPills .level-pill').forEach(p => {
+      p.classList.toggle('active', p.dataset.category === genre);
+    });
+  }
   if (level) {
     activeLevel = level;
     document.querySelectorAll('#levelPills .level-pill').forEach(p => {
@@ -1038,35 +1058,14 @@ function parseUrlFilters(){
   }
   if (query && searchInput) {
     searchInput.value = query;
-    searchInput.dispatchEvent(new Event('input'));
   }
+  renderLevelGrid();
 }
 
 const searchInput = document.getElementById('searchInput');
-const searchSection = document.getElementById('searchResultsSection');
-if (searchInput && searchSection) {
+if (searchInput) {
   searchInput.addEventListener('input', () => {
-    const raw = searchInput.value.trim();
-    const q = raw.toLowerCase();
-    if (!q){
-      document.body.classList.remove('searching');
-      searchSection.classList.remove('active');
-      return;
-    }
-    document.body.classList.add('searching');
-    searchSection.classList.add('active');
-    const sortedMatches = getSortedBooks(BOOKS.filter((b) => b.title.toLowerCase().includes(q) || b.author.toLowerCase().includes(q)));
-    const searchSub = document.getElementById('searchResultsSub');
-    if (searchSub) {
-      searchSub.textContent = sortedMatches.length
-        ? sortedMatches.length + (sortedMatches.length === 1 ? ' match for "' : ' matches for "') + raw + '"'
-        : 'No matches for "' + raw + '"';
-    }
-    const grid = document.getElementById('searchGrid');
-    if (grid) {
-      grid.innerHTML = '';
-      sortedMatches.forEach((b) => grid.appendChild(createBookCardEl(b)));
-    }
+    renderLevelGrid();
   });
 }
 
@@ -1075,6 +1074,15 @@ document.querySelectorAll('#levelPills .level-pill').forEach((pill) => {
     document.querySelectorAll('#levelPills .level-pill').forEach((p) => p.classList.remove('active'));
     pill.classList.add('active');
     activeLevel = pill.dataset.level;
+    renderLevelGrid();
+  });
+});
+
+document.querySelectorAll('#categoryPills .level-pill').forEach((pill) => {
+  pill.addEventListener('click', () => {
+    document.querySelectorAll('#categoryPills .level-pill').forEach((p) => p.classList.remove('active'));
+    pill.classList.add('active');
+    activeCategory = pill.dataset.category;
     renderLevelGrid();
   });
 });
