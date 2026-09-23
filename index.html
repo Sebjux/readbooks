@@ -665,6 +665,17 @@
      RESPONSIVE / MOTION PREFERENCES
      ============================================================ */
   @media (max-width:768px){
+    .topbar{
+      flex-wrap:wrap;
+      gap:10px 8px;
+      padding:12px 14px;
+      padding-top:calc(12px + env(safe-area-inset-top,0px));
+    }
+    .search-wrap{
+      order:10;
+      width:100%;
+      max-width:100%;
+    }
     .ad-container{
       width:100%;
       margin:16px auto;
@@ -717,6 +728,18 @@
   @media (max-width:640px){
     .book-card{ flex-basis:132px; }
     .hero-cover{ width:78px; height:112px; }
+  }
+  @media (max-width:480px){
+    .topbar{
+      gap:8px 6px;
+      padding:10px 10px;
+      padding-top:calc(10px + env(safe-area-inset-top,0px));
+    }
+    .brand-name{ font-size:.95rem; }
+    .brand-mark{ width:28px; height:28px; }
+    .nav-tab-btn{ padding:5px 9px; font-size:.75rem; }
+    .vocab-toggle-nav{ padding:6px 8px; font-size:.75rem; }
+    .lang-trigger{ padding:6px 8px; font-size:.92rem; }
   }
   @media (prefers-reduced-motion:reduce){
     *{ animation-duration:.001ms !important; transition-duration:.001ms !important; }
