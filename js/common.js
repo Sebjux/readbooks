@@ -12,26 +12,32 @@ const GENRE_ICONS = {
 
 let BOOKS = [];
 let STORY = {};
+const bookContentCache = {};
 
 async function loadAllBooks() {
   try {
-    const res = await fetch('books/index.json');
-    const bookIds = await res.json();
-    const books = [];
-
-    for (const id of bookIds) {
-      try {
-        const bRes = await fetch(`books/${encodeURIComponent(id)}.json`);
-        const bData = await bRes.json();
-        books.push(bData);
-      } catch (err) {
-        console.warn(`Could not load book file books/${id}.json`, err);
-      }
-    }
-
-    BOOKS = books;
+    const res = await fetch('books/catalog.json');
+    if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+    BOOKS = await res.json();
   } catch (err) {
-    console.error('Failed to load books/index.json', err);
+    console.error('Failed to load books/catalog.json:', err);
+    BOOKS = [];
+  }
+}
+
+async function fetchBookContent(bookId) {
+  if (bookContentCache[bookId]) {
+    return bookContentCache[bookId];
+  }
+  try {
+    const res = await fetch(`books/content/${encodeURIComponent(bookId)}.json`);
+    if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+    const content = await res.json();
+    bookContentCache[bookId] = content;
+    return content;
+  } catch (err) {
+    console.error(`Failed to load book content for ${bookId}:`, err);
+    return null;
   }
 }
 
@@ -499,6 +505,16 @@ async function openBook(book, originCoverEl, startPosition){
   isAnimating = true;
   currentBook = book;
   currentOriginCover = originCoverEl;
+
+  const fullContent = await fetchBookContent(book.id);
+  if (fullContent && fullContent.story) {
+    currentBook.story = fullContent.story;
+  } else if (!currentBook.story) {
+    console.error('Book content unavailable for:', book.id);
+    alert('Ospravedlňujeme sa, obsah knihy sa nepodarilo načítať.');
+    isAnimating = false;
+    return;
+  }
 
   let targetPos = startPosition;
   if (typeof targetPos !== 'number'){
