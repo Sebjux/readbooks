@@ -783,7 +783,7 @@ function renderDiscoverPage() {
 
     const track = document.createElement('div');
     track.className = 'row-track';
-    lvlBooks.forEach(b => track.appendChild(createBookCardEl(b)));
+    lvlBooks.forEach(b => track.appendChild(createBookCardEl(b, lvl.code)));
 
     section.appendChild(head);
     section.appendChild(track);

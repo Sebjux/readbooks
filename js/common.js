@@ -393,7 +393,8 @@ function getMostRecentBookData(){
 /* ================================================================
    BOOK CARD CREATION
    ================================================================ */
-function createBookCardEl(book){
+function createBookCardEl(book, overrideLevel){
+  const displayLevel = overrideLevel || book.level || 'B1';
   const card = document.createElement('article');
   card.className = 'book-card';
   card.tabIndex = 0;
@@ -407,8 +408,8 @@ function createBookCardEl(book){
   const metaRow = document.createElement('div');
   metaRow.className = 'book-meta-row';
   metaRow.innerHTML =
-    '<span class="level-chip" style="--lvl-color:' + LEVEL_COLORS[book.level] + '">' +
-      '<span class="level-dot"></span>' + book.level +
+    '<span class="level-chip" style="--lvl-color:' + LEVEL_COLORS[displayLevel] + '">' +
+      '<span class="level-dot"></span>' + displayLevel +
     '</span>' +
     '<span class="meta-time">' +
       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>' +
@@ -467,7 +468,7 @@ function createBookCardEl(book){
   statusRow.appendChild(statusSelect);
 
   const LEVEL_SEGMENTS = { A1: 1, A2: 2, B1: 3, B2: 4, C1: 5, C2: 6 };
-  const filledCount = LEVEL_SEGMENTS[book.level] || 1;
+  const filledCount = LEVEL_SEGMENTS[displayLevel] || 1;
 
   const meter = document.createElement('div');
   meter.className = 'vocab-meter';
@@ -484,7 +485,7 @@ function createBookCardEl(book){
 
   const open = (e) => {
     if (e.target.closest('.status-select')) return;
-    openBook(book, cover);
+    openBook(book, cover, undefined, displayLevel);
   };
   card.addEventListener('click', open);
   card.addEventListener('keydown', (e) => {

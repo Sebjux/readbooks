@@ -985,7 +985,7 @@ function renderLevelGrid(){
   }
 
   const batch = filtered.slice(0, visibleBookLimit);
-  batch.forEach((b) => grid.appendChild(createBookCardEl(b)));
+  batch.forEach((b) => grid.appendChild(createBookCardEl(b, activeLevel !== 'all' ? activeLevel : b.level)));
 
   if (loadMoreWrap) {
     if (filtered.length > visibleBookLimit) {
