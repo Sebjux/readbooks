@@ -1340,9 +1340,14 @@ function initCommonListeners() {
 
   const navVocabBtn = document.getElementById('navVocabBtn');
   if (navVocabBtn) {
-    navVocabBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
+    navVocabBtn.addEventListener('click', async () => {
+      const readerView = document.getElementById('readerView');
+      if (readerView && readerView.hidden){
+        const recentData = getMostRecentBookData();
+        const book = recentData ? recentData.book : (BOOKS.find((b) => b.id === HERO_BOOK_ID) || BOOKS[0]);
+        const pos = recentData && recentData.progressData ? recentData.progressData.lastPosition : 0;
+        await openBook(book, document.getElementById('heroCover'), pos);
+      }
       openDrawer();
     });
   }
