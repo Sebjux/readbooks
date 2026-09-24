@@ -1352,6 +1352,25 @@ function initCommonListeners() {
     });
   }
 
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      closeDrawer();
+      closeLangMenu();
+      hidePopover();
+    }
+  });
+
+  document.addEventListener('click', (e) => {
+    const vocabDrawer = document.getElementById('vocabDrawer');
+    const navVocabBtn = document.getElementById('navVocabBtn');
+    const drawerToggleBtn = document.getElementById('drawerToggleBtn');
+    if (vocabDrawer && vocabDrawer.classList.contains('open')) {
+      if (!vocabDrawer.contains(e.target) && (!navVocabBtn || !navVocabBtn.contains(e.target)) && (!drawerToggleBtn || !drawerToggleBtn.contains(e.target))) {
+        closeDrawer();
+      }
+    }
+  });
+
   const vocabList = document.getElementById('vocabList');
   if (vocabList) {
     vocabList.addEventListener('click', (e) => {
