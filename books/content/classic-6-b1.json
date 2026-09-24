@@ -1,0 +1,22 @@
+{
+  "id": "classic-6",
+  "title": "The Picture of Dorian Gray",
+  "author": "Oscar Wilde",
+  "level": "B1",
+  "genre": "classic",
+  "minutes": 330,
+  "vocab": 5,
+  "dateAdded": "2026-09-15",
+  "c1": "#A88A5C",
+  "c2": "#2B2214",
+  "story": {
+    "B1": [
+      [
+        "The Picture of Dorian Gray, written by Oscar Wilde, presents an intermediate narrative in the classic genre."
+      ],
+      [
+        "The characters face interesting challenges that help build reading fluency."
+      ]
+    ]
+  }
+}

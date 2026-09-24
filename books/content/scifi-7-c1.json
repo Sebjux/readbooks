@@ -1,0 +1,22 @@
+{
+  "id": "scifi-7",
+  "title": "Quantum Singularity",
+  "author": "Dr. Evelyn Cross",
+  "level": "C1",
+  "genre": "scifi",
+  "minutes": 280,
+  "vocab": 5,
+  "dateAdded": "2026-09-22",
+  "c1": "#BE123C",
+  "c2": "#31040D",
+  "story": {
+    "C1": [
+      [
+        "Quantum Singularity by Dr. Evelyn Cross offers an advanced reading experience with sophisticated prose."
+      ],
+      [
+        "Detailed descriptions and nuanced character motivations enrich the narrative structure."
+      ]
+    ]
+  }
+}

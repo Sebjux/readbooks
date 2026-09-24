@@ -1,0 +1,22 @@
+{
+  "id": "scifi-2",
+  "title": "The Clockwork Sea",
+  "author": "Devon Marsh",
+  "level": "B1",
+  "genre": "scifi",
+  "minutes": 240,
+  "vocab": 5,
+  "dateAdded": "2026-09-10",
+  "c1": "#2E2470",
+  "c2": "#0B081E",
+  "story": {
+    "B1": [
+      [
+        "The Clockwork Sea, written by Devon Marsh, presents an intermediate narrative in the scifi genre."
+      ],
+      [
+        "The characters face interesting challenges that help build reading fluency."
+      ]
+    ]
+  }
+}

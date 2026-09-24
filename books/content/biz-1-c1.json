@@ -1,0 +1,22 @@
+{
+  "id": "biz-1",
+  "title": "The Focused Founder",
+  "author": "Mark Ellison",
+  "level": "C1",
+  "genre": "business",
+  "minutes": 165,
+  "vocab": 3,
+  "dateAdded": "2026-09-18",
+  "c1": "#D6A34A",
+  "c2": "#2E2008",
+  "story": {
+    "C1": [
+      [
+        "The Focused Founder by Mark Ellison offers an advanced reading experience with sophisticated prose."
+      ],
+      [
+        "Detailed descriptions and nuanced character motivations enrich the narrative structure."
+      ]
+    ]
+  }
+}

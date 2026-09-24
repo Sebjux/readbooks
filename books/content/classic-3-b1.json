@@ -1,0 +1,22 @@
+{
+  "id": "classic-3",
+  "title": "Alice's Adventures in Wonderland",
+  "author": "Lewis Carroll",
+  "level": "B1",
+  "genre": "classic",
+  "minutes": 150,
+  "vocab": 3,
+  "dateAdded": "2026-09-06",
+  "c1": "#9C7B4A",
+  "c2": "#261E10",
+  "story": {
+    "B1": [
+      [
+        "Alice's Adventures in Wonderland, written by Lewis Carroll, presents an intermediate narrative in the classic genre."
+      ],
+      [
+        "The characters face interesting challenges that help build reading fluency."
+      ]
+    ]
+  }
+}

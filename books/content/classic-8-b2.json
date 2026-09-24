@@ -1,0 +1,22 @@
+{
+  "id": "classic-8",
+  "title": "Moby Dick (Unabridged)",
+  "author": "Herman Melville",
+  "level": "B2",
+  "genre": "classic",
+  "minutes": 520,
+  "vocab": 5,
+  "dateAdded": "2026-09-22",
+  "c1": "#9F1239",
+  "c2": "#280511",
+  "story": {
+    "B2": [
+      [
+        "In Moby Dick (Unabridged), author Herman Melville delivers an upper-intermediate story filled with rich dialogue."
+      ],
+      [
+        "Readers will encounter expanded vocabulary and more complex narrative themes."
+      ]
+    ]
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "id": "scifi-1",
+  "title": "Neon Horizon",
+  "author": "Kaya Ilyanova",
+  "level": "A2",
+  "genre": "scifi",
+  "minutes": 195,
+  "vocab": 4,
+  "dateAdded": "2026-09-18",
+  "c1": "#4C3AFF",
+  "c2": "#150E38",
+  "story": {
+    "A2": [
+      [
+        "Neon Horizon is an engaging story written by Kaya Ilyanova for A2 elementary readers."
+      ],
+      [
+        "It uses clear sentence structures and helpful everyday vocabulary."
+      ]
+    ]
+  }
+}

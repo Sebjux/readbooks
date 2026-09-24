@@ -1,0 +1,22 @@
+{
+  "id": "classic-2",
+  "title": "Frankenstein",
+  "author": "Mary Shelley",
+  "level": "A2",
+  "genre": "classic",
+  "minutes": 360,
+  "vocab": 5,
+  "dateAdded": "2026-09-12",
+  "c1": "#6E5A3E",
+  "c2": "#1C1710",
+  "story": {
+    "A2": [
+      [
+        "Frankenstein is an engaging story written by Mary Shelley for A2 elementary readers."
+      ],
+      [
+        "It uses clear sentence structures and helpful everyday vocabulary."
+      ]
+    ]
+  }
+}

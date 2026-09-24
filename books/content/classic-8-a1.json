@@ -1,0 +1,22 @@
+{
+  "id": "classic-8",
+  "title": "Moby Dick (Unabridged)",
+  "author": "Herman Melville",
+  "level": "A1",
+  "genre": "classic",
+  "minutes": 520,
+  "vocab": 5,
+  "dateAdded": "2026-09-22",
+  "c1": "#9F1239",
+  "c2": "#280511",
+  "story": {
+    "A1": [
+      [
+        "This is Moby Dick (Unabridged) by Herman Melville. It is a clear story for A1 learners."
+      ],
+      [
+        "The story is simple and easy to read. You can learn new words."
+      ]
+    ]
+  }
+}

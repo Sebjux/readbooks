@@ -1,0 +1,22 @@
+{
+  "id": "classic-5",
+  "title": "A Christmas Carol",
+  "author": "Charles Dickens",
+  "level": "C2",
+  "genre": "classic",
+  "minutes": 120,
+  "vocab": 3,
+  "dateAdded": "2026-09-03",
+  "c1": "#7A6244",
+  "c2": "#1F1810",
+  "story": {
+    "C2": [
+      [
+        "A Christmas Carol, authored by Charles Dickens, demonstrates exemplary literary quality tailored for proficient C2 readers."
+      ],
+      [
+        "Subtle thematic depth, complex syntactic structures, and expansive vocabulary characterize this work."
+      ]
+    ]
+  }
+}

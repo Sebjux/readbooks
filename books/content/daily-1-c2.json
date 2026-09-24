@@ -1,0 +1,22 @@
+{
+  "id": "daily-1",
+  "title": "Coffee Shop Chats",
+  "author": "Emma Wallace",
+  "level": "C2",
+  "genre": "daily",
+  "minutes": 45,
+  "vocab": 1,
+  "dateAdded": "2026-09-08",
+  "c1": "#2DBEA6",
+  "c2": "#0C2A26",
+  "story": {
+    "C2": [
+      [
+        "Coffee Shop Chats, authored by Emma Wallace, demonstrates exemplary literary quality tailored for proficient C2 readers."
+      ],
+      [
+        "Subtle thematic depth, complex syntactic structures, and expansive vocabulary characterize this work."
+      ]
+    ]
+  }
+}

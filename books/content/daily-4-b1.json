@@ -1,0 +1,22 @@
+{
+  "id": "daily-4",
+  "title": "Everyday English in Action",
+  "author": "Nora Fischer",
+  "level": "B1",
+  "genre": "daily",
+  "minutes": 90,
+  "vocab": 2,
+  "dateAdded": "2026-09-17",
+  "c1": "#4BD8BE",
+  "c2": "#10312B",
+  "story": {
+    "B1": [
+      [
+        "Everyday English in Action, written by Nora Fischer, presents an intermediate narrative in the daily genre."
+      ],
+      [
+        "The characters face interesting challenges that help build reading fluency."
+      ]
+    ]
+  }
+}

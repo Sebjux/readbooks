@@ -1,0 +1,22 @@
+{
+  "id": "daily-4",
+  "title": "Everyday English in Action",
+  "author": "Nora Fischer",
+  "level": "A2",
+  "genre": "daily",
+  "minutes": 90,
+  "vocab": 2,
+  "dateAdded": "2026-09-17",
+  "c1": "#4BD8BE",
+  "c2": "#10312B",
+  "story": {
+    "A2": [
+      [
+        "Everyday English in Action is an engaging story written by Nora Fischer for A2 elementary readers."
+      ],
+      [
+        "It uses clear sentence structures and helpful everyday vocabulary."
+      ]
+    ]
+  }
+}

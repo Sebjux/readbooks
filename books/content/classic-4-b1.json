@@ -1,0 +1,22 @@
+{
+  "id": "classic-4",
+  "title": "The Adventures of Sherlock Holmes",
+  "author": "Arthur Conan Doyle",
+  "level": "B1",
+  "genre": "classic",
+  "minutes": 300,
+  "vocab": 4,
+  "dateAdded": "2026-09-09",
+  "c1": "#8C6F4E",
+  "c2": "#241C12",
+  "story": {
+    "B1": [
+      [
+        "The Adventures of Sherlock Holmes, written by Arthur Conan Doyle, presents an intermediate narrative in the classic genre."
+      ],
+      [
+        "The characters face interesting challenges that help build reading fluency."
+      ]
+    ]
+  }
+}

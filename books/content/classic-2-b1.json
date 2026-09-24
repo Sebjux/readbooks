@@ -1,0 +1,22 @@
+{
+  "id": "classic-2",
+  "title": "Frankenstein",
+  "author": "Mary Shelley",
+  "level": "B1",
+  "genre": "classic",
+  "minutes": 360,
+  "vocab": 5,
+  "dateAdded": "2026-09-12",
+  "c1": "#6E5A3E",
+  "c2": "#1C1710",
+  "story": {
+    "B1": [
+      [
+        "Frankenstein, written by Mary Shelley, presents an intermediate narrative in the classic genre."
+      ],
+      [
+        "The characters face interesting challenges that help build reading fluency."
+      ]
+    ]
+  }
+}

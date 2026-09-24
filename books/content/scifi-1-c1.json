@@ -1,0 +1,22 @@
+{
+  "id": "scifi-1",
+  "title": "Neon Horizon",
+  "author": "Kaya Ilyanova",
+  "level": "C1",
+  "genre": "scifi",
+  "minutes": 195,
+  "vocab": 4,
+  "dateAdded": "2026-09-18",
+  "c1": "#4C3AFF",
+  "c2": "#150E38",
+  "story": {
+    "C1": [
+      [
+        "Neon Horizon by Kaya Ilyanova offers an advanced reading experience with sophisticated prose."
+      ],
+      [
+        "Detailed descriptions and nuanced character motivations enrich the narrative structure."
+      ]
+    ]
+  }
+}

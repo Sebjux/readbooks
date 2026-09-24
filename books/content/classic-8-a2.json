@@ -1,0 +1,22 @@
+{
+  "id": "classic-8",
+  "title": "Moby Dick (Unabridged)",
+  "author": "Herman Melville",
+  "level": "A2",
+  "genre": "classic",
+  "minutes": 520,
+  "vocab": 5,
+  "dateAdded": "2026-09-22",
+  "c1": "#9F1239",
+  "c2": "#280511",
+  "story": {
+    "A2": [
+      [
+        "Moby Dick (Unabridged) is an engaging story written by Herman Melville for A2 elementary readers."
+      ],
+      [
+        "It uses clear sentence structures and helpful everyday vocabulary."
+      ]
+    ]
+  }
+}

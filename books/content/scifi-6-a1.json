@@ -1,0 +1,22 @@
+{
+  "id": "scifi-6",
+  "title": "First Star in Space",
+  "author": "Leo Vance",
+  "level": "A1",
+  "genre": "scifi",
+  "minutes": 30,
+  "vocab": 1,
+  "dateAdded": "2026-09-01",
+  "c1": "#059669",
+  "c2": "#022C22",
+  "story": {
+    "A1": [
+      [
+        "This is First Star in Space by Leo Vance. It is a clear story for A1 learners."
+      ],
+      [
+        "The story is simple and easy to read. You can learn new words."
+      ]
+    ]
+  }
+}

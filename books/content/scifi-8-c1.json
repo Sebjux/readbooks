@@ -1,0 +1,22 @@
+{
+  "id": "scifi-8",
+  "title": "Starlight Odyssey",
+  "author": "Elena Vance",
+  "level": "C1",
+  "genre": "scifi",
+  "minutes": 120,
+  "vocab": 3,
+  "dateAdded": "2026-09-23",
+  "c1": "#7C3AED",
+  "c2": "#1E1B4B",
+  "story": {
+    "C1": [
+      [
+        "The starship Odyssey glided smoothly through the dark expanse of space, her engines glowing with a brilliant purple light."
+      ],
+      [
+        "Commander Elena Vance checked the navigation screens, discovering a clear signal coming from an unexplored twin star system."
+      ]
+    ]
+  }
+}

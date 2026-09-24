@@ -1,0 +1,22 @@
+{
+  "id": "scifi-3",
+  "title": "Echoes Beyond Jupiter",
+  "author": "Aiden Cole",
+  "level": "A2",
+  "genre": "scifi",
+  "minutes": 100,
+  "vocab": 3,
+  "dateAdded": "2026-09-20",
+  "c1": "#5B3FE0",
+  "c2": "#170F3D",
+  "story": {
+    "A2": [
+      [
+        "Echoes Beyond Jupiter is an engaging story written by Aiden Cole for A2 elementary readers."
+      ],
+      [
+        "It uses clear sentence structures and helpful everyday vocabulary."
+      ]
+    ]
+  }
+}

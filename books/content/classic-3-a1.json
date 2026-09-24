@@ -1,0 +1,22 @@
+{
+  "id": "classic-3",
+  "title": "Alice's Adventures in Wonderland",
+  "author": "Lewis Carroll",
+  "level": "A1",
+  "genre": "classic",
+  "minutes": 150,
+  "vocab": 3,
+  "dateAdded": "2026-09-06",
+  "c1": "#9C7B4A",
+  "c2": "#261E10",
+  "story": {
+    "A1": [
+      [
+        "This is Alice's Adventures in Wonderland by Lewis Carroll. It is a clear story for A1 learners."
+      ],
+      [
+        "The story is simple and easy to read. You can learn new words."
+      ]
+    ]
+  }
+}

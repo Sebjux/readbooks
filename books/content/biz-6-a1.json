@@ -1,0 +1,22 @@
+{
+  "id": "biz-6",
+  "title": "My First Job",
+  "author": "Sarah Jenkins",
+  "level": "A1",
+  "genre": "business",
+  "minutes": 25,
+  "vocab": 1,
+  "dateAdded": "2026-09-01",
+  "c1": "#10B981",
+  "c2": "#064E3B",
+  "story": {
+    "A1": [
+      [
+        "This is My First Job by Sarah Jenkins. It is a clear story for A1 learners."
+      ],
+      [
+        "The story is simple and easy to read. You can learn new words."
+      ]
+    ]
+  }
+}

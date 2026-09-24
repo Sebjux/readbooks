@@ -1,0 +1,22 @@
+{
+  "id": "classic-5",
+  "title": "A Christmas Carol",
+  "author": "Charles Dickens",
+  "level": "A2",
+  "genre": "classic",
+  "minutes": 120,
+  "vocab": 3,
+  "dateAdded": "2026-09-03",
+  "c1": "#7A6244",
+  "c2": "#1F1810",
+  "story": {
+    "A2": [
+      [
+        "A Christmas Carol is an engaging story written by Charles Dickens for A2 elementary readers."
+      ],
+      [
+        "It uses clear sentence structures and helpful everyday vocabulary."
+      ]
+    ]
+  }
+}

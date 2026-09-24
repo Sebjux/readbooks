@@ -1,0 +1,22 @@
+{
+  "id": "healthy-1",
+  "title": "The Rhythm of Renewal",
+  "author": "Clara Miller",
+  "level": "C1",
+  "genre": "health",
+  "minutes": 120,
+  "vocab": 3,
+  "dateAdded": "2026-09-23",
+  "c1": "#059669",
+  "c2": "#022C22",
+  "story": {
+    "C1": [
+      [
+        "At thirty-four, Marcus Vance was a successful architectural designer whose busy lifestyle took a toll on his health."
+      ],
+      [
+        "By adopting a sleep hygiene routine, Mediterranean meals, and daily walks, he transformed his physical well-being."
+      ]
+    ]
+  }
+}

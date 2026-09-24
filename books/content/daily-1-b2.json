@@ -1,0 +1,22 @@
+{
+  "id": "daily-1",
+  "title": "Coffee Shop Chats",
+  "author": "Emma Wallace",
+  "level": "B2",
+  "genre": "daily",
+  "minutes": 45,
+  "vocab": 1,
+  "dateAdded": "2026-09-08",
+  "c1": "#2DBEA6",
+  "c2": "#0C2A26",
+  "story": {
+    "B2": [
+      [
+        "In Coffee Shop Chats, author Emma Wallace delivers an upper-intermediate story filled with rich dialogue."
+      ],
+      [
+        "Readers will encounter expanded vocabulary and more complex narrative themes."
+      ]
+    ]
+  }
+}

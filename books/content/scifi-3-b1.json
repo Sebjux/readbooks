@@ -1,0 +1,22 @@
+{
+  "id": "scifi-3",
+  "title": "Echoes Beyond Jupiter",
+  "author": "Aiden Cole",
+  "level": "B1",
+  "genre": "scifi",
+  "minutes": 100,
+  "vocab": 3,
+  "dateAdded": "2026-09-20",
+  "c1": "#5B3FE0",
+  "c2": "#170F3D",
+  "story": {
+    "B1": [
+      [
+        "Echoes Beyond Jupiter, written by Aiden Cole, presents an intermediate narrative in the scifi genre."
+      ],
+      [
+        "The characters face interesting challenges that help build reading fluency."
+      ]
+    ]
+  }
+}

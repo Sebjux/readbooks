@@ -1,0 +1,22 @@
+{
+  "id": "scifi-6",
+  "title": "First Star in Space",
+  "author": "Leo Vance",
+  "level": "A2",
+  "genre": "scifi",
+  "minutes": 30,
+  "vocab": 1,
+  "dateAdded": "2026-09-01",
+  "c1": "#059669",
+  "c2": "#022C22",
+  "story": {
+    "A2": [
+      [
+        "First Star in Space is an engaging story written by Leo Vance for A2 elementary readers."
+      ],
+      [
+        "It uses clear sentence structures and helpful everyday vocabulary."
+      ]
+    ]
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "id": "scifi-5",
+  "title": "The Last Signal",
+  "author": "Priya Nataraj",
+  "level": "B1",
+  "genre": "scifi",
+  "minutes": 210,
+  "vocab": 4,
+  "dateAdded": "2026-09-15",
+  "c1": "#3A2E8C",
+  "c2": "#100B29",
+  "story": {
+    "B1": [
+      [
+        "The Last Signal, written by Priya Nataraj, presents an intermediate narrative in the scifi genre."
+      ],
+      [
+        "The characters face interesting challenges that help build reading fluency."
+      ]
+    ]
+  }
+}

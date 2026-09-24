@@ -1,0 +1,22 @@
+{
+  "id": "classic-3",
+  "title": "Alice's Adventures in Wonderland",
+  "author": "Lewis Carroll",
+  "level": "C2",
+  "genre": "classic",
+  "minutes": 150,
+  "vocab": 3,
+  "dateAdded": "2026-09-06",
+  "c1": "#9C7B4A",
+  "c2": "#261E10",
+  "story": {
+    "C2": [
+      [
+        "Alice's Adventures in Wonderland, authored by Lewis Carroll, demonstrates exemplary literary quality tailored for proficient C2 readers."
+      ],
+      [
+        "Subtle thematic depth, complex syntactic structures, and expansive vocabulary characterize this work."
+      ]
+    ]
+  }
+}

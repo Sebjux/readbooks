@@ -1,0 +1,22 @@
+{
+  "id": "classic-1",
+  "title": "Pride and Prejudice",
+  "author": "Jane Austen",
+  "level": "C1",
+  "genre": "classic",
+  "minutes": 480,
+  "vocab": 5,
+  "dateAdded": "2026-09-19",
+  "c1": "#B08D5E",
+  "c2": "#2A2013",
+  "story": {
+    "C1": [
+      [
+        "It is a truth universally acknowledged that a single man in possession of a good fortune must be in want of a wife."
+      ],
+      [
+        "Elizabeth Bennet's keen wit clashed with Mr. Darcy's initial arrogance before mutual esteem overcame pride and prejudice."
+      ]
+    ]
+  }
+}

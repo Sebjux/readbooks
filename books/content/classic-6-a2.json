@@ -1,0 +1,22 @@
+{
+  "id": "classic-6",
+  "title": "The Picture of Dorian Gray",
+  "author": "Oscar Wilde",
+  "level": "A2",
+  "genre": "classic",
+  "minutes": 330,
+  "vocab": 5,
+  "dateAdded": "2026-09-15",
+  "c1": "#A88A5C",
+  "c2": "#2B2214",
+  "story": {
+    "A2": [
+      [
+        "The Picture of Dorian Gray is an engaging story written by Oscar Wilde for A2 elementary readers."
+      ],
+      [
+        "It uses clear sentence structures and helpful everyday vocabulary."
+      ]
+    ]
+  }
+}

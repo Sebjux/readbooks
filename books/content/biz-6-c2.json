@@ -1,0 +1,22 @@
+{
+  "id": "biz-6",
+  "title": "My First Job",
+  "author": "Sarah Jenkins",
+  "level": "C2",
+  "genre": "business",
+  "minutes": 25,
+  "vocab": 1,
+  "dateAdded": "2026-09-01",
+  "c1": "#10B981",
+  "c2": "#064E3B",
+  "story": {
+    "C2": [
+      [
+        "My First Job, authored by Sarah Jenkins, demonstrates exemplary literary quality tailored for proficient C2 readers."
+      ],
+      [
+        "Subtle thematic depth, complex syntactic structures, and expansive vocabulary characterize this work."
+      ]
+    ]
+  }
+}
