@@ -1,0 +1,22 @@
+{
+  "id": "classic-5",
+  "title": "A Christmas Carol",
+  "author": "Charles Dickens",
+  "level": "C2",
+  "genre": "classic",
+  "minutes": 120,
+  "vocab": 3,
+  "dateAdded": "2026-09-03",
+  "c1": "#7A6244",
+  "c2": "#1F1810",
+  "story": {
+    "C2": [
+      [
+        "Ebenezer Scrooge was visited on Christmas Eve by three spirits showing his past, present, and potential future. Deeply moved, he transformed into a generous and joyful neighbour."
+      ],
+      [
+        "This chapter explores the core story at the C2 proficiency level, providing natural vocabulary and clear sentence structure."
+      ]
+    ]
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "id": "scifi-6",
+  "title": "First Star in Space",
+  "author": "Leo Vance",
+  "level": "B2",
+  "genre": "scifi",
+  "minutes": 30,
+  "vocab": 1,
+  "dateAdded": "2026-09-01",
+  "c1": "#059669",
+  "c2": "#022C22",
+  "story": {
+    "B2": [
+      [
+        "Young cadet Toby boarded his first shuttle to the orbital academy. Looking through the viewport, he watched Earth shrink as the stars blazed ahead."
+      ],
+      [
+        "This chapter explores the core story at the B2 proficiency level, providing natural vocabulary and clear sentence structure."
+      ]
+    ]
+  }
+}

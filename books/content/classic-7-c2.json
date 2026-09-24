@@ -1,0 +1,22 @@
+{
+  "id": "classic-7",
+  "title": "Simple Tales for Beginners",
+  "author": "Hans Christian Andersen",
+  "level": "C2",
+  "genre": "classic",
+  "minutes": 35,
+  "vocab": 1,
+  "dateAdded": "2026-09-01",
+  "c1": "#047857",
+  "c2": "#022C22",
+  "story": {
+    "C2": [
+      [
+        "A duckling grew up feeling different from others until discovering he was a graceful swan. Through patience and kindness, he found his true place in the world."
+      ],
+      [
+        "This chapter explores the core story at the C2 proficiency level, providing natural vocabulary and clear sentence structure."
+      ]
+    ]
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "id": "classic-2",
+  "title": "Frankenstein",
+  "author": "Mary Shelley",
+  "level": "A2",
+  "genre": "classic",
+  "minutes": 360,
+  "vocab": 5,
+  "dateAdded": "2026-09-12",
+  "c1": "#6E5A3E",
+  "c2": "#1C1710",
+  "story": {
+    "A2": [
+      [
+        "Victor Frankenstein laboured in his solitary laboratory, breathing life into a creature of his own design. Shocked by his creation's awakening, he fled to face moral consequences."
+      ],
+      [
+        "This chapter explores the core story at the A2 proficiency level, providing natural vocabulary and clear sentence structure."
+      ]
+    ]
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "id": "classic-8",
+  "title": "Moby Dick (Unabridged)",
+  "author": "Herman Melville",
+  "level": "B2",
+  "genre": "classic",
+  "minutes": 520,
+  "vocab": 5,
+  "dateAdded": "2026-09-22",
+  "c1": "#9F1239",
+  "c2": "#280511",
+  "story": {
+    "B2": [
+      [
+        "Call me Ishmael. On the whaling ship Pequod, Captain Ahab pursued the legendary white whale across stormy seas, driven by an obsessive quest that tested the crew."
+      ],
+      [
+        "This chapter explores the core story at the B2 proficiency level, providing natural vocabulary and clear sentence structure."
+      ]
+    ]
+  }
+}

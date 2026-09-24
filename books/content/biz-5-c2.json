@@ -1,0 +1,22 @@
+{
+  "id": "biz-5",
+  "title": "Leading Remote Teams",
+  "author": "Daniel Kwan",
+  "level": "C2",
+  "genre": "business",
+  "minutes": 100,
+  "vocab": 2,
+  "dateAdded": "2026-09-08",
+  "c1": "#A67A2E",
+  "c2": "#241A08",
+  "story": {
+    "C2": [
+      [
+        "Daniel Kwan managed seventy engineers across four continents. By shifting from synchronous meetings to clear asynchronous documentation, team morale and output reached historic highs."
+      ],
+      [
+        "This chapter explores the core story at the C2 proficiency level, providing natural vocabulary and clear sentence structure."
+      ]
+    ]
+  }
+}

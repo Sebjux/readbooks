@@ -1,0 +1,22 @@
+{
+  "id": "classic-3",
+  "title": "Alice's Adventures in Wonderland",
+  "author": "Lewis Carroll",
+  "level": "C2",
+  "genre": "classic",
+  "minutes": 150,
+  "vocab": 3,
+  "dateAdded": "2026-09-06",
+  "c1": "#9C7B4A",
+  "c2": "#261E10",
+  "story": {
+    "C2": [
+      [
+        "Alice followed the White Rabbit down a deep hole into a surreal wonderland. She encountered the Mad Hatter, the Cheshire Cat, and the Queen of Hearts in whimsical adventures."
+      ],
+      [
+        "This chapter explores the core story at the C2 proficiency level, providing natural vocabulary and clear sentence structure."
+      ]
+    ]
+  }
+}

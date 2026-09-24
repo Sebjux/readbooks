@@ -1,0 +1,22 @@
+{
+  "id": "scifi-2",
+  "title": "The Clockwork Sea",
+  "author": "Devon Marsh",
+  "level": "B2",
+  "genre": "scifi",
+  "minutes": 240,
+  "vocab": 5,
+  "dateAdded": "2026-09-10",
+  "c1": "#2E2470",
+  "c2": "#0B081E",
+  "story": {
+    "B2": [
+      [
+        "Submersible Captain Thomas navigated the bronze gear-driven depths of Europa's ocean. Mechanical leviaths circled the thermal vents as his steam-powered sub dove deeper."
+      ],
+      [
+        "This chapter explores the core story at the B2 proficiency level, providing natural vocabulary and clear sentence structure."
+      ]
+    ]
+  }
+}

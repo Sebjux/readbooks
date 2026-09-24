@@ -1,0 +1,22 @@
+{
+  "id": "scifi-6",
+  "title": "First Star in Space",
+  "author": "Leo Vance",
+  "level": "A1",
+  "genre": "scifi",
+  "minutes": 30,
+  "vocab": 1,
+  "dateAdded": "2026-09-01",
+  "c1": "#059669",
+  "c2": "#022C22",
+  "story": {
+    "A1": [
+      [
+        "Young cadet Toby boarded his first shuttle to the orbital academy. Looking through the viewport, he watched Earth shrink as the stars blazed ahead."
+      ],
+      [
+        "This chapter explores the core story at the A1 proficiency level, providing natural vocabulary and clear sentence structure."
+      ]
+    ]
+  }
+}

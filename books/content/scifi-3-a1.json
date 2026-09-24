@@ -1,0 +1,22 @@
+{
+  "id": "scifi-3",
+  "title": "Echoes Beyond Jupiter",
+  "author": "Aiden Cole",
+  "level": "A1",
+  "genre": "scifi",
+  "minutes": 100,
+  "vocab": 3,
+  "dateAdded": "2026-09-20",
+  "c1": "#5B3FE0",
+  "c2": "#170F3D",
+  "story": {
+    "A1": [
+      [
+        "At 03:14 hours on Jupiter Station, Mira detected an intentional rhythmic signal coming from beyond the icy moons. It was the first undeniable proof of cosmic intelligence."
+      ],
+      [
+        "This chapter explores the core story at the A1 proficiency level, providing natural vocabulary and clear sentence structure."
+      ]
+    ]
+  }
+}
