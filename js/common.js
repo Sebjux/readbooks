@@ -803,21 +803,35 @@ function renderSheets(){
   const wrapper = document.getElementById('sheetsWrapper');
   wrapper.innerHTML = '';
   const sheetCount = Math.ceil(pages.length / 2);
+  const activeSheet = Math.floor(currentPageIndex / 2);
+
   for (let i = 0; i < sheetCount; i++){
     const frontIdx = i * 2, backIdx = i * 2 + 1;
     const sheet = document.createElement('div');
     sheet.className = 'paper-sheet';
     sheet.id = 'sheet-' + i;
 
+    // DOM Recycling / Virtualization:
+    // Only generate full tokenized DOM for active sheet and immediate adjacent sheets (activeSheet - 1, activeSheet, activeSheet + 1)
+    const isNearby = Math.abs(i - activeSheet) <= 1;
+
     const front = document.createElement('div');
     front.className = 'page-face page-front';
-    front.innerHTML = '<div class="page-content">' + pages[frontIdx].map((p) => '<p>' + tokenize(p) + '</p>').join('') + '</div>';
+    if (isNearby && frontIdx < pages.length) {
+      front.innerHTML = '<div class="page-content">' + pages[frontIdx].map((p) => '<p>' + tokenize(p) + '</p>').join('') + '</div>';
+    } else {
+      front.innerHTML = '<div class="page-content"></div>';
+    }
 
     const back = document.createElement('div');
     back.className = 'page-face page-back';
-    back.innerHTML = backIdx < pages.length
-      ? '<div class="page-content">' + pages[backIdx].map((p) => '<p>' + tokenize(p) + '</p>').join('') + '</div>'
-      : '<div class="page-content page-end">The End</div>';
+    if (isNearby) {
+      back.innerHTML = backIdx < pages.length
+        ? '<div class="page-content">' + pages[backIdx].map((p) => '<p>' + tokenize(p) + '</p>').join('') + '</div>'
+        : '<div class="page-content page-end">The End</div>';
+    } else {
+      back.innerHTML = '<div class="page-content"></div>';
+    }
 
     sheet.appendChild(front);
     sheet.appendChild(back);
@@ -883,13 +897,14 @@ function renderPage(idx){
 
 async function goToPage(delta, opts){
   opts = opts || {};
-  const pages = getBookPages(currentBook, currentVariant);
+  const pages = currentFlatPages && currentFlatPages.length ? currentFlatPages : getBookPages(currentBook, currentVariant);
   const next = currentPageIndex + delta;
   if (next < 0 || next >= pages.length || isPageAnimating) return;
   isPageAnimating = true;
   hidePopover();
   if (!opts.keepReading) stopReadAloud();
   currentPageIndex = next;
+  renderSheets();
   updateSheetZIndexes();
   updateReaderChrome(next);
 
@@ -1124,11 +1139,14 @@ function pickEnglishVoice(){
     return voices.find((v) => v.lang && v.lang.toLowerCase().indexOf('en') === 0) || null;
   }catch(e){ return null; }
 }
+let activeAudioInstance = null;
+
 function speak(word){
   try{
     stopReadAloud();
     if (currentAudioUrl) {
       const audio = new Audio(currentAudioUrl);
+      activeAudioInstance = audio;
       audio.play().catch(err => {
         if ('speechSynthesis' in window) {
           const u = new SpeechSynthesisUtterance(word);
@@ -1274,6 +1292,13 @@ function speakNextSentence(){
 
 function stopReadAloud(){
   clearReadTimers();
+  if (activeAudioInstance) {
+    try {
+      activeAudioInstance.pause();
+      activeAudioInstance.src = '';
+    } catch(e) {}
+    activeAudioInstance = null;
+  }
   try{ if ('speechSynthesis' in window) window.speechSynthesis.cancel(); }catch(e){ /* ignore */ }
   clearReadingHighlight();
   setPlayingUI(false);
