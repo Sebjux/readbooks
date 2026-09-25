@@ -928,5 +928,12 @@
         }
       ]
     }
-  }
+  },
+  "author": "Aiden Cole",
+  "genre": "scifi",
+  "minutes": 140,
+  "vocab": 8,
+  "dateAdded": "2026-09-22",
+  "c1": "#7CACF8",
+  "c2": "#12141F"
 }

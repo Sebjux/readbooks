@@ -96,6 +96,18 @@
     "c2": "#280511"
   },
   {
+    "id": "scifi-10",
+    "title": "The Ninth Lantern 2",
+    "level": "C2",
+    "author": "Aiden Cole",
+    "genre": "scifi",
+    "minutes": 140,
+    "vocab": 8,
+    "dateAdded": "2026-09-22",
+    "c1": "#7CACF8",
+    "c2": "#12141F"
+  },
+  {
     "id": "scifi-7",
     "title": "Quantum Singularity",
     "author": "Dr. Evelyn Cross",
@@ -406,10 +418,5 @@
     "dateAdded": "2026-09-01",
     "c1": "#059669",
     "c2": "#022C22"
-  },
-  {
-    "id": "scifi-10",
-    "title": "The Ninth Lantern 2",
-    "level": "C2"
   }
 ]
