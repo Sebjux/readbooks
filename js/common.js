@@ -367,26 +367,27 @@ function updateBookProgress(bookId, pageIndex, totalPages, level){
 function getMostRecentBookData(){
   const data = loadReadingProgress();
   if (!data.books) return null;
-  let mostRecentBookId = null;
+  let mostRecentEntry = null;
   let maxTime = 0;
 
-  for (const [id, info] of Object.entries(data.books)){
-    if (info && info.lastRead){
+  for (const [key, info] of Object.entries(data.books)){
+    if (info && info.lastRead && info.bookId){
       const t = new Date(info.lastRead).getTime();
       if (!isNaN(t) && t > maxTime){
         maxTime = t;
-        mostRecentBookId = id;
+        mostRecentEntry = info;
       }
     }
   }
 
-  if (!mostRecentBookId) return null;
-  const bookMeta = BOOKS.find((b) => b.id === mostRecentBookId);
+  if (!mostRecentEntry || !mostRecentEntry.bookId) return null;
+  const targetId = mostRecentEntry.bookId;
+  const bookMeta = BOOKS.find((b) => b.id === targetId);
   if (!bookMeta) return null;
 
   return {
     book: bookMeta,
-    progressData: data.books[mostRecentBookId]
+    progressData: mostRecentEntry
   };
 }
 
@@ -544,8 +545,9 @@ async function openBook(book, originCoverEl, startPosition, targetLevel){
     const status = getBookStatus(book.id);
     if (status === 'unread') {
       setBookStatus(book.id, 'in-progress');
-      refreshAllBookDisplays();
     }
+    updateBookProgress(book.id, targetPos, 1, levelToLoad);
+    refreshAllBookDisplays();
   }
 
   const flyingBookEl = document.getElementById('flyingBook');
