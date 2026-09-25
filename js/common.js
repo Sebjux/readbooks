@@ -552,7 +552,14 @@ async function openBook(book, originCoverEl, startPosition, targetLevel){
 
   const levelToLoad = targetLevel || (typeof activeLevel !== 'undefined' && activeLevel !== 'all' ? activeLevel : book.level) || 'B1';
 
-  const fullContent = await fetchBookContent(book.id, levelToLoad);
+  let fullContent = await fetchBookContent(book.id, levelToLoad);
+  if (!fullContent || !fullContent.story) {
+    // If requested level content file is missing, fallback to the book's default level file
+    if (book.level && book.level.toUpperCase() !== levelToLoad.toUpperCase()) {
+      fullContent = await fetchBookContent(book.id, book.level);
+    }
+  }
+
   if (fullContent && fullContent.story) {
     currentBook.story = fullContent.story;
   } else if (!currentBook.story) {
@@ -826,6 +833,11 @@ function renderSheets(){
   const activeSheet = Math.floor(currentPageIndex / 2);
 
   for (let i = 0; i < sheetCount; i++){
+    // WebKit GPU / Layer Memory Optimization:
+    // Only instantiate 3D .paper-sheet DOM elements for sheets within range (activeSheet ± 2).
+    // Distant sheets (> 2 sheets away) do not exist in DOM, keeping compositor memory minimal on iOS devices.
+    if (Math.abs(i - activeSheet) > 2) continue;
+
     const frontIdx = i * 2, backIdx = i * 2 + 1;
     const sheet = document.createElement('div');
     sheet.className = 'paper-sheet';
