@@ -1,4 +1,16 @@
 [
+    {
+  "id": "fantasy-9",
+  "title": "The Ninth Lantern",
+  "author": "Manus AI",
+  "level": "C2",
+  "genre": "fantasy",
+  "minutes": 446,
+  "vocab": 2,
+  "dateAdded": "2026-09-25",
+  "c1": "#B8863B",
+  "c2": "#2A1C0A"
+  },
   {
     "id": "healthy-1",
     "title": "The Rhythm of Renewal",
