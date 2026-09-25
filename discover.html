@@ -169,7 +169,7 @@
     padding:8px 14px; border-radius:var(--radius-pill);
     background:var(--glass-fill-soft); border:1px solid var(--glass-border);
     font-size:.82rem; color:var(--text-secondary);
-    transition:border-color 200ms;
+    transition:border-color 200ms, color 200ms, background 200ms;
   }
   .vocab-toggle-nav:hover{ border-color:var(--glass-border-hi); color:var(--text-primary); }
   .vocab-toggle-nav svg{width:15px; height:15px;}
@@ -364,8 +364,11 @@
   .icon-btn{
     width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center;
     background:var(--glass-fill-soft); border:1px solid var(--glass-border); color:var(--text-secondary);
-    transition:color 150ms, border-color 150ms; position:relative; flex-shrink:0;
+    transition:color 150ms, border-color 150ms, background 150ms; position:relative; flex-shrink:0;
   }
+  .icon-btn:hover{ color:var(--text-primary); border-color:var(--glass-border-hi); }
+  .icon-btn svg{ width:15px; height:15px; }
+  .icon-btn.is-playing{ color:var(--neon-cyan); border-color:rgba(76,245,224,.45); background:rgba(76,245,224,.1); }
   .icon-btn .badge{
     position:absolute; top:-4px; right:-4px; min-width:15px; height:15px; padding:0 3px;
     border-radius:99px; background:var(--neon-violet); color:#fff; font-size:.6rem; font-family:'JetBrains Mono';
