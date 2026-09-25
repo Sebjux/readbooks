@@ -597,6 +597,25 @@
       justify-content:center;
       width:100%;
     }
+    .page-edge{
+      width:48px;
+      height:48px;
+    }
+    .reader-top{
+      padding:10px 12px;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    .reader-heading{
+      order:-1;
+      width:100%;
+      margin-bottom:2px;
+    }
+    .reader-tools{
+      overflow-x:auto;
+      max-width:100%;
+      padding-bottom:2px;
+    }
   }
 
   @media (max-width:640px){
@@ -613,6 +632,9 @@
     .nav-tab-btn{ padding:5px 9px; font-size:.75rem; }
     .vocab-toggle-nav{ padding:6px 8px; font-size:.75rem; }
     .lang-trigger{ padding:6px 8px; font-size:.92rem; }
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{ animation-duration:.001ms !important; transition-duration:.001ms !important; }
   }
 </style>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7203744964486071" crossorigin="anonymous"></script>
