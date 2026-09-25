@@ -15,14 +15,20 @@ let STORY = {};
 const bookContentCache = {};
 
 async function loadAllBooks() {
-  try {
-    const res = await fetch('books/catalog.json');
-    if (!res.ok) throw new Error(`HTTP error ${res.status}`);
-    BOOKS = await res.json();
-  } catch (err) {
-    console.error('Failed to load books/catalog.json:', err);
-    BOOKS = [];
+  const urlsToTry = ['books/catalog.json', '/books/catalog.json'];
+  for (const url of urlsToTry) {
+    try {
+      const res = await fetch(url);
+      if (res.ok) {
+        BOOKS = await res.json();
+        return;
+      }
+    } catch (err) {
+      /* try next URL */
+    }
   }
+  console.error('Failed to load books/catalog.json from all paths');
+  BOOKS = [];
 }
 
 async function fetchBookContent(bookId, level) {
@@ -31,16 +37,30 @@ async function fetchBookContent(bookId, level) {
   if (bookContentCache[cacheKey]) {
     return bookContentCache[cacheKey];
   }
-  try {
-    const res = await fetch(`books/content/${encodeURIComponent(bookId)}-${selectedLevel.toLowerCase()}.json`);
-    if (!res.ok) throw new Error(`HTTP error ${res.status}`);
-    const content = await res.json();
-    bookContentCache[cacheKey] = content;
-    return content;
-  } catch (err) {
-    console.error(`Failed to load book content for ${bookId} level ${selectedLevel}:`, err);
-    return null;
+
+  const filename = `${encodeURIComponent(bookId)}-${selectedLevel.toLowerCase()}.json`;
+  const urlsToTry = [
+    `books/content/${filename}`,
+    `/books/content/${filename}`
+  ];
+
+  for (const url of urlsToTry) {
+    try {
+      const res = await fetch(url);
+      if (res.ok) {
+        const content = await res.json();
+        if (content && content.story) {
+          bookContentCache[cacheKey] = content;
+          return content;
+        }
+      }
+    } catch (err) {
+      /* try next URL */
+    }
   }
+
+  console.error(`Failed to load book content for ${bookId} level ${selectedLevel}`);
+  return null;
 }
 
 function getBookPages(book, variant) {
