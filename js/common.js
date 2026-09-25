@@ -45,11 +45,25 @@ async function fetchBookContent(bookId, level) {
 
 function getBookPages(book, variant) {
   if (book && book.story && book.story[variant]) {
-    return book.story[variant];
+    const data = book.story[variant];
+    if (Array.isArray(data)) return data;
+    if (data && Array.isArray(data.chapters)) {
+      const all = [];
+      data.chapters.forEach(c => { if (Array.isArray(c.pages)) all.push(...c.pages); });
+      return all;
+    }
   }
   if (book && book.story) {
     const firstAvailable = Object.keys(book.story)[0];
-    if (firstAvailable && book.story[firstAvailable]) return book.story[firstAvailable];
+    if (firstAvailable && book.story[firstAvailable]) {
+      const data = book.story[firstAvailable];
+      if (Array.isArray(data)) return data;
+      if (data && Array.isArray(data.chapters)) {
+        const all = [];
+        data.chapters.forEach(c => { if (Array.isArray(c.pages)) all.push(...c.pages); });
+        return all;
+      }
+    }
   }
   return STORY[variant] || STORY['C1'] || [];
 }
@@ -681,10 +695,26 @@ function buildChaptersForBook(book, variant) {
   let chapters = [];
   let flatPages = [];
 
+  const storyLvl = book && book.story ? (book.story[variant] || book.story[Object.keys(book.story)[0]]) : null;
+
   // Check if book has explicit chapters in story JSON
-  if (book && book.story && book.story[variant] && Array.isArray(book.story[variant].chapters)) {
+  if (storyLvl && Array.isArray(storyLvl.chapters)) {
     let offset = 0;
-    book.story[variant].chapters.forEach((ch, idx) => {
+    storyLvl.chapters.forEach((ch, idx) => {
+      const chPages = ch.pages || [];
+      chapters.push({
+        index: idx,
+        title: ch.title || `Chapter ${idx + 1}`,
+        startIndex: offset,
+        pageCount: chPages.length,
+        pages: chPages
+      });
+      flatPages.push(...chPages);
+      offset += chPages.length;
+    });
+  } else if (book && Array.isArray(book.chapters)) {
+    let offset = 0;
+    book.chapters.forEach((ch, idx) => {
       const chPages = ch.pages || [];
       chapters.push({
         index: idx,
