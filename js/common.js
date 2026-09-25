@@ -671,14 +671,90 @@ function nearestVariant(level){
 let currentVariant = 'B1';
 let currentPageIndex = 0;
 let isPageAnimating = false;
+let currentChapters = [];
+let currentFlatPages = [];
+
+function buildChaptersForBook(book, variant) {
+  const rawPages = getBookPages(book, variant);
+  let chapters = [];
+  let flatPages = [];
+
+  // Check if book has explicit chapters in story JSON
+  if (book && book.story && book.story[variant] && Array.isArray(book.story[variant].chapters)) {
+    let offset = 0;
+    book.story[variant].chapters.forEach((ch, idx) => {
+      const chPages = ch.pages || [];
+      chapters.push({
+        index: idx,
+        title: ch.title || `Chapter ${idx + 1}`,
+        startIndex: offset,
+        pageCount: chPages.length,
+        pages: chPages
+      });
+      flatPages.push(...chPages);
+      offset += chPages.length;
+    });
+  } else if (rawPages && rawPages.length > 8) {
+    // Automatically partition long books (> 8 pages) into 8-page virtual chapters
+    const PAGES_PER_CHAPTER = 8;
+    let offset = 0;
+    let chIdx = 0;
+    while (offset < rawPages.length) {
+      const chunk = rawPages.slice(offset, offset + PAGES_PER_CHAPTER);
+      chapters.push({
+        index: chIdx,
+        title: `Chapter ${chIdx + 1} (Pages ${offset + 1}–${offset + chunk.length})`,
+        startIndex: offset,
+        pageCount: chunk.length,
+        pages: chunk
+      });
+      flatPages.push(...chunk);
+      offset += chunk.length;
+      chIdx++;
+    }
+  } else {
+    // Short book: single chapter
+    flatPages = rawPages || [];
+    chapters = [{
+      index: 0,
+      title: 'Full Story',
+      startIndex: 0,
+      pageCount: flatPages.length,
+      pages: flatPages
+    }];
+  }
+
+  return { chapters, flatPages };
+}
+
+function updateChapterDropdownUI() {
+  const select = document.getElementById('chapterSelect');
+  if (!select) return;
+
+  if (currentChapters && currentChapters.length > 1) {
+    select.innerHTML = currentChapters.map(ch =>
+      `<option value="${ch.index}">${escapeHtml(ch.title)}</option>`
+    ).join('');
+    select.style.display = 'inline-block';
+  } else {
+    select.innerHTML = '';
+    select.style.display = 'none';
+  }
+}
 
 function prepareReader(book, startPosition, level){
   const selectedLevel = level || (typeof activeLevel !== 'undefined' && activeLevel !== 'all' ? activeLevel : book.level) || 'B1';
   document.getElementById('readerTitle').textContent = book.title;
   document.getElementById('readerSub').textContent = book.author + ' · ' + selectedLevel.toUpperCase();
   currentVariant = nearestVariant(selectedLevel);
-  const pages = getBookPages(currentBook || book, currentVariant);
-  const totalPages = pages ? pages.length : 1;
+
+  const parsed = buildChaptersForBook(currentBook || book, currentVariant);
+  currentChapters = parsed.chapters;
+  currentFlatPages = parsed.flatPages;
+
+  updateChapterDropdownUI();
+
+  const totalPages = currentFlatPages ? currentFlatPages.length : 1;
   const initialPos = (typeof startPosition === 'number' && startPosition >= 0 && startPosition < totalPages) ? startPosition : 0;
   currentPageIndex = initialPos;
   renderPage(currentPageIndex);
@@ -691,7 +767,7 @@ function prepareReader(book, startPosition, level){
 }
 
 function renderSheets(){
-  const pages = getBookPages(currentBook, currentVariant);
+  const pages = currentFlatPages && currentFlatPages.length ? currentFlatPages : getBookPages(currentBook, currentVariant);
   const wrapper = document.getElementById('sheetsWrapper');
   wrapper.innerHTML = '';
   const sheetCount = Math.ceil(pages.length / 2);
@@ -718,7 +794,7 @@ function renderSheets(){
 }
 
 function updateSheetZIndexes(){
-  const pages = getBookPages(currentBook, currentVariant);
+  const pages = currentFlatPages && currentFlatPages.length ? currentFlatPages : getBookPages(currentBook, currentVariant);
   const sheetCount = Math.ceil(pages.length / 2);
   const activeSheet = Math.floor(currentPageIndex / 2);
   for (let i = 0; i < sheetCount; i++){
@@ -749,11 +825,20 @@ function applyWordStatusClasses(){
 }
 
 function updateReaderChrome(idx){
-  const pages = getBookPages(currentBook, currentVariant);
+  const pages = currentFlatPages && currentFlatPages.length ? currentFlatPages : getBookPages(currentBook, currentVariant);
   document.getElementById('progressFill').style.width = (((idx + 1) / pages.length) * 100) + '%';
   document.getElementById('pageIndicator').textContent = (idx + 1) + ' / ' + pages.length;
   document.getElementById('prevPageBtn').disabled = idx === 0;
   document.getElementById('nextPageBtn').disabled = idx === pages.length - 1;
+
+  // Sync chapter dropdown value with active page
+  const select = document.getElementById('chapterSelect');
+  if (select && currentChapters && currentChapters.length > 1) {
+    const activeCh = currentChapters.find(c => idx >= c.startIndex && idx < c.startIndex + c.pageCount);
+    if (activeCh) {
+      select.value = String(activeCh.index);
+    }
+  }
 }
 
 function renderPage(idx){
@@ -1340,15 +1425,22 @@ function initCommonListeners() {
 
   const navVocabBtn = document.getElementById('navVocabBtn');
   if (navVocabBtn) {
-    navVocabBtn.addEventListener('click', async () => {
-      const readerView = document.getElementById('readerView');
-      if (readerView && readerView.hidden){
-        const recentData = getMostRecentBookData();
-        const book = recentData ? recentData.book : (BOOKS.find((b) => b.id === HERO_BOOK_ID) || BOOKS[0]);
-        const pos = recentData && recentData.progressData ? recentData.progressData.lastPosition : 0;
-        await openBook(book, document.getElementById('heroCover'), pos);
-      }
+    navVocabBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
       openDrawer();
+    });
+  }
+
+  const chapterSelect = document.getElementById('chapterSelect');
+  if (chapterSelect) {
+    chapterSelect.addEventListener('change', (e) => {
+      const chIdx = parseInt(e.target.value, 10);
+      if (currentChapters && currentChapters[chIdx]) {
+        stopReadAloud();
+        const targetPage = currentChapters[chIdx].startIndex;
+        goToPage(targetPage - currentPageIndex);
+      }
     });
   }
 
