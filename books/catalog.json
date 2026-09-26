@@ -1,28 +1,4 @@
 [
-      {
-  "id": "scifi-10",
-  "title": "The Ninth Lantern 2",
-  "author": "Juraj Suda",
-  "level": "C2",
-  "genre": "fantasy",
-  "minutes": 446,
-  "vocab": 2,
-  "dateAdded": "2026-09-25",
-  "c1": "#B8863B",
-  "c2": "#2A1C0A"
-  },
-    {
-  "id": "scifi-9",
-  "title": "The Ninth Lantern",
-  "author": "Juraj Suda",
-  "level": "C2",
-  "genre": "fantasy",
-  "minutes": 446,
-  "vocab": 2,
-  "dateAdded": "2026-09-25",
-  "c1": "#B8863B",
-  "c2": "#2A1C0A"
-  },
   {
     "id": "epic-novel-1",
     "title": "The Long Horizon",
@@ -34,6 +10,18 @@
     "dateAdded": "2026-10-15",
     "c1": "#2C3E50",
     "c2": "#0F172A"
+  },
+  {
+    "id": "scifi-9",
+    "title": "The Ninth Lantern",
+    "author": "Juraj Suda",
+    "level": "B1",
+    "genre": "fantasy",
+    "minutes": 446,
+    "vocab": 2,
+    "dateAdded": "2026-09-25",
+    "c1": "#B8863B",
+    "c2": "#2A1C0A"
   },
   {
     "id": "healthy-1",
