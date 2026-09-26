@@ -810,9 +810,6 @@ function createAdSlotEl() {
          data-ad-format="auto"
          data-full-width-responsive="true"></ins>
   `;
-  try {
-    (window.adsbygoogle = window.adsbygoogle || []).push({});
-  } catch (e) { /* ignore */ }
   return container;
 }
 
@@ -874,7 +871,11 @@ function renderDiscoverPage() {
 
     // Insert an ad slot between genre sections (after 2nd genre section)
     if (idx === 1) {
-      genreRowsContainer.appendChild(createAdSlotEl());
+      const adEl = createAdSlotEl();
+      genreRowsContainer.appendChild(adEl);
+      try {
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+      } catch (e) { /* ignore */ }
     }
   });
 
@@ -922,7 +923,11 @@ function renderDiscoverPage() {
 
     // Insert an ad slot between level sections (after 3rd level section)
     if (idx === 2) {
-      levelRowsContainer.appendChild(createAdSlotEl());
+      const adEl = createAdSlotEl();
+      levelRowsContainer.appendChild(adEl);
+      try {
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+      } catch (e) { /* ignore */ }
     }
   });
 }
