@@ -15,20 +15,14 @@ let STORY = {};
 const bookContentCache = {};
 
 async function loadAllBooks() {
-  const urlsToTry = ['books/catalog.json', '/books/catalog.json'];
-  for (const url of urlsToTry) {
-    try {
-      const res = await fetch(url);
-      if (res.ok) {
-        BOOKS = await res.json();
-        return;
-      }
-    } catch (err) {
-      /* try next URL */
-    }
+  try {
+    const res = await fetch('books/catalog.json');
+    if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+    BOOKS = await res.json();
+  } catch (err) {
+    console.error('Failed to load books/catalog.json:', err);
+    BOOKS = [];
   }
-  console.error('Failed to load books/catalog.json from all paths');
-  BOOKS = [];
 }
 
 async function fetchBookContent(bookId, level) {
@@ -37,53 +31,25 @@ async function fetchBookContent(bookId, level) {
   if (bookContentCache[cacheKey]) {
     return bookContentCache[cacheKey];
   }
-
-  const filename = `${encodeURIComponent(bookId)}-${selectedLevel.toLowerCase()}.json`;
-  const urlsToTry = [
-    `books/content/${filename}`,
-    `/books/content/${filename}`
-  ];
-
-  for (const url of urlsToTry) {
-    try {
-      const res = await fetch(url);
-      if (res.ok) {
-        const content = await res.json();
-        if (content && content.story) {
-          bookContentCache[cacheKey] = content;
-          return content;
-        }
-      }
-    } catch (err) {
-      /* try next URL */
-    }
+  try {
+    const res = await fetch(`books/content/${encodeURIComponent(bookId)}-${selectedLevel.toLowerCase()}.json`);
+    if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+    const content = await res.json();
+    bookContentCache[cacheKey] = content;
+    return content;
+  } catch (err) {
+    console.error(`Failed to load book content for ${bookId} level ${selectedLevel}:`, err);
+    return null;
   }
-
-  console.error(`Failed to load book content for ${bookId} level ${selectedLevel}`);
-  return null;
 }
 
 function getBookPages(book, variant) {
   if (book && book.story && book.story[variant]) {
-    const data = book.story[variant];
-    if (Array.isArray(data)) return data;
-    if (data && Array.isArray(data.chapters)) {
-      const all = [];
-      data.chapters.forEach(c => { if (Array.isArray(c.pages)) all.push(...c.pages); });
-      return all;
-    }
+    return book.story[variant];
   }
   if (book && book.story) {
     const firstAvailable = Object.keys(book.story)[0];
-    if (firstAvailable && book.story[firstAvailable]) {
-      const data = book.story[firstAvailable];
-      if (Array.isArray(data)) return data;
-      if (data && Array.isArray(data.chapters)) {
-        const all = [];
-        data.chapters.forEach(c => { if (Array.isArray(c.pages)) all.push(...c.pages); });
-        return all;
-      }
-    }
+    if (firstAvailable && book.story[firstAvailable]) return book.story[firstAvailable];
   }
   return STORY[variant] || STORY['C1'] || [];
 }
@@ -401,27 +367,26 @@ function updateBookProgress(bookId, pageIndex, totalPages, level){
 function getMostRecentBookData(){
   const data = loadReadingProgress();
   if (!data.books) return null;
-  let mostRecentEntry = null;
+  let mostRecentBookId = null;
   let maxTime = 0;
 
-  for (const [key, info] of Object.entries(data.books)){
-    if (info && info.lastRead && info.bookId){
+  for (const [id, info] of Object.entries(data.books)){
+    if (info && info.lastRead){
       const t = new Date(info.lastRead).getTime();
       if (!isNaN(t) && t > maxTime){
         maxTime = t;
-        mostRecentEntry = info;
+        mostRecentBookId = id;
       }
     }
   }
 
-  if (!mostRecentEntry || !mostRecentEntry.bookId) return null;
-  const targetId = mostRecentEntry.bookId;
-  const bookMeta = BOOKS.find((b) => b.id === targetId);
+  if (!mostRecentBookId) return null;
+  const bookMeta = BOOKS.find((b) => b.id === mostRecentBookId);
   if (!bookMeta) return null;
 
   return {
     book: bookMeta,
-    progressData: mostRecentEntry
+    progressData: data.books[mostRecentBookId]
   };
 }
 
@@ -552,14 +517,7 @@ async function openBook(book, originCoverEl, startPosition, targetLevel){
 
   const levelToLoad = targetLevel || (typeof activeLevel !== 'undefined' && activeLevel !== 'all' ? activeLevel : book.level) || 'B1';
 
-  let fullContent = await fetchBookContent(book.id, levelToLoad);
-  if (!fullContent || !fullContent.story) {
-    // If requested level content file is missing, fallback to the book's default level file
-    if (book.level && book.level.toUpperCase() !== levelToLoad.toUpperCase()) {
-      fullContent = await fetchBookContent(book.id, book.level);
-    }
-  }
-
+  const fullContent = await fetchBookContent(book.id, levelToLoad);
   if (fullContent && fullContent.story) {
     currentBook.story = fullContent.story;
   } else if (!currentBook.story) {
@@ -586,9 +544,8 @@ async function openBook(book, originCoverEl, startPosition, targetLevel){
     const status = getBookStatus(book.id);
     if (status === 'unread') {
       setBookStatus(book.id, 'in-progress');
+      refreshAllBookDisplays();
     }
-    updateBookProgress(book.id, targetPos, 1, levelToLoad);
-    refreshAllBookDisplays();
   }
 
   const flyingBookEl = document.getElementById('flyingBook');
@@ -714,165 +671,14 @@ function nearestVariant(level){
 let currentVariant = 'B1';
 let currentPageIndex = 0;
 let isPageAnimating = false;
-let currentChapters = [];
-let currentFlatPages = [];
-
-function repaginatePagesForMobile(pages) {
-  if (!pages || !Array.isArray(pages)) return pages || [];
-  if (typeof window === 'undefined' || window.innerWidth > 768) {
-    return pages;
-  }
-
-  const TARGET_WORDS = 80;
-  const newPages = [];
-  let currentParagraphs = [];
-  let currentWordCount = 0;
-
-  pages.forEach(pg => {
-    if (!Array.isArray(pg)) return;
-    pg.forEach(paragraph => {
-      if (!paragraph || typeof paragraph !== 'string') return;
-      const sentences = paragraph.match(/[^.!?]+[.!?]+|\S+/g) || [paragraph];
-
-      let sentenceBuffer = "";
-      sentences.forEach(sentence => {
-        const words = sentence.trim().split(/\s+/).filter(Boolean);
-        const wCount = words.length;
-
-        if (currentWordCount + wCount > TARGET_WORDS && currentParagraphs.length > 0) {
-          if (sentenceBuffer.trim()) {
-            currentParagraphs.push(sentenceBuffer.trim());
-            sentenceBuffer = "";
-          }
-          newPages.push(currentParagraphs);
-          currentParagraphs = [];
-          currentWordCount = 0;
-        }
-
-        sentenceBuffer += (sentenceBuffer ? " " : "") + sentence.trim();
-        currentWordCount += wCount;
-      });
-
-      if (sentenceBuffer.trim()) {
-        currentParagraphs.push(sentenceBuffer.trim());
-      }
-    });
-  });
-
-  if (currentParagraphs.length > 0) {
-    newPages.push(currentParagraphs);
-  }
-
-  return newPages.length > 0 ? newPages : pages;
-}
-
-function buildChaptersForBook(book, variant) {
-  let rawPages = getBookPages(book, variant);
-  if (typeof window !== 'undefined' && window.innerWidth <= 768) {
-    rawPages = repaginatePagesForMobile(rawPages);
-  }
-
-  let chapters = [];
-  let flatPages = [];
-
-  const storyLvl = book && book.story ? (book.story[variant] || book.story[Object.keys(book.story)[0]]) : null;
-
-  // Check if book has explicit chapters in story JSON
-  if (storyLvl && Array.isArray(storyLvl.chapters)) {
-    let offset = 0;
-    storyLvl.chapters.forEach((ch, idx) => {
-      let chPages = ch.pages || [];
-      if (typeof window !== 'undefined' && window.innerWidth <= 768) {
-        chPages = repaginatePagesForMobile(chPages);
-      }
-      chapters.push({
-        index: idx,
-        title: ch.title || `Chapter ${idx + 1}`,
-        startIndex: offset,
-        pageCount: chPages.length,
-        pages: chPages
-      });
-      flatPages.push(...chPages);
-      offset += chPages.length;
-    });
-  } else if (book && Array.isArray(book.chapters)) {
-    let offset = 0;
-    book.chapters.forEach((ch, idx) => {
-      let chPages = ch.pages || [];
-      if (typeof window !== 'undefined' && window.innerWidth <= 768) {
-        chPages = repaginatePagesForMobile(chPages);
-      }
-      chapters.push({
-        index: idx,
-        title: ch.title || `Chapter ${idx + 1}`,
-        startIndex: offset,
-        pageCount: chPages.length,
-        pages: chPages
-      });
-      flatPages.push(...chPages);
-      offset += chPages.length;
-    });
-  } else if (rawPages && rawPages.length > 8) {
-    // Automatically partition long books (> 8 pages) into 8-page virtual chapters
-    const PAGES_PER_CHAPTER = 8;
-    let offset = 0;
-    let chIdx = 0;
-    while (offset < rawPages.length) {
-      const chunk = rawPages.slice(offset, offset + PAGES_PER_CHAPTER);
-      chapters.push({
-        index: chIdx,
-        title: `Chapter ${chIdx + 1} (Pages ${offset + 1}–${offset + chunk.length})`,
-        startIndex: offset,
-        pageCount: chunk.length,
-        pages: chunk
-      });
-      flatPages.push(...chunk);
-      offset += chunk.length;
-      chIdx++;
-    }
-  } else {
-    // Short book: single chapter
-    flatPages = rawPages || [];
-    chapters = [{
-      index: 0,
-      title: 'Full Story',
-      startIndex: 0,
-      pageCount: flatPages.length,
-      pages: flatPages
-    }];
-  }
-
-  return { chapters, flatPages };
-}
-
-function updateChapterDropdownUI() {
-  const select = document.getElementById('chapterSelect');
-  if (!select) return;
-
-  if (currentChapters && currentChapters.length > 1) {
-    select.innerHTML = currentChapters.map(ch =>
-      `<option value="${ch.index}">${escapeHtml(ch.title)}</option>`
-    ).join('');
-    select.style.display = 'inline-block';
-  } else {
-    select.innerHTML = '';
-    select.style.display = 'none';
-  }
-}
 
 function prepareReader(book, startPosition, level){
   const selectedLevel = level || (typeof activeLevel !== 'undefined' && activeLevel !== 'all' ? activeLevel : book.level) || 'B1';
   document.getElementById('readerTitle').textContent = book.title;
   document.getElementById('readerSub').textContent = book.author + ' · ' + selectedLevel.toUpperCase();
   currentVariant = nearestVariant(selectedLevel);
-
-  const parsed = buildChaptersForBook(currentBook || book, currentVariant);
-  currentChapters = parsed.chapters;
-  currentFlatPages = parsed.flatPages;
-
-  updateChapterDropdownUI();
-
-  const totalPages = currentFlatPages ? currentFlatPages.length : 1;
+  const pages = getBookPages(currentBook || book, currentVariant);
+  const totalPages = pages ? pages.length : 1;
   const initialPos = (typeof startPosition === 'number' && startPosition >= 0 && startPosition < totalPages) ? startPosition : 0;
   currentPageIndex = initialPos;
   renderPage(currentPageIndex);
@@ -885,44 +691,25 @@ function prepareReader(book, startPosition, level){
 }
 
 function renderSheets(){
-  const pages = currentFlatPages && currentFlatPages.length ? currentFlatPages : getBookPages(currentBook, currentVariant);
+  const pages = getBookPages(currentBook, currentVariant);
   const wrapper = document.getElementById('sheetsWrapper');
   wrapper.innerHTML = '';
   const sheetCount = Math.ceil(pages.length / 2);
-  const activeSheet = Math.floor(currentPageIndex / 2);
-
   for (let i = 0; i < sheetCount; i++){
-    // WebKit GPU / Layer Memory Optimization:
-    // Only instantiate 3D .paper-sheet DOM elements for sheets within range (activeSheet ± 2).
-    // Distant sheets (> 2 sheets away) do not exist in DOM, keeping compositor memory minimal on iOS devices.
-    if (Math.abs(i - activeSheet) > 2) continue;
-
     const frontIdx = i * 2, backIdx = i * 2 + 1;
     const sheet = document.createElement('div');
     sheet.className = 'paper-sheet';
     sheet.id = 'sheet-' + i;
 
-    // DOM Recycling / Virtualization:
-    // Only generate full tokenized DOM for active sheet and immediate adjacent sheets (activeSheet - 1, activeSheet, activeSheet + 1)
-    const isNearby = Math.abs(i - activeSheet) <= 1;
-
     const front = document.createElement('div');
     front.className = 'page-face page-front';
-    if (isNearby && frontIdx < pages.length) {
-      front.innerHTML = '<div class="page-content">' + pages[frontIdx].map((p) => '<p>' + tokenize(p) + '</p>').join('') + '</div>';
-    } else {
-      front.innerHTML = '<div class="page-content"></div>';
-    }
+    front.innerHTML = '<div class="page-content">' + pages[frontIdx].map((p) => '<p>' + tokenize(p) + '</p>').join('') + '</div>';
 
     const back = document.createElement('div');
     back.className = 'page-face page-back';
-    if (isNearby) {
-      back.innerHTML = backIdx < pages.length
-        ? '<div class="page-content">' + pages[backIdx].map((p) => '<p>' + tokenize(p) + '</p>').join('') + '</div>'
-        : '<div class="page-content page-end">The End</div>';
-    } else {
-      back.innerHTML = '<div class="page-content"></div>';
-    }
+    back.innerHTML = backIdx < pages.length
+      ? '<div class="page-content">' + pages[backIdx].map((p) => '<p>' + tokenize(p) + '</p>').join('') + '</div>'
+      : '<div class="page-content page-end">The End</div>';
 
     sheet.appendChild(front);
     sheet.appendChild(back);
@@ -931,7 +718,7 @@ function renderSheets(){
 }
 
 function updateSheetZIndexes(){
-  const pages = currentFlatPages && currentFlatPages.length ? currentFlatPages : getBookPages(currentBook, currentVariant);
+  const pages = getBookPages(currentBook, currentVariant);
   const sheetCount = Math.ceil(pages.length / 2);
   const activeSheet = Math.floor(currentPageIndex / 2);
   for (let i = 0; i < sheetCount; i++){
@@ -962,20 +749,11 @@ function applyWordStatusClasses(){
 }
 
 function updateReaderChrome(idx){
-  const pages = currentFlatPages && currentFlatPages.length ? currentFlatPages : getBookPages(currentBook, currentVariant);
+  const pages = getBookPages(currentBook, currentVariant);
   document.getElementById('progressFill').style.width = (((idx + 1) / pages.length) * 100) + '%';
   document.getElementById('pageIndicator').textContent = (idx + 1) + ' / ' + pages.length;
   document.getElementById('prevPageBtn').disabled = idx === 0;
   document.getElementById('nextPageBtn').disabled = idx === pages.length - 1;
-
-  // Sync chapter dropdown value with active page
-  const select = document.getElementById('chapterSelect');
-  if (select && currentChapters && currentChapters.length > 1) {
-    const activeCh = currentChapters.find(c => idx >= c.startIndex && idx < c.startIndex + c.pageCount);
-    if (activeCh) {
-      select.value = String(activeCh.index);
-    }
-  }
 }
 
 function renderPage(idx){
@@ -988,14 +766,13 @@ function renderPage(idx){
 
 async function goToPage(delta, opts){
   opts = opts || {};
-  const pages = currentFlatPages && currentFlatPages.length ? currentFlatPages : getBookPages(currentBook, currentVariant);
+  const pages = getBookPages(currentBook, currentVariant);
   const next = currentPageIndex + delta;
   if (next < 0 || next >= pages.length || isPageAnimating) return;
   isPageAnimating = true;
   hidePopover();
   if (!opts.keepReading) stopReadAloud();
   currentPageIndex = next;
-  renderSheets();
   updateSheetZIndexes();
   updateReaderChrome(next);
 
@@ -1230,14 +1007,11 @@ function pickEnglishVoice(){
     return voices.find((v) => v.lang && v.lang.toLowerCase().indexOf('en') === 0) || null;
   }catch(e){ return null; }
 }
-let activeAudioInstance = null;
-
 function speak(word){
   try{
     stopReadAloud();
     if (currentAudioUrl) {
       const audio = new Audio(currentAudioUrl);
-      activeAudioInstance = audio;
       audio.play().catch(err => {
         if ('speechSynthesis' in window) {
           const u = new SpeechSynthesisUtterance(word);
@@ -1383,13 +1157,6 @@ function speakNextSentence(){
 
 function stopReadAloud(){
   clearReadTimers();
-  if (activeAudioInstance) {
-    try {
-      activeAudioInstance.pause();
-      activeAudioInstance.src = '';
-    } catch(e) {}
-    activeAudioInstance = null;
-  }
   try{ if ('speechSynthesis' in window) window.speechSynthesis.cancel(); }catch(e){ /* ignore */ }
   clearReadingHighlight();
   setPlayingUI(false);
@@ -1499,7 +1266,130 @@ function closeDrawer(){
   if (vocabDrawer) vocabDrawer.classList.remove('open');
 }
 
+/* ================================================================
+   FLASHCARDS PRACTICE
+   ================================================================ */
+let fcList = [];
+let fcIndex = 0;
+
+function startFlashcardPractice() {
+  const vocab = loadVocab();
+  if (!vocab.length) {
+    alert('Uložte si najprv slovíčka kliknutím na "Učiť sa" počas čítania.');
+    return;
+  }
+  fcList = vocab.slice().sort(() => Math.random() - 0.5);
+  fcIndex = 0;
+  showFlashcard(fcIndex);
+  const modal = document.getElementById('flashcardModal');
+  if (modal) modal.removeAttribute('hidden');
+}
+
+function showFlashcard(index) {
+  if (!fcList.length || index < 0 || index >= fcList.length) return;
+  const item = fcList[index];
+  const card = document.getElementById('fcCard');
+  if (card) card.classList.remove('flipped');
+
+  const fcCounter = document.getElementById('fcCounter');
+  const fcWord = document.getElementById('fcWord');
+  const fcTranslation = document.getElementById('fcTranslation');
+
+  if (fcCounter) fcCounter.textContent = `${index + 1} / ${fcList.length}`;
+  if (fcWord) fcWord.textContent = item.word;
+
+  const lang = currentLang || 'sk';
+  const cacheKey = `${lang}:${item.word.trim().toLowerCase()}`;
+  const cached = wordCache[cacheKey];
+
+  if (cached && cached.translation) {
+    if (fcTranslation) fcTranslation.textContent = cached.translation;
+  } else {
+    if (fcTranslation) fcTranslation.textContent = item.sk || 'Načítavam...';
+    fetchWordData(item.word, lang).then(data => {
+      if (fcTranslation && data && data.translation) {
+        fcTranslation.textContent = data.translation;
+      }
+    });
+  }
+}
+
+function nextFlashcard() {
+  if (!fcList.length) return;
+  fcIndex = (fcIndex + 1) % fcList.length;
+  showFlashcard(fcIndex);
+}
+
+function closeFlashcardPractice() {
+  const modal = document.getElementById('flashcardModal');
+  if (modal) modal.setAttribute('hidden', '');
+}
+
 function initCommonListeners() {
+  /* Touch Swipe Gestures for Mobile Page Turning */
+  const bookStageEl = document.getElementById('bookStage');
+  if (bookStageEl) {
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchStartTime = 0;
+
+    bookStageEl.addEventListener('touchstart', (e) => {
+      if (e.touches.length !== 1) return;
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+      touchStartTime = Date.now();
+    }, { passive: true });
+
+    bookStageEl.addEventListener('touchend', (e) => {
+      if (e.changedTouches.length !== 1) return;
+      const touchEndX = e.changedTouches[0].clientX;
+      const touchEndY = e.changedTouches[0].clientY;
+      const deltaX = touchEndX - touchStartX;
+      const deltaY = touchEndY - touchStartY;
+      const deltaTime = Date.now() - touchStartTime;
+
+      if (Math.abs(deltaX) > 40 && Math.abs(deltaY) < 60 && deltaTime < 600) {
+        if (e.target.closest('.w') || e.target.closest('#wordPopover') || e.target.closest('.vocab-drawer')) return;
+        if (deltaX < 0) {
+          stopReadAloud();
+          goToPage(1);
+        } else {
+          stopReadAloud();
+          goToPage(-1);
+        }
+      }
+    }, { passive: true });
+  }
+  const startFlashcardsBtn = document.getElementById('startFlashcardsBtn');
+  if (startFlashcardsBtn) {
+    startFlashcardsBtn.addEventListener('click', startFlashcardPractice);
+  }
+
+  const fcCard = document.getElementById('fcCard');
+  if (fcCard) {
+    fcCard.addEventListener('click', () => {
+      fcCard.classList.toggle('flipped');
+    });
+  }
+
+  const fcNextBtn = document.getElementById('fcNextBtn');
+  if (fcNextBtn) {
+    fcNextBtn.addEventListener('click', nextFlashcard);
+  }
+
+  const fcCloseBtn = document.getElementById('fcCloseBtn');
+  if (fcCloseBtn) {
+    fcCloseBtn.addEventListener('click', closeFlashcardPractice);
+  }
+
+  const fcAudioBtn = document.getElementById('fcAudioBtn');
+  if (fcAudioBtn) {
+    fcAudioBtn.addEventListener('click', () => {
+      if (fcList[fcIndex]) {
+        speak(fcList[fcIndex].word);
+      }
+    });
+  }
   const popoverEl = document.getElementById('wordPopover');
   if (popoverEl) {
     popoverEl.addEventListener('click', (e) => {
@@ -1573,43 +1463,17 @@ function initCommonListeners() {
 
   const navVocabBtn = document.getElementById('navVocabBtn');
   if (navVocabBtn) {
-    navVocabBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
+    navVocabBtn.addEventListener('click', async () => {
+      const readerView = document.getElementById('readerView');
+      if (readerView && readerView.hidden){
+        const recentData = getMostRecentBookData();
+        const book = recentData ? recentData.book : (BOOKS.find((b) => b.id === HERO_BOOK_ID) || BOOKS[0]);
+        const pos = recentData && recentData.progressData ? recentData.progressData.lastPosition : 0;
+        await openBook(book, document.getElementById('heroCover'), pos);
+      }
       openDrawer();
     });
   }
-
-  const chapterSelect = document.getElementById('chapterSelect');
-  if (chapterSelect) {
-    chapterSelect.addEventListener('change', (e) => {
-      const chIdx = parseInt(e.target.value, 10);
-      if (currentChapters && currentChapters[chIdx]) {
-        stopReadAloud();
-        const targetPage = currentChapters[chIdx].startIndex;
-        goToPage(targetPage - currentPageIndex);
-      }
-    });
-  }
-
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-      closeDrawer();
-      closeLangMenu();
-      hidePopover();
-    }
-  });
-
-  document.addEventListener('click', (e) => {
-    const vocabDrawer = document.getElementById('vocabDrawer');
-    const navVocabBtn = document.getElementById('navVocabBtn');
-    const drawerToggleBtn = document.getElementById('drawerToggleBtn');
-    if (vocabDrawer && vocabDrawer.classList.contains('open')) {
-      if (!vocabDrawer.contains(e.target) && (!navVocabBtn || !navVocabBtn.contains(e.target)) && (!drawerToggleBtn || !drawerToggleBtn.contains(e.target))) {
-        closeDrawer();
-      }
-    }
-  });
 
   const vocabList = document.getElementById('vocabList');
   if (vocabList) {

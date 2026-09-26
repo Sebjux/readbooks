@@ -1,0 +1,10 @@
+Popover test server running on port 8103
+[index.html] Popover word: "Marcus" (expected: "Marcus")
+[index.html] Buttons visible -> speak:true, known:true, learn:true, close:true
+[index.html] Known button toggled active class: true
+[index.html] Popover visible after close: false
+[discover.html] Popover word: "The" (expected: "The")
+[discover.html] Buttons visible -> speak:true, known:true, learn:true, close:true
+[discover.html] Known button toggled active class: true
+[discover.html] Popover visible after close: false
+Popover parity test PASSED on both index.html and discover.html!
