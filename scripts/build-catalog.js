@@ -13,7 +13,7 @@ const defaultBookLevels = {
   "classic-4": "B2", "classic-3": "B1", "classic-2": "C1", "classic-1": "C1",
   "daily-7": "C2", "daily-6": "A1", "daily-5": "A2", "daily-4": "B1",
   "daily-3": "B1", "daily-2": "A2", "daily-1": "A2",
-  "healthy-1": "B1"
+  "healthy-1": "B1", "epic-novel-1": "C1", "scifi-10": "C2"
 };
 
 const files = fs.readdirSync(contentDir).filter(f => f.endsWith('.json'));

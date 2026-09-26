@@ -24,6 +24,18 @@
   "c2": "#2A1C0A"
   },
   {
+    "id": "epic-novel-1",
+    "title": "The Long Horizon",
+    "author": "Eleanor Vance",
+    "level": "C1",
+    "genre": "classic",
+    "minutes": 320,
+    "vocab": 12,
+    "dateAdded": "2026-10-15",
+    "c1": "#2C3E50",
+    "c2": "#0F172A"
+  },
+  {
     "id": "healthy-1",
     "title": "The Rhythm of Renewal",
     "author": "Clara Miller",
@@ -82,6 +94,18 @@
     "dateAdded": "2026-09-22",
     "c1": "#881337",
     "c2": "#280511"
+  },
+  {
+    "id": "scifi-10",
+    "title": "The Ninth Lantern 2",
+    "level": "C2",
+    "author": "Aiden Cole",
+    "genre": "scifi",
+    "minutes": 140,
+    "vocab": 8,
+    "dateAdded": "2026-09-22",
+    "c1": "#7CACF8",
+    "c2": "#12141F"
   },
   {
     "id": "scifi-7",
