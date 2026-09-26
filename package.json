@@ -1,8 +1,0 @@
-{
-  "name": "lumen-english-reader",
-  "version": "1.0.0",
-  "description": "Lumen — English Reading Library",
-  "scripts": {
-    "build:catalog": "node scripts/build-catalog.js"
-  }
-}
