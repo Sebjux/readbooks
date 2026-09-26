@@ -633,6 +633,18 @@ async function openBook(book, originCoverEl, startPosition, targetLevel){
   prepareReader(book, targetPos);
   readerView.hidden = false;
   requestAnimationFrame(() => { readerView.classList.add('entered'); });
+
+  // Initialize reader AdSense slot only when visible and only once
+  const readerAdIns = readerView ? readerView.querySelector('.ad-container--reader ins.adsbygoogle') : null;
+  if (readerAdIns && !readerAdIns.dataset.adPushed) {
+    readerAdIns.dataset.adPushed = 'true';
+    try {
+      (window.adsbygoogle = window.adsbygoogle || []).push({});
+    } catch (e) {
+      console.error('AdSense reader ad push error:', e);
+    }
+  }
+
   await wait(280);
 
   flyingBookEl.hidden = true;
