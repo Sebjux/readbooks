@@ -717,8 +717,61 @@ let isPageAnimating = false;
 let currentChapters = [];
 let currentFlatPages = [];
 
+function repaginatePagesForMobile(pages) {
+  if (!pages || !Array.isArray(pages)) return pages || [];
+  if (typeof window === 'undefined' || window.innerWidth > 768) {
+    return pages;
+  }
+
+  const TARGET_WORDS = 80;
+  const newPages = [];
+  let currentParagraphs = [];
+  let currentWordCount = 0;
+
+  pages.forEach(pg => {
+    if (!Array.isArray(pg)) return;
+    pg.forEach(paragraph => {
+      if (!paragraph || typeof paragraph !== 'string') return;
+      const sentences = paragraph.match(/[^.!?]+[.!?]+|\S+/g) || [paragraph];
+
+      let sentenceBuffer = "";
+      sentences.forEach(sentence => {
+        const words = sentence.trim().split(/\s+/).filter(Boolean);
+        const wCount = words.length;
+
+        if (currentWordCount + wCount > TARGET_WORDS && currentParagraphs.length > 0) {
+          if (sentenceBuffer.trim()) {
+            currentParagraphs.push(sentenceBuffer.trim());
+            sentenceBuffer = "";
+          }
+          newPages.push(currentParagraphs);
+          currentParagraphs = [];
+          currentWordCount = 0;
+        }
+
+        sentenceBuffer += (sentenceBuffer ? " " : "") + sentence.trim();
+        currentWordCount += wCount;
+      });
+
+      if (sentenceBuffer.trim()) {
+        currentParagraphs.push(sentenceBuffer.trim());
+      }
+    });
+  });
+
+  if (currentParagraphs.length > 0) {
+    newPages.push(currentParagraphs);
+  }
+
+  return newPages.length > 0 ? newPages : pages;
+}
+
 function buildChaptersForBook(book, variant) {
-  const rawPages = getBookPages(book, variant);
+  let rawPages = getBookPages(book, variant);
+  if (typeof window !== 'undefined' && window.innerWidth <= 768) {
+    rawPages = repaginatePagesForMobile(rawPages);
+  }
+
   let chapters = [];
   let flatPages = [];
 
@@ -728,7 +781,10 @@ function buildChaptersForBook(book, variant) {
   if (storyLvl && Array.isArray(storyLvl.chapters)) {
     let offset = 0;
     storyLvl.chapters.forEach((ch, idx) => {
-      const chPages = ch.pages || [];
+      let chPages = ch.pages || [];
+      if (typeof window !== 'undefined' && window.innerWidth <= 768) {
+        chPages = repaginatePagesForMobile(chPages);
+      }
       chapters.push({
         index: idx,
         title: ch.title || `Chapter ${idx + 1}`,
@@ -742,7 +798,10 @@ function buildChaptersForBook(book, variant) {
   } else if (book && Array.isArray(book.chapters)) {
     let offset = 0;
     book.chapters.forEach((ch, idx) => {
-      const chPages = ch.pages || [];
+      let chPages = ch.pages || [];
+      if (typeof window !== 'undefined' && window.innerWidth <= 768) {
+        chPages = repaginatePagesForMobile(chPages);
+      }
       chapters.push({
         index: idx,
         title: ch.title || `Chapter ${idx + 1}`,
