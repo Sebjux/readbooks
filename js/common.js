@@ -734,29 +734,10 @@ function repaginateStrictNoScroll(rawPages) {
     return rawPages || [];
   }
 
-  const readerView = document.getElementById('readerView');
-  const wasHidden = readerView ? readerView.hidden : false;
-  if (readerView && wasHidden) {
-    readerView.hidden = false;
-  }
-
-  const bookStage = document.getElementById('bookStage');
-  const sheetsWrapper = document.getElementById('sheetsWrapper');
-  const samplePage = document.querySelector('#sheetsWrapper .page-content') || document.querySelector('.page-content');
-
-  let targetWidth = samplePage ? samplePage.clientWidth : 0;
-  let targetHeight = samplePage ? samplePage.clientHeight : 0;
-
-  if (!targetWidth || !targetHeight) {
-    if (bookStage && bookStage.clientWidth > 0 && bookStage.clientHeight > 0) {
-      targetWidth = bookStage.clientWidth;
-      targetHeight = bookStage.clientHeight;
-    } else {
-      const isMobile = window.innerWidth <= 768;
-      targetWidth = isMobile ? window.innerWidth - 32 : 360;
-      targetHeight = isMobile ? window.innerHeight - 180 : 500;
-    }
-  }
+  // 1. Vytvorenie dočasného meracieho elementu s presnými rozmermi cieľovej strany
+  const samplePage = document.querySelector('.page-content');
+  const targetWidth = samplePage ? samplePage.clientWidth : (window.innerWidth <= 768 ? window.innerWidth - 32 : 360);
+  const targetHeight = samplePage ? samplePage.clientHeight : (window.innerHeight <= 768 ? window.innerHeight - 180 : 500);
 
   const measurer = document.createElement('div');
   measurer.className = 'page-content';
@@ -768,17 +749,18 @@ function repaginateStrictNoScroll(rawPages) {
   measurer.style.height = targetHeight + 'px';
   measurer.style.overflow = 'hidden';
 
+  // Aplikovanie font-scale
+  const bookStage = document.getElementById('bookStage');
   if (bookStage) {
     measurer.style.setProperty('--font-scale', bookStage.style.getPropertyValue('--font-scale') || '1');
   }
 
-  const parentContainer = sheetsWrapper || bookStage || document.body;
-  parentContainer.appendChild(measurer);
+  document.body.appendChild(measurer);
 
   const newPages = [];
   let currentPageParagraphs = [];
-  let currentParagraphBuffer = "";
 
+  // Vytiahnutie všetkých odsekov
   const allParagraphs = [];
   rawPages.forEach(pg => {
     if (Array.isArray(pg)) {
@@ -788,76 +770,42 @@ function repaginateStrictNoScroll(rawPages) {
     }
   });
 
+  // 2. Iterácia cez odseky a vety s meraním scrollHeight vs clientHeight
   allParagraphs.forEach(paragraph => {
     if (!paragraph || typeof paragraph !== 'string') return;
 
-    const sentences = paragraph.match(/[^.!?;:]+[.!?;:]+|\S+/g) || [paragraph];
+    const sentences = paragraph.match(/[^.!?]+[.!?]+|\S+/g) || [paragraph];
+    let currentParagraphBuffer = "";
 
     sentences.forEach(sentence => {
-      const trimmedSentence = sentence.trim();
-      if (!trimmedSentence) return;
+      const testBuffer = currentParagraphBuffer ? (currentParagraphBuffer + " " + sentence.trim()) : sentence.trim();
+      const testPagesContent = [...currentPageParagraphs, testBuffer];
+      measurer.innerHTML = testPagesContent.map(p => `<p>${p}</p>`).join('');
 
-      const testParagraph = currentParagraphBuffer ? (currentParagraphBuffer + " " + trimmedSentence) : trimmedSentence;
-      const testPagesContent = [...currentPageParagraphs, testParagraph];
-
-      measurer.innerHTML = testPagesContent.map(p => '<p>' + tokenize(p) + '</p>').join('');
-
-      if (measurer.scrollHeight > measurer.clientHeight) {
+      // Ak pretečie výška, uzavrie sa strana
+      if (measurer.scrollHeight > measurer.clientHeight && currentPageParagraphs.length > 0) {
         if (currentParagraphBuffer.trim()) {
           currentPageParagraphs.push(currentParagraphBuffer.trim());
         }
+        newPages.push(currentPageParagraphs);
 
-        if (currentPageParagraphs.length > 0) {
-          newPages.push(currentPageParagraphs);
-          currentPageParagraphs = [];
-        }
-
-        currentParagraphBuffer = trimmedSentence;
-
-        measurer.innerHTML = '<p>' + tokenize(currentParagraphBuffer) + '</p>';
-        if (measurer.scrollHeight > measurer.clientHeight) {
-          const words = currentParagraphBuffer.split(/\s+/);
-          let wBuffer = "";
-          words.forEach(w => {
-            const testW = wBuffer ? (wBuffer + " " + w) : w;
-            measurer.innerHTML = '<p>' + tokenize(testW) + '</p>';
-            if (measurer.scrollHeight > measurer.clientHeight && wBuffer) {
-              newPages.push([wBuffer]);
-              wBuffer = w;
-            } else {
-              wBuffer = testW;
-            }
-          });
-          if (wBuffer) {
-            currentPageParagraphs = [wBuffer];
-          }
-          currentParagraphBuffer = "";
-        }
+        currentPageParagraphs = [];
+        currentParagraphBuffer = sentence.trim();
       } else {
-        currentParagraphBuffer = testParagraph;
+        currentParagraphBuffer = testBuffer;
       }
     });
 
     if (currentParagraphBuffer.trim()) {
       currentPageParagraphs.push(currentParagraphBuffer.trim());
-      currentParagraphBuffer = "";
     }
   });
-
-  if (currentParagraphBuffer.trim()) {
-    currentPageParagraphs.push(currentParagraphBuffer.trim());
-  }
 
   if (currentPageParagraphs.length > 0) {
     newPages.push(currentPageParagraphs);
   }
 
-  parentContainer.removeChild(measurer);
-
-  if (readerView && wasHidden) {
-    readerView.hidden = true;
-  }
-
+  document.body.removeChild(measurer);
   return newPages.length > 0 ? newPages : rawPages;
 }
 
@@ -980,138 +928,66 @@ function prepareReader(book, startPosition, level){
   }
 }
 
-function getNextPageIndex(currentIndex, delta, totalPages, isMobile) {
-  if (isMobile) {
-    const next = currentIndex + delta;
-    if (next < 0) return 0;
-    if (next >= totalPages) return totalPages - 1;
-    return next;
-  }
-
-  if (delta > 0) {
-    if (currentIndex === 0) return Math.min(1, totalPages - 1);
-    const nextOdd = currentIndex % 2 === 1 ? currentIndex + 2 : currentIndex + 1;
-    return Math.min(nextOdd, totalPages - 1);
-  } else if (delta < 0) {
-    if (currentIndex <= 1) return 0;
-    const prevOdd = currentIndex % 2 === 1 ? currentIndex - 2 : currentIndex - 1;
-    return Math.max(0, prevOdd);
-  }
-  return currentIndex;
-}
-
 function renderSheets(){
   const pages = currentFlatPages && currentFlatPages.length ? currentFlatPages : getBookPages(currentBook, currentVariant);
   const wrapper = document.getElementById('sheetsWrapper');
   wrapper.innerHTML = '';
-  if (!pages || !pages.length) return;
+  const sheetCount = Math.ceil(pages.length / 2);
+  const activeSheet = Math.floor(currentPageIndex / 2);
 
-  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
+  for (let i = 0; i < sheetCount; i++){
+    // WebKit GPU / Layer Memory Optimization:
+    // Only instantiate 3D .paper-sheet DOM elements for sheets within range (activeSheet ± 2).
+    // Distant sheets (> 2 sheets away) do not exist in DOM, keeping compositor memory minimal on iOS devices.
+    if (Math.abs(i - activeSheet) > 2) continue;
 
-  if (isMobile) {
-    const sheetCount = pages.length;
-    const activeSheet = currentPageIndex;
+    const frontIdx = i * 2, backIdx = i * 2 + 1;
+    const sheet = document.createElement('div');
+    sheet.className = 'paper-sheet';
+    sheet.id = 'sheet-' + i;
 
-    for (let i = 0; i < sheetCount; i++){
-      if (Math.abs(i - activeSheet) > 2) continue;
+    // DOM Recycling / Virtualization:
+    // Only generate full tokenized DOM for active sheet and immediate adjacent sheets (activeSheet - 1, activeSheet, activeSheet + 1)
+    const isNearby = Math.abs(i - activeSheet) <= 1;
 
-      const sheet = document.createElement('div');
-      sheet.className = 'paper-sheet';
-      sheet.id = 'sheet-' + i;
+    const front = document.createElement('div');
+    front.className = 'page-face page-front';
+    if (isNearby && frontIdx < pages.length) {
+      front.innerHTML = '<div class="page-content">' + pages[frontIdx].map((p) => '<p>' + tokenize(p) + '</p>').join('') + '</div>';
+    } else {
+      front.innerHTML = '<div class="page-content"></div>';
+    }
 
-      const isNearby = Math.abs(i - activeSheet) <= 1;
-
-      const front = document.createElement('div');
-      front.className = 'page-face page-front';
-      if (isNearby) {
-        front.innerHTML = '<div class="page-content">' + pages[i].map((p) => '<p>' + tokenize(p) + '</p>').join('') + '</div>';
-      } else {
-        front.innerHTML = '<div class="page-content"></div>';
-      }
-
-      const back = document.createElement('div');
-      back.className = 'page-face page-back';
+    const back = document.createElement('div');
+    back.className = 'page-face page-back';
+    if (isNearby) {
+      back.innerHTML = backIdx < pages.length
+        ? '<div class="page-content">' + pages[backIdx].map((p) => '<p>' + tokenize(p) + '</p>').join('') + '</div>'
+        : '<div class="page-content page-end">The End</div>';
+    } else {
       back.innerHTML = '<div class="page-content"></div>';
-
-      sheet.appendChild(front);
-      sheet.appendChild(back);
-      wrapper.appendChild(sheet);
     }
-  } else {
-    const sheetCount = Math.ceil(pages.length / 2);
-    const activeSheet = Math.floor(currentPageIndex / 2);
 
-    for (let i = 0; i < sheetCount; i++){
-      if (Math.abs(i - activeSheet) > 2) continue;
-
-      const frontIdx = i * 2, backIdx = i * 2 + 1;
-      const sheet = document.createElement('div');
-      sheet.className = 'paper-sheet';
-      sheet.id = 'sheet-' + i;
-
-      const isNearby = Math.abs(i - activeSheet) <= 1;
-
-      const front = document.createElement('div');
-      front.className = 'page-face page-front';
-      if (isNearby && frontIdx < pages.length) {
-        front.innerHTML = '<div class="page-content">' + pages[frontIdx].map((p) => '<p>' + tokenize(p) + '</p>').join('') + '</div>';
-      } else {
-        front.innerHTML = '<div class="page-content"></div>';
-      }
-
-      const back = document.createElement('div');
-      back.className = 'page-face page-back';
-      if (isNearby) {
-        back.innerHTML = backIdx < pages.length
-          ? '<div class="page-content">' + pages[backIdx].map((p) => '<p>' + tokenize(p) + '</p>').join('') + '</div>'
-          : '<div class="page-content page-end">The End</div>';
-      } else {
-        back.innerHTML = '<div class="page-content"></div>';
-      }
-
-      sheet.appendChild(front);
-      sheet.appendChild(back);
-      wrapper.appendChild(sheet);
-    }
+    sheet.appendChild(front);
+    sheet.appendChild(back);
+    wrapper.appendChild(sheet);
   }
 }
 
 function updateSheetZIndexes(){
   const pages = currentFlatPages && currentFlatPages.length ? currentFlatPages : getBookPages(currentBook, currentVariant);
-  if (!pages || !pages.length) return;
-
-  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
-
-  if (isMobile) {
-    const sheetCount = pages.length;
-    for (let i = 0; i < sheetCount; i++){
-      const sheet = document.getElementById('sheet-' + i);
-      if (!sheet) continue;
-      const isFlipped = i < currentPageIndex;
-      sheet.classList.toggle('flipped', isFlipped);
-      sheet.style.zIndex = i < currentPageIndex ? (i + 1) : (sheetCount - i);
-    }
-  } else {
-    const sheetCount = Math.ceil(pages.length / 2);
-    const activeSheet = Math.floor(currentPageIndex / 2);
-    for (let i = 0; i < sheetCount; i++){
-      const sheet = document.getElementById('sheet-' + i);
-      if (!sheet) continue;
-      const isFlipped = i < activeSheet || (i === activeSheet && currentPageIndex % 2 === 1);
-      sheet.classList.toggle('flipped', isFlipped);
-      sheet.style.zIndex = i < activeSheet ? (i + 1) : (sheetCount - i);
-    }
+  const sheetCount = Math.ceil(pages.length / 2);
+  const activeSheet = Math.floor(currentPageIndex / 2);
+  for (let i = 0; i < sheetCount; i++){
+    const sheet = document.getElementById('sheet-' + i);
+    if (!sheet) continue;
+    const isFlipped = i < activeSheet || (i === activeSheet && currentPageIndex % 2 === 1);
+    sheet.classList.toggle('flipped', isFlipped);
+    sheet.style.zIndex = i < activeSheet ? (i + 1) : (sheetCount - i);
   }
 }
 
 function getCurrentFaceEl(){
-  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
-  if (isMobile) {
-    const sheet = document.getElementById('sheet-' + currentPageIndex);
-    if (!sheet) return null;
-    return sheet.querySelector('.page-front .page-content');
-  }
-
   const sheetIdx = Math.floor(currentPageIndex / 2);
   const isBack = currentPageIndex % 2 === 1;
   const sheet = document.getElementById('sheet-' + sheetIdx);
@@ -1157,13 +1033,8 @@ function renderPage(idx){
 async function goToPage(delta, opts){
   opts = opts || {};
   const pages = currentFlatPages && currentFlatPages.length ? currentFlatPages : getBookPages(currentBook, currentVariant);
-  if (!pages || !pages.length || isPageAnimating) return;
-
-  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
-  const next = getNextPageIndex(currentPageIndex, delta, pages.length, isMobile);
-
-  if (next === currentPageIndex) return;
-
+  const next = currentPageIndex + delta;
+  if (next < 0 || next >= pages.length || isPageAnimating) return;
   isPageAnimating = true;
   hidePopover();
   if (!opts.keepReading) stopReadAloud();
