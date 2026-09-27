@@ -744,10 +744,13 @@ function repaginateStrictNoScroll(rawPages) {
 
   // 1. Vytvorenie dočasného meracieho elementu s presnými rozmermi cieľovej strany
   const samplePage = document.querySelector('.page-content');
+  const computedStyle = samplePage ? window.getComputedStyle(samplePage) : null;
+  const lineHeight = computedStyle ? (parseFloat(computedStyle.lineHeight) || 24) : 24;
+  const SAFETY_MARGIN = lineHeight * 1.5;
+
   const targetWidth = samplePage ? samplePage.clientWidth : (isMobileDevice() ? window.innerWidth - 32 : 360);
   const rawTargetHeight = samplePage ? samplePage.clientHeight : (isMobileDevice() ? window.innerHeight - 180 : 500);
-  const SAFETY_MARGIN_PX = 20;
-  const targetHeight = Math.max(100, rawTargetHeight - SAFETY_MARGIN_PX);
+  const targetHeight = Math.max(100, rawTargetHeight - SAFETY_MARGIN);
 
   const measurer = document.createElement('div');
   measurer.className = 'page-content';

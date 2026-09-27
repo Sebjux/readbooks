@@ -580,6 +580,7 @@
     flex-direction:column;
     justify-content:flex-start;
     padding:clamp(24px,4vw,52px);
+    padding-bottom:24px !important;
     font-family:'Literata', serif;
     font-size:calc(1.15rem * var(--font-scale, 1));
     line-height:1.85;
@@ -590,31 +591,35 @@
   .page-content p:last-child{ margin-bottom:0; }
   .page-content.page-end{ display:flex; align-items:center; justify-content:center; height:100%; font-style:italic; color:var(--text-tertiary); }
 
-  .w{ border-bottom:1px solid rgba(124,172,248,.35); cursor:pointer; border-radius:2px; transition:background 150ms, border-color 300ms; }
-  .w:hover{ background:rgba(124,172,248,.14); }
+  .w, .page-content span.word, .page-content [data-word], .word{
+    border-bottom: none !important;
+    text-decoration: none !important;
+    color: inherit;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: background 150ms, border-color 300ms;
+  }
+  .w:hover, .page-content span.word:hover, .page-content [data-word]:hover, .word:hover{
+    border-bottom: 1px solid rgba(255, 255, 255, 0.4) !important;
+    background: rgba(124, 172, 248, .14);
+    cursor: pointer;
+  }
   .w.active-word{ background:rgba(124,172,248,.25); }
-  .w.learning{ border-bottom-color:var(--neon-cyan); }
-  .w.known{ border-bottom-color:transparent; }
-  .w.phrase{ border-bottom-style:solid; border-bottom-color:rgba(255,200,118,.5); background:rgba(255,200,118,.09); border-radius:4px; padding:0 3px; }
+  .w.learning{ border-bottom: 1px solid var(--neon-cyan) !important; }
+  .w.known{ border-bottom: none !important; }
+  .w.phrase{ border-bottom: 1px solid rgba(255,200,118,.5) !important; background:rgba(255,200,118,.09); border-radius:4px; padding:0 3px; }
   .w.phrase:hover{ background:rgba(255,200,118,.2); }
   .w.reading-now, .word-reading{
     background-color: #ff7675 !important;
     color: #ffffff !important;
     border-radius: 4px;
     padding: 2px 4px;
-    border-bottom-color: transparent !important;
+    border-bottom: none !important;
   }
   .phrase-highlight{
     background-color: rgba(255, 202, 40, 0.2);
-    border-bottom: 2px solid #ffca28;
+    border-bottom: 2px solid #ffca28 !important;
     font-weight: 500;
-  }
-  .word{
-    cursor: pointer;
-    border-bottom: 1px dotted #bdc3c7;
-    transition: background-color 0.1s ease;
-    border-radius: 3px;
-    padding: 0 2px;
   }
 
   .reader-bottom{
