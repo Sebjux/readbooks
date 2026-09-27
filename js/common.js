@@ -734,10 +734,29 @@ function repaginateStrictNoScroll(rawPages) {
     return rawPages || [];
   }
 
-  // 1. Vytvorenie dočasného meracieho elementu s presnými rozmermi cieľovej strany
-  const samplePage = document.querySelector('.page-content');
-  const targetWidth = samplePage ? samplePage.clientWidth : (window.innerWidth <= 768 ? window.innerWidth - 32 : 360);
-  const targetHeight = samplePage ? samplePage.clientHeight : (window.innerHeight <= 768 ? window.innerHeight - 180 : 500);
+  const readerView = document.getElementById('readerView');
+  const wasHidden = readerView ? readerView.hidden : false;
+  if (readerView && wasHidden) {
+    readerView.hidden = false;
+  }
+
+  const bookStage = document.getElementById('bookStage');
+  const sheetsWrapper = document.getElementById('sheetsWrapper');
+  const samplePage = document.querySelector('#sheetsWrapper .page-content') || document.querySelector('.page-content');
+
+  let targetWidth = samplePage ? samplePage.clientWidth : 0;
+  let targetHeight = samplePage ? samplePage.clientHeight : 0;
+
+  if (!targetWidth || !targetHeight) {
+    if (bookStage && bookStage.clientWidth > 0 && bookStage.clientHeight > 0) {
+      targetWidth = bookStage.clientWidth;
+      targetHeight = bookStage.clientHeight;
+    } else {
+      const isMobile = window.innerWidth <= 768;
+      targetWidth = isMobile ? window.innerWidth - 32 : 360;
+      targetHeight = isMobile ? window.innerHeight - 180 : 500;
+    }
+  }
 
   const measurer = document.createElement('div');
   measurer.className = 'page-content';
@@ -749,18 +768,17 @@ function repaginateStrictNoScroll(rawPages) {
   measurer.style.height = targetHeight + 'px';
   measurer.style.overflow = 'hidden';
 
-  // Aplikovanie font-scale
-  const bookStage = document.getElementById('bookStage');
   if (bookStage) {
     measurer.style.setProperty('--font-scale', bookStage.style.getPropertyValue('--font-scale') || '1');
   }
 
-  document.body.appendChild(measurer);
+  const parentContainer = sheetsWrapper || bookStage || document.body;
+  parentContainer.appendChild(measurer);
 
   const newPages = [];
   let currentPageParagraphs = [];
+  let currentParagraphBuffer = "";
 
-  // Vytiahnutie všetkých odsekov
   const allParagraphs = [];
   rawPages.forEach(pg => {
     if (Array.isArray(pg)) {
@@ -770,42 +788,76 @@ function repaginateStrictNoScroll(rawPages) {
     }
   });
 
-  // 2. Iterácia cez odseky a vety s meraním scrollHeight vs clientHeight
   allParagraphs.forEach(paragraph => {
     if (!paragraph || typeof paragraph !== 'string') return;
 
-    const sentences = paragraph.match(/[^.!?]+[.!?]+|\S+/g) || [paragraph];
-    let currentParagraphBuffer = "";
+    const sentences = paragraph.match(/[^.!?;:]+[.!?;:]+|\S+/g) || [paragraph];
 
     sentences.forEach(sentence => {
-      const testBuffer = currentParagraphBuffer ? (currentParagraphBuffer + " " + sentence.trim()) : sentence.trim();
-      const testPagesContent = [...currentPageParagraphs, testBuffer];
-      measurer.innerHTML = testPagesContent.map(p => `<p>${p}</p>`).join('');
+      const trimmedSentence = sentence.trim();
+      if (!trimmedSentence) return;
 
-      // Ak pretečie výška, uzavrie sa strana
-      if (measurer.scrollHeight > measurer.clientHeight && currentPageParagraphs.length > 0) {
+      const testParagraph = currentParagraphBuffer ? (currentParagraphBuffer + " " + trimmedSentence) : trimmedSentence;
+      const testPagesContent = [...currentPageParagraphs, testParagraph];
+
+      measurer.innerHTML = testPagesContent.map(p => '<p>' + tokenize(p) + '</p>').join('');
+
+      if (measurer.scrollHeight > measurer.clientHeight) {
         if (currentParagraphBuffer.trim()) {
           currentPageParagraphs.push(currentParagraphBuffer.trim());
         }
-        newPages.push(currentPageParagraphs);
 
-        currentPageParagraphs = [];
-        currentParagraphBuffer = sentence.trim();
+        if (currentPageParagraphs.length > 0) {
+          newPages.push(currentPageParagraphs);
+          currentPageParagraphs = [];
+        }
+
+        currentParagraphBuffer = trimmedSentence;
+
+        measurer.innerHTML = '<p>' + tokenize(currentParagraphBuffer) + '</p>';
+        if (measurer.scrollHeight > measurer.clientHeight) {
+          const words = currentParagraphBuffer.split(/\s+/);
+          let wBuffer = "";
+          words.forEach(w => {
+            const testW = wBuffer ? (wBuffer + " " + w) : w;
+            measurer.innerHTML = '<p>' + tokenize(testW) + '</p>';
+            if (measurer.scrollHeight > measurer.clientHeight && wBuffer) {
+              newPages.push([wBuffer]);
+              wBuffer = w;
+            } else {
+              wBuffer = testW;
+            }
+          });
+          if (wBuffer) {
+            currentPageParagraphs = [wBuffer];
+          }
+          currentParagraphBuffer = "";
+        }
       } else {
-        currentParagraphBuffer = testBuffer;
+        currentParagraphBuffer = testParagraph;
       }
     });
 
     if (currentParagraphBuffer.trim()) {
       currentPageParagraphs.push(currentParagraphBuffer.trim());
+      currentParagraphBuffer = "";
     }
   });
+
+  if (currentParagraphBuffer.trim()) {
+    currentPageParagraphs.push(currentParagraphBuffer.trim());
+  }
 
   if (currentPageParagraphs.length > 0) {
     newPages.push(currentPageParagraphs);
   }
 
-  document.body.removeChild(measurer);
+  parentContainer.removeChild(measurer);
+
+  if (readerView && wasHidden) {
+    readerView.hidden = true;
+  }
+
   return newPages.length > 0 ? newPages : rawPages;
 }
 
