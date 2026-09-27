@@ -745,7 +745,9 @@ function repaginateStrictNoScroll(rawPages) {
   // 1. Vytvorenie dočasného meracieho elementu s presnými rozmermi cieľovej strany
   const samplePage = document.querySelector('.page-content');
   const targetWidth = samplePage ? samplePage.clientWidth : (isMobileDevice() ? window.innerWidth - 32 : 360);
-  const targetHeight = samplePage ? samplePage.clientHeight : (isMobileDevice() ? window.innerHeight - 180 : 500);
+  const rawTargetHeight = samplePage ? samplePage.clientHeight : (isMobileDevice() ? window.innerHeight - 180 : 500);
+  const SAFETY_MARGIN_PX = 20;
+  const targetHeight = Math.max(100, rawTargetHeight - SAFETY_MARGIN_PX);
 
   const measurer = document.createElement('div');
   measurer.className = 'page-content';
@@ -1088,12 +1090,68 @@ function updateReaderChrome(idx){
   }
 }
 
+function fixPageOverflowIfNeeded(pageElement) {
+  if (!pageElement || !(pageElement instanceof HTMLElement)) return;
+  if (!currentFlatPages || !currentFlatPages[currentPageIndex]) return;
+
+  // Check if content overflows vertical boundaries
+  if (pageElement.scrollHeight <= pageElement.clientHeight) return;
+
+  let pageParagraphs = currentFlatPages[currentPageIndex];
+  if (!Array.isArray(pageParagraphs) || pageParagraphs.length === 0) return;
+
+  // Flatten paragraphs into sentences to find the last sentence on page
+  let lastParaIndex = pageParagraphs.length - 1;
+  let lastParagraph = pageParagraphs[lastParaIndex];
+
+  if (!lastParagraph || typeof lastParagraph !== 'string') return;
+
+  let sentences = lastParagraph.match(/[^.!?]+[.!?]+|\S+/g) || [lastParagraph];
+  if (sentences.length === 0) return;
+
+  let movedSentence = sentences.pop().trim();
+  let updatedParagraph = sentences.join(' ').trim();
+
+  if (updatedParagraph) {
+    pageParagraphs[lastParaIndex] = updatedParagraph;
+  } else {
+    pageParagraphs.pop();
+  }
+
+  // Prepend moved sentence to the next page
+  if (currentPageIndex + 1 < currentFlatPages.length) {
+    let nextPage = currentFlatPages[currentPageIndex + 1];
+    if (Array.isArray(nextPage) && nextPage.length > 0) {
+      nextPage[0] = movedSentence + ' ' + nextPage[0];
+    } else {
+      currentFlatPages[currentPageIndex + 1] = [movedSentence];
+    }
+  } else {
+    currentFlatPages.push([movedSentence]);
+  }
+
+  // Re-render sheets and check recursively if overflow still exists
+  renderSheets();
+  updateSheetZIndexes();
+  applyWordStatusClasses();
+
+  const newFace = getCurrentFaceEl();
+  if (newFace && newFace.scrollHeight > newFace.clientHeight) {
+    fixPageOverflowIfNeeded(newFace);
+  }
+}
+
 function renderPage(idx){
   currentPageIndex = idx;
   renderSheets();
   updateSheetZIndexes();
   applyWordStatusClasses();
   updateReaderChrome(idx);
+
+  const activeFace = getCurrentFaceEl();
+  if (activeFace) {
+    fixPageOverflowIfNeeded(activeFace);
+  }
 }
 
 async function goToPage(delta, opts){
