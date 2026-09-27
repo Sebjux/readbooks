@@ -1300,7 +1300,7 @@ function clearReadTimers(){
 function splitIntoSentenceUnits(faceEl){
   const wordEls = faceEl ? Array.from(faceEl.querySelectorAll('.w')) : [];
   const sentences = [];
-  let current = { text: '', words: [] };
+  let current = { text: '', words: [], pauseType: 'sentence' };
 
   wordEls.forEach((el) => {
     const wordText = el.textContent.trim();
@@ -1308,7 +1308,7 @@ function splitIntoSentenceUnits(faceEl){
 
     if (el.nextSibling && el.nextSibling.nodeType === Node.TEXT_NODE) {
       const sibText = el.nextSibling.textContent;
-      const pMatch = sibText.match(/^[.!?]+/);
+      const pMatch = sibText.match(/^[.!?:;]+/);
       if (pMatch) {
         trailingPunct = pMatch[0];
       }
@@ -1322,13 +1322,21 @@ function splitIntoSentenceUnits(faceEl){
       const cleanWord = wordText.toLowerCase().replace(/[^a-z]/g, '');
       const isShortAbbrev = (cleanWord.length <= 2) || ['mr','mrs','ms','dr','prof','sr','jr','capt','col','st','vs','etc','inc','ltd'].includes(cleanWord);
       if (!isShortAbbrev) {
+        current.pauseType = 'sentence';
         sentences.push(current);
-        current = { text: '', words: [] };
+        current = { text: '', words: [], pauseType: 'sentence' };
       }
+    } else if (/[:;]$/.test(fullToken)) {
+      current.pauseType = 'clause';
+      sentences.push(current);
+      current = { text: '', words: [], pauseType: 'sentence' };
     }
   });
 
-  if (current.words.length) sentences.push(current);
+  if (current.words.length) {
+    if (!current.pauseType) current.pauseType = 'sentence';
+    sentences.push(current);
+  }
   return sentences;
 }
 
@@ -1380,7 +1388,12 @@ function speakNextSentence(){
   u.onend = () => {
     if (!isReading) return;
     clearReadingHighlight();
-    const pauseMs = 350;
+    let pauseMs = 350;
+    if (unit && unit.pauseType === 'sentence') {
+      pauseMs = 450;
+    } else if (unit && unit.pauseType === 'clause') {
+      pauseMs = 280;
+    }
     const pauseTimer = setTimeout(() => {
       if (!isReading) return;
       readSentenceIndex++;
