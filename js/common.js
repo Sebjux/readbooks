@@ -932,67 +932,122 @@ function renderSheets(){
   const pages = currentFlatPages && currentFlatPages.length ? currentFlatPages : getBookPages(currentBook, currentVariant);
   const wrapper = document.getElementById('sheetsWrapper');
   wrapper.innerHTML = '';
-  const sheetCount = Math.ceil(pages.length / 2);
-  const activeSheet = Math.floor(currentPageIndex / 2);
 
-  for (let i = 0; i < sheetCount; i++){
-    // WebKit GPU / Layer Memory Optimization:
-    // Only instantiate 3D .paper-sheet DOM elements for sheets within range (activeSheet ± 2).
-    // Distant sheets (> 2 sheets away) do not exist in DOM, keeping compositor memory minimal on iOS devices.
-    if (Math.abs(i - activeSheet) > 2) continue;
+  const isMobile = window.innerWidth <= 768;
 
-    const frontIdx = i * 2, backIdx = i * 2 + 1;
-    const sheet = document.createElement('div');
-    sheet.className = 'paper-sheet';
-    sheet.id = 'sheet-' + i;
+  if (isMobile) {
+    const sheetCount = pages.length;
+    const activeSheet = currentPageIndex;
 
-    // DOM Recycling / Virtualization:
-    // Only generate full tokenized DOM for active sheet and immediate adjacent sheets (activeSheet - 1, activeSheet, activeSheet + 1)
-    const isNearby = Math.abs(i - activeSheet) <= 1;
+    for (let i = 0; i < sheetCount; i++){
+      if (Math.abs(i - activeSheet) > 2) continue;
 
-    const front = document.createElement('div');
-    front.className = 'page-face page-front';
-    if (isNearby && frontIdx < pages.length) {
-      front.innerHTML = '<div class="page-content">' + pages[frontIdx].map((p) => '<p>' + tokenize(p) + '</p>').join('') + '</div>';
-    } else {
-      front.innerHTML = '<div class="page-content"></div>';
-    }
+      const sheet = document.createElement('div');
+      sheet.className = 'paper-sheet';
+      sheet.id = 'sheet-' + i;
 
-    const back = document.createElement('div');
-    back.className = 'page-face page-back';
-    if (isNearby) {
-      back.innerHTML = backIdx < pages.length
-        ? '<div class="page-content">' + pages[backIdx].map((p) => '<p>' + tokenize(p) + '</p>').join('') + '</div>'
-        : '<div class="page-content page-end">The End</div>';
-    } else {
+      const isNearby = Math.abs(i - activeSheet) <= 1;
+
+      const front = document.createElement('div');
+      front.className = 'page-face page-front';
+      if (isNearby && i < pages.length) {
+        front.innerHTML = '<div class="page-content">' + pages[i].map((p) => '<p>' + tokenize(p) + '</p>').join('') + '</div>';
+      } else {
+        front.innerHTML = '<div class="page-content"></div>';
+      }
+
+      const back = document.createElement('div');
+      back.className = 'page-face page-back';
       back.innerHTML = '<div class="page-content"></div>';
-    }
 
-    sheet.appendChild(front);
-    sheet.appendChild(back);
-    wrapper.appendChild(sheet);
+      sheet.appendChild(front);
+      sheet.appendChild(back);
+      wrapper.appendChild(sheet);
+    }
+  } else {
+    const sheetCount = Math.ceil(pages.length / 2);
+    const activeSheet = Math.floor(currentPageIndex / 2);
+
+    for (let i = 0; i < sheetCount; i++){
+      // WebKit GPU / Layer Memory Optimization:
+      // Only instantiate 3D .paper-sheet DOM elements for sheets within range (activeSheet ± 2).
+      // Distant sheets (> 2 sheets away) do not exist in DOM, keeping compositor memory minimal on iOS devices.
+      if (Math.abs(i - activeSheet) > 2) continue;
+
+      const frontIdx = i * 2, backIdx = i * 2 + 1;
+      const sheet = document.createElement('div');
+      sheet.className = 'paper-sheet';
+      sheet.id = 'sheet-' + i;
+
+      // DOM Recycling / Virtualization:
+      // Only generate full tokenized DOM for active sheet and immediate adjacent sheets (activeSheet - 1, activeSheet, activeSheet + 1)
+      const isNearby = Math.abs(i - activeSheet) <= 1;
+
+      const front = document.createElement('div');
+      front.className = 'page-face page-front';
+      if (isNearby && frontIdx < pages.length) {
+        front.innerHTML = '<div class="page-content">' + pages[frontIdx].map((p) => '<p>' + tokenize(p) + '</p>').join('') + '</div>';
+      } else {
+        front.innerHTML = '<div class="page-content"></div>';
+      }
+
+      const back = document.createElement('div');
+      back.className = 'page-face page-back';
+      if (isNearby) {
+        back.innerHTML = backIdx < pages.length
+          ? '<div class="page-content">' + pages[backIdx].map((p) => '<p>' + tokenize(p) + '</p>').join('') + '</div>'
+          : '<div class="page-content page-end">The End</div>';
+      } else {
+        back.innerHTML = '<div class="page-content"></div>';
+      }
+
+      sheet.appendChild(front);
+      sheet.appendChild(back);
+      wrapper.appendChild(sheet);
+    }
   }
 }
 
 function updateSheetZIndexes(){
   const pages = currentFlatPages && currentFlatPages.length ? currentFlatPages : getBookPages(currentBook, currentVariant);
-  const sheetCount = Math.ceil(pages.length / 2);
-  const activeSheet = Math.floor(currentPageIndex / 2);
-  for (let i = 0; i < sheetCount; i++){
-    const sheet = document.getElementById('sheet-' + i);
-    if (!sheet) continue;
-    const isFlipped = i < activeSheet || (i === activeSheet && currentPageIndex % 2 === 1);
-    sheet.classList.toggle('flipped', isFlipped);
-    sheet.style.zIndex = i < activeSheet ? (i + 1) : (sheetCount - i);
+  const isMobile = window.innerWidth <= 768;
+
+  if (isMobile) {
+    const sheetCount = pages.length;
+    const activeSheet = currentPageIndex;
+    for (let i = 0; i < sheetCount; i++){
+      const sheet = document.getElementById('sheet-' + i);
+      if (!sheet) continue;
+      const isFlipped = i < activeSheet;
+      sheet.classList.toggle('flipped', isFlipped);
+      sheet.style.zIndex = i < activeSheet ? (i + 1) : (sheetCount - i);
+    }
+  } else {
+    const sheetCount = Math.ceil(pages.length / 2);
+    const activeSheet = Math.floor(currentPageIndex / 2);
+    for (let i = 0; i < sheetCount; i++){
+      const sheet = document.getElementById('sheet-' + i);
+      if (!sheet) continue;
+      const isFlipped = i < activeSheet || (i === activeSheet && currentPageIndex % 2 === 1);
+      sheet.classList.toggle('flipped', isFlipped);
+      sheet.style.zIndex = i < activeSheet ? (i + 1) : (sheetCount - i);
+    }
   }
 }
 
 function getCurrentFaceEl(){
-  const sheetIdx = Math.floor(currentPageIndex / 2);
-  const isBack = currentPageIndex % 2 === 1;
-  const sheet = document.getElementById('sheet-' + sheetIdx);
-  if (!sheet) return null;
-  return sheet.querySelector(isBack ? '.page-back .page-content' : '.page-front .page-content');
+  const isMobile = window.innerWidth <= 768;
+  if (isMobile) {
+    const sheet = document.getElementById('sheet-' + currentPageIndex);
+    if (!sheet) return null;
+    return sheet.querySelector('.page-front .page-content');
+  } else {
+    const sheetIdx = Math.floor(currentPageIndex / 2);
+    const isBack = currentPageIndex % 2 === 1;
+    const sheet = document.getElementById('sheet-' + sheetIdx);
+    if (!sheet) return null;
+    return sheet.querySelector(isBack ? '.page-back .page-content' : '.page-front .page-content');
+  }
 }
 
 function applyWordStatusClasses(){
