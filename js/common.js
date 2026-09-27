@@ -729,60 +729,89 @@ let isPageAnimating = false;
 let currentChapters = [];
 let currentFlatPages = [];
 
-function repaginatePagesForMobile(pages) {
-  if (!pages || !Array.isArray(pages)) return pages || [];
-  if (typeof window === 'undefined' || window.innerWidth > 768) {
-    return pages;
+function repaginateStrictNoScroll(rawPages) {
+  if (!rawPages || !Array.isArray(rawPages) || typeof window === 'undefined') {
+    return rawPages || [];
   }
 
-  const TARGET_WORDS = 80;
+  // 1. Vytvorenie dočasného meracieho elementu s presnými rozmermi cieľovej strany
+  const samplePage = document.querySelector('.page-content');
+  const targetWidth = samplePage ? samplePage.clientWidth : (window.innerWidth <= 768 ? window.innerWidth - 32 : 360);
+  const targetHeight = samplePage ? samplePage.clientHeight : (window.innerHeight <= 768 ? window.innerHeight - 180 : 500);
+
+  const measurer = document.createElement('div');
+  measurer.className = 'page-content';
+  measurer.style.position = 'absolute';
+  measurer.style.visibility = 'hidden';
+  measurer.style.left = '-9999px';
+  measurer.style.top = '-9999px';
+  measurer.style.width = targetWidth + 'px';
+  measurer.style.height = targetHeight + 'px';
+  measurer.style.overflow = 'hidden';
+
+  // Aplikovanie font-scale
+  const bookStage = document.getElementById('bookStage');
+  if (bookStage) {
+    measurer.style.setProperty('--font-scale', bookStage.style.getPropertyValue('--font-scale') || '1');
+  }
+
+  document.body.appendChild(measurer);
+
   const newPages = [];
-  let currentParagraphs = [];
-  let currentWordCount = 0;
+  let currentPageParagraphs = [];
 
-  pages.forEach(pg => {
-    if (!Array.isArray(pg)) return;
-    pg.forEach(paragraph => {
-      if (!paragraph || typeof paragraph !== 'string') return;
-      const sentences = paragraph.match(/[^.!?]+[.!?]+|\S+/g) || [paragraph];
-
-      let sentenceBuffer = "";
-      sentences.forEach(sentence => {
-        const words = sentence.trim().split(/\s+/).filter(Boolean);
-        const wCount = words.length;
-
-        if (currentWordCount + wCount > TARGET_WORDS && currentParagraphs.length > 0) {
-          if (sentenceBuffer.trim()) {
-            currentParagraphs.push(sentenceBuffer.trim());
-            sentenceBuffer = "";
-          }
-          newPages.push(currentParagraphs);
-          currentParagraphs = [];
-          currentWordCount = 0;
-        }
-
-        sentenceBuffer += (sentenceBuffer ? " " : "") + sentence.trim();
-        currentWordCount += wCount;
-      });
-
-      if (sentenceBuffer.trim()) {
-        currentParagraphs.push(sentenceBuffer.trim());
-      }
-    });
+  // Vytiahnutie všetkých odsekov
+  const allParagraphs = [];
+  rawPages.forEach(pg => {
+    if (Array.isArray(pg)) {
+      allParagraphs.push(...pg);
+    } else if (typeof pg === 'string') {
+      allParagraphs.push(pg);
+    }
   });
 
-  if (currentParagraphs.length > 0) {
-    newPages.push(currentParagraphs);
+  // 2. Iterácia cez odseky a vety s meraním scrollHeight vs clientHeight
+  allParagraphs.forEach(paragraph => {
+    if (!paragraph || typeof paragraph !== 'string') return;
+
+    const sentences = paragraph.match(/[^.!?]+[.!?]+|\S+/g) || [paragraph];
+    let currentParagraphBuffer = "";
+
+    sentences.forEach(sentence => {
+      const testBuffer = currentParagraphBuffer ? (currentParagraphBuffer + " " + sentence.trim()) : sentence.trim();
+      const testPagesContent = [...currentPageParagraphs, testBuffer];
+      measurer.innerHTML = testPagesContent.map(p => `<p>${p}</p>`).join('');
+
+      // Ak pretečie výška, uzavrie sa strana
+      if (measurer.scrollHeight > measurer.clientHeight && currentPageParagraphs.length > 0) {
+        if (currentParagraphBuffer.trim()) {
+          currentPageParagraphs.push(currentParagraphBuffer.trim());
+        }
+        newPages.push(currentPageParagraphs);
+
+        currentPageParagraphs = [];
+        currentParagraphBuffer = sentence.trim();
+      } else {
+        currentParagraphBuffer = testBuffer;
+      }
+    });
+
+    if (currentParagraphBuffer.trim()) {
+      currentPageParagraphs.push(currentParagraphBuffer.trim());
+    }
+  });
+
+  if (currentPageParagraphs.length > 0) {
+    newPages.push(currentPageParagraphs);
   }
 
-  return newPages.length > 0 ? newPages : pages;
+  document.body.removeChild(measurer);
+  return newPages.length > 0 ? newPages : rawPages;
 }
 
 function buildChaptersForBook(book, variant) {
   let rawPages = getBookPages(book, variant);
-  if (typeof window !== 'undefined' && window.innerWidth <= 768) {
-    rawPages = repaginatePagesForMobile(rawPages);
-  }
+  rawPages = repaginateStrictNoScroll(rawPages);
 
   let chapters = [];
   let flatPages = [];
@@ -793,10 +822,7 @@ function buildChaptersForBook(book, variant) {
   if (storyLvl && Array.isArray(storyLvl.chapters)) {
     let offset = 0;
     storyLvl.chapters.forEach((ch, idx) => {
-      let chPages = ch.pages || [];
-      if (typeof window !== 'undefined' && window.innerWidth <= 768) {
-        chPages = repaginatePagesForMobile(chPages);
-      }
+      let chPages = repaginateStrictNoScroll(ch.pages || []);
       chapters.push({
         index: idx,
         title: ch.title || `Chapter ${idx + 1}`,
@@ -810,10 +836,7 @@ function buildChaptersForBook(book, variant) {
   } else if (book && Array.isArray(book.chapters)) {
     let offset = 0;
     book.chapters.forEach((ch, idx) => {
-      let chPages = ch.pages || [];
-      if (typeof window !== 'undefined' && window.innerWidth <= 768) {
-        chPages = repaginatePagesForMobile(chPages);
-      }
+      let chPages = repaginateStrictNoScroll(ch.pages || []);
       chapters.push({
         index: idx,
         title: ch.title || `Chapter ${idx + 1}`,
@@ -869,6 +892,15 @@ function updateChapterDropdownUI() {
   } else {
     select.innerHTML = '';
     select.style.display = 'none';
+  }
+}
+
+function onFontScaleChange() {
+  if (currentBook) {
+    const currentProgressRatio = currentPageIndex / (currentFlatPages.length || 1);
+    prepareReader(currentBook, 0);
+    const newTotal = currentFlatPages.length || 1;
+    renderPage(Math.min(Math.round(currentProgressRatio * newTotal), newTotal - 1));
   }
 }
 
@@ -1524,6 +1556,28 @@ function closeDrawer(){
   if (vocabDrawer) vocabDrawer.classList.remove('open');
 }
 
+function initTouchGestures() {
+  const stage = document.getElementById('bookStage');
+  if (!stage) return;
+
+  let touchStartX = 0;
+  let touchEndX = 0;
+
+  stage.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+  }, { passive: true });
+
+  stage.addEventListener('touchend', (e) => {
+    touchEndX = e.changedTouches[0].screenX;
+    const swipeThreshold = 40;
+    if (touchStartX - touchEndX > swipeThreshold) {
+      goToPage(1); // Swipe doľava -> ďalšia strana
+    } else if (touchEndX - touchStartX > swipeThreshold) {
+      goToPage(-1); // Swipe doprava -> predchádzajúca strana
+    }
+  }, { passive: true });
+}
+
 function initCommonListeners() {
   const popoverEl = document.getElementById('wordPopover');
   if (popoverEl) {
@@ -1622,6 +1676,23 @@ function initCommonListeners() {
       closeDrawer();
       closeLangMenu();
       hidePopover();
+      return;
+    }
+
+    const readerView = document.getElementById('readerView');
+    if (!readerView || readerView.hidden) return;
+
+    const activeEl = document.activeElement;
+    if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.isContentEditable)) {
+      return;
+    }
+
+    if (e.key === 'ArrowRight' || e.key === ' ') {
+      e.preventDefault();
+      goToPage(1);
+    } else if (e.key === 'ArrowLeft') {
+      e.preventDefault();
+      goToPage(-1);
     }
   });
 
@@ -1665,6 +1736,7 @@ function initCommonListeners() {
       fontScale = Math.min(1.35, Math.round((fontScale + 0.08) * 100) / 100);
       if (bookStage) bookStage.style.setProperty('--font-scale', String(fontScale));
       try{ localStorage.setItem('lumen_font_scale', String(fontScale)); }catch(e){ /* ignore */ }
+      onFontScaleChange();
     });
   }
 
@@ -1674,8 +1746,25 @@ function initCommonListeners() {
       fontScale = Math.max(0.85, Math.round((fontScale - 0.08) * 100) / 100);
       if (bookStage) bookStage.style.setProperty('--font-scale', String(fontScale));
       try{ localStorage.setItem('lumen_font_scale', String(fontScale)); }catch(e){ /* ignore */ }
+      onFontScaleChange();
     });
   }
 
+  let resizeDebounce;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeDebounce);
+    resizeDebounce = setTimeout(() => {
+      const readerView = document.getElementById('readerView');
+      if (readerView && !readerView.hidden && currentBook) {
+        const currentProgressRatio = currentPageIndex / (currentFlatPages.length || 1);
+        prepareReader(currentBook, 0);
+        const newTotal = currentFlatPages.length || 1;
+        const targetPage = Math.min(Math.round(currentProgressRatio * newTotal), newTotal - 1);
+        renderPage(targetPage);
+      }
+    }, 300);
+  });
+
   initLangTrigger();
+  initTouchGestures();
 }
