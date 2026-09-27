@@ -729,6 +729,14 @@ let isPageAnimating = false;
 let currentChapters = [];
 let currentFlatPages = [];
 
+function isMobileDevice() {
+  if (typeof window === 'undefined') return false;
+  const hasCoarsePointer = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+  const hasTouch = 'ontouchstart' in window || (navigator.maxTouchPoints > 0);
+  const isMobileUA = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent || '');
+  return hasCoarsePointer || hasTouch || isMobileUA;
+}
+
 function repaginateStrictNoScroll(rawPages) {
   if (!rawPages || !Array.isArray(rawPages) || typeof window === 'undefined') {
     return rawPages || [];
@@ -736,8 +744,8 @@ function repaginateStrictNoScroll(rawPages) {
 
   // 1. Vytvorenie dočasného meracieho elementu s presnými rozmermi cieľovej strany
   const samplePage = document.querySelector('.page-content');
-  const targetWidth = samplePage ? samplePage.clientWidth : (window.innerWidth <= 768 ? window.innerWidth - 32 : 360);
-  const targetHeight = samplePage ? samplePage.clientHeight : (window.innerHeight <= 768 ? window.innerHeight - 180 : 500);
+  const targetWidth = samplePage ? samplePage.clientWidth : (isMobileDevice() ? window.innerWidth - 32 : 360);
+  const targetHeight = samplePage ? samplePage.clientHeight : (isMobileDevice() ? window.innerHeight - 180 : 500);
 
   const measurer = document.createElement('div');
   measurer.className = 'page-content';
@@ -933,7 +941,7 @@ function renderSheets(){
   const wrapper = document.getElementById('sheetsWrapper');
   wrapper.innerHTML = '';
 
-  const isMobile = window.innerWidth <= 768;
+  const isMobile = isMobileDevice();
 
   if (isMobile) {
     const sheetCount = pages.length;
@@ -1010,7 +1018,7 @@ function renderSheets(){
 
 function updateSheetZIndexes(){
   const pages = currentFlatPages && currentFlatPages.length ? currentFlatPages : getBookPages(currentBook, currentVariant);
-  const isMobile = window.innerWidth <= 768;
+  const isMobile = isMobileDevice();
 
   if (isMobile) {
     const sheetCount = pages.length;
@@ -1018,9 +1026,12 @@ function updateSheetZIndexes(){
     for (let i = 0; i < sheetCount; i++){
       const sheet = document.getElementById('sheet-' + i);
       if (!sheet) continue;
-      const isFlipped = i < activeSheet;
-      sheet.classList.toggle('flipped', isFlipped);
-      sheet.style.zIndex = i < activeSheet ? (i + 1) : (sheetCount - i);
+      sheet.classList.remove('flipped');
+      sheet.style.transform = 'none';
+      sheet.style.transition = 'opacity 200ms ease-in-out';
+      sheet.style.opacity = (i === activeSheet) ? '1' : '0';
+      sheet.style.pointerEvents = (i === activeSheet) ? 'auto' : 'none';
+      sheet.style.zIndex = (i === activeSheet) ? '10' : '1';
     }
   } else {
     const sheetCount = Math.ceil(pages.length / 2);
@@ -1036,7 +1047,7 @@ function updateSheetZIndexes(){
 }
 
 function getCurrentFaceEl(){
-  const isMobile = window.innerWidth <= 768;
+  const isMobile = isMobileDevice();
   if (isMobile) {
     const sheet = document.getElementById('sheet-' + currentPageIndex);
     if (!sheet) return null;
@@ -1619,10 +1630,12 @@ function initTouchGestures() {
   let touchEndX = 0;
 
   stage.addEventListener('touchstart', (e) => {
+    if (!isMobileDevice()) return;
     touchStartX = e.changedTouches[0].screenX;
   }, { passive: true });
 
   stage.addEventListener('touchend', (e) => {
+    if (!isMobileDevice()) return;
     touchEndX = e.changedTouches[0].screenX;
     const swipeThreshold = 40;
     if (touchStartX - touchEndX > swipeThreshold) {
