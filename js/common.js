@@ -669,9 +669,11 @@ async function openBook(book, originCoverEl, startPosition, targetLevel){
 
   let fullContent = await fetchBookContent(book.id, levelToLoad);
   if (!fullContent || !fullContent.story) {
-    // If requested level content file is missing, fallback to the book's default level file
-    if (book.level && book.level.toUpperCase() !== levelToLoad.toUpperCase()) {
-      fullContent = await fetchBookContent(book.id, book.level);
+    const fallbackLevels = [book.level, 'C2', 'C1', 'B2', 'B1', 'A2', 'A1'];
+    for (const lvl of fallbackLevels) {
+      if (!lvl) continue;
+      fullContent = await fetchBookContent(book.id, lvl);
+      if (fullContent && fullContent.story) break;
     }
   }
 
