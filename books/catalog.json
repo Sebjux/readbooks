@@ -15,7 +15,7 @@
     "id": "scifi-9",
     "title": "The Ninth Lantern",
     "author": "Juraj Suda",
-    "level": "C2",
+    "level": "B1",
     "genre": "fantasy",
     "minutes": 446,
     "vocab": 2,
@@ -88,13 +88,13 @@
     "title": "The Ninth Lantern 2",
     "level": "C2",
     "author": "Aiden Cole",
-    "genre": "fantasy",
-    "coverImage": "books/covers/scifi-10.svg",
+    "genre": "scifi",
+    "coverImage": "books/covers/scifi-10.png",
     "minutes": 140,
     "vocab": 8,
     "dateAdded": "2026-09-22",
-    "c1": "#B8863B",
-    "c2": "#2A1C0A"
+    "c1": "#7CACF8",
+    "c2": "#12141F"
   },
   {
     "id": "scifi-7",
