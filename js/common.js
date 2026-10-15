@@ -314,6 +314,13 @@ function coverInnerHTML(book){
 function paintCover(el, book){
   el.style.setProperty('--c1', book.c1);
   el.style.setProperty('--c2', book.c2);
+  if (book.coverImage) {
+    el.style.backgroundImage = 'url(' + book.coverImage + ')';
+    el.style.backgroundSize = 'cover';
+    el.style.backgroundPosition = 'center';
+  } else {
+    el.style.backgroundImage = '';
+  }
   el.innerHTML = coverInnerHTML(book);
 }
 
