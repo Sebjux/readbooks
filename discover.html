@@ -568,6 +568,78 @@
     z-index:2;
   }
 
+  /* ============================================================
+     BOOK DETAILS MODAL
+     ============================================================ */
+  .details-modal-overlay{
+    position:fixed; inset:0; z-index:90;
+    background:rgba(4,5,10,.78);
+    backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+    display:flex; align-items:center; justify-content:center;
+    padding:20px;
+    opacity:0; pointer-events:none;
+    transition:opacity 240ms var(--ease-out-expo);
+  }
+  .details-modal-overlay.open{
+    opacity:1; pointer-events:auto;
+  }
+  .details-modal-box{
+    position:relative; width:min(600px, 92vw); max-height:88vh; overflow-y:auto;
+    background:rgba(18,20,31,.88); border:1px solid var(--glass-border-hi);
+    border-radius:28px; padding:28px;
+    box-shadow:0 30px 80px -20px rgba(0,0,0,.8);
+    transform:scale(.94) translateY(12px);
+    transition:transform 280ms var(--ease-out-expo);
+  }
+  .details-modal-overlay.open .details-modal-box{
+    transform:scale(1) translateY(0);
+  }
+  .details-close-btn{
+    position:absolute; top:20px; right:20px; z-index:2;
+    width:34px; height:34px; border-radius:50%;
+    background:var(--glass-fill-soft); border:1px solid var(--glass-border);
+    color:var(--text-secondary); display:flex; align-items:center; justify-content:center;
+    transition:color 150ms, border-color 150ms;
+  }
+  .details-close-btn:hover{ color:var(--text-primary); border-color:var(--glass-border-hi); }
+  .details-modal-grid{
+    display:grid; grid-template-columns:140px 1fr; gap:24px; align-items:start;
+  }
+  @media (max-width:540px){
+    .details-modal-grid{ grid-template-columns:1fr; justify-items:center; text-align:center; }
+    .details-cover{ width:130px !important; margin:0 auto; }
+    .details-actions{ justify-content:center; }
+  }
+  .details-cover{
+    width:140px; aspect-ratio:2/3; border-radius:16px; overflow:hidden; position:relative;
+    box-shadow:0 16px 36px -12px rgba(0,0,0,.7);
+  }
+  .details-info{ display:flex; flex-direction:column; gap:12px; }
+  .details-title{ font-family:'Space Grotesk'; font-size:1.4rem; font-weight:700; line-height:1.25; }
+  .details-author{ font-size:.9rem; color:var(--text-secondary); }
+  .details-tags{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+  .details-tag{
+    font-size:.75rem; font-weight:600; padding:4px 10px; border-radius:var(--radius-pill);
+    background:var(--glass-fill-soft); border:1px solid var(--glass-border); color:var(--text-secondary);
+  }
+  .details-progress-wrap{
+    background:rgba(255,255,255,.03); border:1px solid var(--glass-border);
+    border-radius:16px; padding:14px 16px; display:flex; flex-direction:column; gap:8px;
+  }
+  .details-progress-head{ display:flex; justify-content:space-between; font-size:.8rem; color:var(--text-secondary); }
+  .details-progress-track{ height:6px; border-radius:99px; background:rgba(255,255,255,.08); overflow:hidden; }
+  .details-progress-fill{ height:100%; border-radius:99px; background:linear-gradient(90deg, var(--neon-cyan), var(--neon-violet)); }
+  .details-actions{ display:flex; gap:12px; align-items:center; margin-top:8px; }
+  .details-btn-primary{
+    display:inline-flex; align-items:center; gap:8px; padding:12px 24px; border-radius:var(--radius-pill);
+    background:linear-gradient(120deg, var(--neon-cyan), var(--neon-violet));
+    color:#04050A; font-weight:600; font-size:.92rem;
+    box-shadow:0 10px 30px -8px rgba(155,123,255,.55);
+    transition:transform 200ms var(--ease-out-expo);
+  }
+  .details-btn-primary:hover{ transform:translateY(-2px); }
+  .details-btn-primary svg{ width:18px; height:18px; }
+
   @media (max-width:768px){
     .topbar{
       flex-wrap:wrap;
@@ -804,6 +876,40 @@
 <div class="flying-book" id="flyingBook" hidden aria-hidden="true">
   <div class="flying-cover" id="flyingCover"></div>
   <div class="flying-pages"></div>
+</div>
+
+<!-- BOOK DETAILS MODAL -->
+<div class="details-modal-overlay" id="bookDetailsModal" role="dialog" aria-hidden="true">
+  <div class="details-modal-box">
+    <button class="details-close-btn" id="bookDetailsCloseBtn" aria-label="Close modal">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+    <div class="details-modal-grid">
+      <div class="details-cover book-cover" id="detailsModalCover"></div>
+      <div class="details-info">
+        <h2 class="details-title" id="detailsModalTitle">—</h2>
+        <p class="details-author" id="detailsModalAuthor">—</p>
+        <div class="details-tags" id="detailsModalTags"></div>
+        <div class="vocab-meter" id="detailsModalMeter"></div>
+        <div class="details-progress-wrap">
+          <div class="details-progress-head">
+            <span id="detailsProgressStatus">Stav čítania</span>
+            <span id="detailsProgressPct">0%</span>
+          </div>
+          <div class="details-progress-track">
+            <div class="details-progress-fill" id="detailsProgressFill" style="width:0%"></div>
+          </div>
+        </div>
+        <div class="details-actions">
+          <button class="details-btn-primary" id="detailsStartBtn">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            <span id="detailsStartBtnText">Čítať</span>
+          </button>
+          <div id="detailsStatusSelectWrap"></div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- WORD POPOVER -->

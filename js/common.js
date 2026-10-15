@@ -426,6 +426,121 @@ function getMostRecentBookData(){
 }
 
 /* ================================================================
+   BOOK DETAILS MODAL & PROGRESS
+   ================================================================ */
+let activeDetailsBook = null;
+let activeDetailsCoverEl = null;
+
+function showBookDetails(book, originCoverEl, overrideLevel){
+  if (!book) return;
+  activeDetailsBook = book;
+  activeDetailsCoverEl = originCoverEl || null;
+
+  const displayLevel = overrideLevel || book.level || 'B1';
+  const modal = document.getElementById('bookDetailsModal');
+  if (!modal) return;
+
+  const cover = document.getElementById('detailsModalCover');
+  const title = document.getElementById('detailsModalTitle');
+  const author = document.getElementById('detailsModalAuthor');
+  const tags = document.getElementById('detailsModalTags');
+  const meter = document.getElementById('detailsModalMeter');
+  const progressStatus = document.getElementById('detailsProgressStatus');
+  const progressPct = document.getElementById('detailsProgressPct');
+  const progressFill = document.getElementById('detailsProgressFill');
+  const startBtnText = document.getElementById('detailsStartBtnText');
+  const statusWrap = document.getElementById('detailsStatusSelectWrap');
+
+  if (cover) paintCover(cover, book);
+  if (title) title.textContent = book.title;
+  if (author) author.textContent = book.author;
+
+  if (tags) {
+    tags.innerHTML = '' +
+      '<span class="details-tag" style="color:var(--lvl-' + displayLevel + '); border-color:var(--lvl-' + displayLevel + ')">' + displayLevel + '</span>' +
+      '<span class="details-tag">' + (book.genre ? book.genre.toUpperCase() : 'GENERAL') + '</span>' +
+      '<span class="details-tag">⏱ ' + formatTime(book.minutes) + '</span>' +
+      '<span class="details-tag">📅 ' + formatDateAdded(book.dateAdded) + '</span>';
+  }
+
+  if (meter) {
+    const LEVEL_SEGMENTS = { A1: 1, A2: 2, B1: 3, B2: 4, C1: 5, C2: 6 };
+    const filledCount = LEVEL_SEGMENTS[displayLevel] || 1;
+    let segs = '';
+    for (let i = 0; i < 6; i++){ segs += '<i class="' + (i < filledCount ? 'on' : '') + '"></i>'; }
+    meter.innerHTML = segs;
+  }
+
+  const progressData = loadReadingProgress();
+  const progressKey = `${book.id}:${displayLevel.toUpperCase()}`;
+  const entry = (progressData.books && (progressData.books[progressKey] || progressData.books[book.id])) || null;
+
+  const pct = entry ? (entry.progress || 0) : 0;
+  const savedPos = entry && typeof entry.lastPosition === 'number' ? entry.lastPosition : 0;
+  const status = getBookStatus(book.id);
+
+  if (progressStatus) {
+    progressStatus.textContent = status === 'read' ? 'Dokončené' : (status === 'in-progress' ? 'V procese čítania' : 'Neprečítané');
+  }
+  if (progressPct) progressPct.textContent = pct + '%';
+  if (progressFill) progressFill.style.width = pct + '%';
+
+  if (startBtnText) {
+    startBtnText.textContent = pct > 0 ? 'Pokračovať v čítaní' : 'Čítať';
+  }
+
+  if (statusWrap) {
+    statusWrap.innerHTML = '';
+    const statusSelect = document.createElement('select');
+    statusSelect.className = 'status-select';
+    statusSelect.style.fontSize = '.82rem';
+    statusSelect.style.padding = '8px 14px';
+    statusSelect.style.borderRadius = '99px';
+    statusSelect.style.border = '1px solid var(--glass-border)';
+    statusSelect.style.background = 'var(--glass-fill-soft)';
+    statusSelect.style.color = status === 'read' ? 'var(--neon-cyan)' : (status === 'in-progress' ? 'var(--neon-amber)' : 'var(--text-tertiary)');
+    statusSelect.style.cursor = 'pointer';
+
+    const options = [
+      { value: 'unread', label: 'Unread' },
+      { value: 'in-progress', label: 'In Progress' },
+      { value: 'read', label: 'Read' }
+    ];
+
+    options.forEach(opt => {
+      const o = document.createElement('option');
+      o.value = opt.value;
+      o.textContent = opt.label;
+      o.style.background = '#12141F';
+      o.style.color = '#F5F7FA';
+      if (opt.value === status) o.selected = true;
+      statusSelect.appendChild(o);
+    });
+
+    statusSelect.addEventListener('change', (e) => {
+      setBookStatus(book.id, e.target.value);
+      refreshAllBookDisplays();
+      showBookDetails(book, originCoverEl, overrideLevel);
+    });
+
+    statusWrap.appendChild(statusSelect);
+  }
+
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden', 'false');
+}
+
+function closeBookDetails(){
+  const modal = document.getElementById('bookDetailsModal');
+  if (modal) {
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden', 'true');
+  }
+  activeDetailsBook = null;
+  activeDetailsCoverEl = null;
+}
+
+/* ================================================================
    BOOK CARD CREATION
    ================================================================ */
 function createBookCardEl(book, overrideLevel){
@@ -520,7 +635,7 @@ function createBookCardEl(book, overrideLevel){
 
   const open = (e) => {
     if (e.target.closest('.status-select')) return;
-    openBook(book, cover, undefined, displayLevel);
+    showBookDetails(book, cover, displayLevel);
   };
   card.addEventListener('click', open);
   card.addEventListener('keydown', (e) => {
@@ -1778,6 +1893,29 @@ function initCommonListeners() {
 
   const drawerCloseBtn = document.getElementById('drawerCloseBtn');
   if (drawerCloseBtn) drawerCloseBtn.addEventListener('click', closeDrawer);
+
+  const bookDetailsCloseBtn = document.getElementById('bookDetailsCloseBtn');
+  if (bookDetailsCloseBtn) {
+    bookDetailsCloseBtn.addEventListener('click', closeBookDetails);
+  }
+
+  const bookDetailsModal = document.getElementById('bookDetailsModal');
+  if (bookDetailsModal) {
+    bookDetailsModal.addEventListener('click', (e) => {
+      if (e.target === bookDetailsModal) closeBookDetails();
+    });
+  }
+
+  const detailsStartBtn = document.getElementById('detailsStartBtn');
+  if (detailsStartBtn) {
+    detailsStartBtn.addEventListener('click', () => {
+      if (!activeDetailsBook) return;
+      const b = activeDetailsBook;
+      const cov = activeDetailsCoverEl;
+      closeBookDetails();
+      openBook(b, cov);
+    });
+  }
 
   const navVocabBtn = document.getElementById('navVocabBtn');
   if (navVocabBtn) {
