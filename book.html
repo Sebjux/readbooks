@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Book Details — Lumen English Reading Library</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Literata:opsz,wght@6..72,400;6..72,500;6..72,600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          void: '#04050A',
+          deep: '#0A0C16',
+          elevated: '#12141F',
+        },
+        fontFamily: {
+          display: ['"Space Grotesk"', 'sans-serif'],
+          body: ['"Inter"', 'sans-serif'],
+          reader: ['"Literata"', 'serif'],
+          mono: ['"JetBrains Mono"', 'monospace'],
+        }
+      }
+    }
+  }
+</script>
+
+<style>
+  /* ============================================================
+     DESIGN TOKENS
+     ============================================================ */
+  :root{
+    --bg-void:#04050A;
+    --bg-deep:#0A0C16;
+    --bg-elevated:#12141F;
+    --bg-reader:#0C0E18;
+
+    --glass-fill: rgba(20,22,36,.55);
+    --glass-fill-soft: rgba(20,22,36,.32);
+    --glass-border: rgba(255,255,255,.08);
+    --glass-border-hi: rgba(255,255,255,.16);
+
+    --text-primary:#F5F7FA;
+    --text-secondary:#A7AFC2;
+    --text-tertiary:#666E82;
+    --text-reader:#EAE6DD;
+
+    --neon-cyan:#4CF5E0;
+    --neon-blue:#7CACF8;
+    --neon-violet:#9B7BFF;
+    --neon-magenta:#F472B6;
+    --neon-amber:#FFC876;
+
+    --lvl-A1:#34D399;
+    --lvl-A2:#4CF5E0;
+    --lvl-B1:#7CACF8;
+    --lvl-B2:#9B7BFF;
+    --lvl-C1:#F472B6;
+    --lvl-C2:#FB7185;
+
+    --genre-scifi:#8B7CFC;
+    --genre-business:#FFC876;
+    --genre-classic:#E8C79E;
+    --genre-daily:#4CF5E0;
+
+    --radius-card:20px;
+    --radius-panel:26px;
+    --radius-pill:999px;
+
+    --ease-out-expo:cubic-bezier(.16,1,.3,1);
+    --ease-open:cubic-bezier(.65,0,.35,1);
+    --ease-spring:cubic-bezier(.34,1.56,.64,1);
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-padding-top:24px;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background:var(--bg-void);
+    color:var(--text-primary);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  ::selection{background:rgba(155,123,255,.35); color:#fff;}
+
+  a,button{font-family:inherit;}
+  button{cursor:pointer; background:none; border:none; color:inherit;}
+  button:disabled{cursor:default; opacity:.35;}
+  img{max-width:100%; display:block;}
+
+  :focus-visible{
+    outline:2px solid var(--neon-cyan);
+    outline-offset:3px;
+    border-radius:6px;
+  }
+
+  h1,h2,h3,h4{font-family:'Space Grotesk',sans-serif; margin:0; letter-spacing:-0.01em;}
+  p{margin:0;}
+
+  /* AMBIENT BACKGROUND */
+  .ambient{
+    position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden;
+  }
+  .ambient::before, .ambient::after{
+    content:''; position:absolute; border-radius:50%; filter:blur(90px); opacity:.28;
+  }
+  .ambient::before{
+    width:640px; height:640px; top:-220px; left:-160px;
+    background:radial-gradient(circle, var(--neon-violet), transparent 70%);
+  }
+  .ambient::after{
+    width:560px; height:560px; bottom:-260px; right:-140px;
+    background:radial-gradient(circle, var(--neon-cyan), transparent 70%);
+    opacity:.18;
+  }
+  .grain{
+    position:fixed; inset:0; z-index:1; pointer-events:none;
+    opacity:.05; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* GLASS PRIMITIVE */
+  .glass{
+    background:var(--glass-fill);
+    backdrop-filter:blur(22px) saturate(140%);
+    -webkit-backdrop-filter:blur(22px) saturate(140%);
+    border:1px solid var(--glass-border);
+  }
+
+  /* TOP BAR */
+  .topbar{
+    position:sticky; top:0; z-index:40;
+    display:flex; align-items:center; justify-content:space-between;
+    gap:16px; padding:16px clamp(16px,4vw,48px);
+    padding-top:calc(16px + env(safe-area-inset-top,0px));
+    background:rgba(4,5,10,.65);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+    border-bottom:1px solid var(--glass-border);
+  }
+  .brand{display:flex; align-items:center; gap:10px; flex-shrink:0;}
+  .brand-mark{
+    width:34px; height:34px; border-radius:10px;
+    background:linear-gradient(145deg, var(--neon-cyan), var(--neon-violet));
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 0 24px -4px rgba(155,123,255,.7);
+  }
+  .brand-mark svg{width:18px; height:18px; color:#04050A;}
+  .brand-name{font-family:'Space Grotesk'; font-weight:600; font-size:1.05rem; letter-spacing:-.01em;}
+
+  .nav-tabs{
+    display:flex; gap:4px; padding:3px; border-radius:var(--radius-pill);
+    background:var(--glass-fill-soft); border:1px solid var(--glass-border);
+    flex-shrink:0;
+  }
+  .nav-tab-btn{
+    padding:6px 14px; border-radius:var(--radius-pill); font-size:.82rem; font-weight:500;
+    color:var(--text-secondary); transition:all 180ms var(--ease-out-expo);
+    text-decoration:none; display:inline-flex; align-items:center;
+  }
+  .nav-tab-btn:hover{ color:var(--text-primary); }
+  .nav-tab-btn.active{ background:var(--text-primary); color:var(--bg-void); font-weight:600; }
+
+  .search-wrap{
+    flex:1; max-width:420px; display:flex; align-items:center; gap:10px;
+    padding:9px 16px; border-radius:var(--radius-pill);
+    background:var(--glass-fill-soft); border:1px solid var(--glass-border);
+    transition:border-color 200ms var(--ease-out-expo), background 200ms var(--ease-out-expo);
+  }
+  .search-wrap:focus-within{ border-color:var(--glass-border-hi); background:var(--glass-fill); }
+  .search-wrap svg{width:16px; height:16px; color:var(--text-tertiary); flex-shrink:0;}
+  .search-wrap input{
+    background:none; border:none; outline:none; color:var(--text-primary);
+    font-size:.9rem; width:100%;
+  }
+  .search-wrap input::placeholder{color:var(--text-tertiary);}
+
+  .vocab-toggle-nav{
+    display:flex; align-items:center; gap:6px; flex-shrink:0;
+    padding:8px 14px; border-radius:var(--radius-pill);
+    background:var(--glass-fill-soft); border:1px solid var(--glass-border);
+    font-size:.82rem; color:var(--text-secondary);
+    transition:border-color 200ms;
+  }
+  .vocab-toggle-nav:hover{ border-color:var(--glass-border-hi); color:var(--text-primary); }
+  .vocab-toggle-nav svg{width:15px; height:15px;}
+  .vocab-count{
+    font-family:'JetBrains Mono'; font-size:.72rem; color:var(--neon-cyan);
+    background:rgba(76,245,224,.12); padding:1px 7px; border-radius:99px;
+  }
+
+  .lang-picker{ position:relative; flex-shrink:0; }
+  .lang-trigger{
+    display:flex; align-items:center; gap:6px; padding:8px 10px; border-radius:var(--radius-pill);
+    background:var(--glass-fill-soft); border:1px solid var(--glass-border);
+    font-size:1.05rem; line-height:1; color:var(--text-secondary);
+    transition:border-color 150ms;
+  }
+  .lang-trigger:hover{ border-color:var(--glass-border-hi); }
+  .lang-trigger svg{ width:13px; height:13px; opacity:.7; }
+  .lang-menu{
+    position:absolute; top:calc(100% + 10px); right:0; z-index:50; width:290px; max-height:360px;
+    overflow-y:auto; padding:10px; border-radius:18px;
+    background:rgba(14,16,26,.92); backdrop-filter:blur(24px) saturate(160%); -webkit-backdrop-filter:blur(24px) saturate(160%);
+    border:1px solid var(--glass-border-hi);
+    box-shadow:0 24px 60px -18px rgba(0,0,0,.75);
+    opacity:0; transform:translateY(-6px) scale(.97); pointer-events:none;
+    transition:opacity 160ms var(--ease-out-expo), transform 160ms var(--ease-out-expo);
+  }
+  .lang-menu.open{ opacity:1; transform:translateY(0) scale(1); pointer-events:auto; }
+
+  /* MAIN LAYOUT */
+  #bookDetailsMain{
+    position:relative; z-index:2;
+    max-width:1100px; margin:0 auto;
+    padding:32px clamp(16px,4vw,48px) 96px;
+    transition:filter 480ms var(--ease-out-expo), opacity 480ms var(--ease-out-expo);
+  }
+  #bookDetailsMain.dimmed{ filter:blur(10px) brightness(.45); opacity:.75; pointer-events:none; }
+
+  /* NAVIGATION BACK BUTTON */
+  .back-link-btn{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:8px 16px; border-radius:var(--radius-pill);
+    background:var(--glass-fill-soft); border:1px solid var(--glass-border);
+    font-size:.85rem; font-weight:500; color:var(--text-secondary);
+    transition:all 180ms var(--ease-out-expo); margin-bottom:28px;
+  }
+  .back-link-btn:hover{ color:var(--text-primary); border-color:var(--glass-border-hi); transform:translateX(-2px); }
+  .back-link-btn svg{ width:16px; height:16px; }
+
+  /* BOOK DETAIL CONTAINER */
+  .book-hero-card{
+    position:relative; padding:clamp(24px,4vw,40px);
+    border-radius:32px; overflow:hidden;
+    margin-bottom:40px;
+  }
+  .book-hero-grid{
+    display:grid; grid-template-columns:220px 1fr; gap:36px; align-items:start;
+  }
+  @media (max-width:768px){
+    .book-hero-grid{ grid-template-columns:1fr; gap:24px; justify-items:center; text-align:center; }
+    .details-actions-row{ justify-content:center; }
+    .book-meta-chips{ justify-content:center; }
+  }
+
+  .details-book-cover{
+    width:220px; aspect-ratio:2/3; border-radius:20px; overflow:hidden; position:relative;
+    box-shadow:0 24px 60px -16px rgba(0,0,0,.75); flex-shrink:0;
+  }
+  .book-details-content{ display:flex; flex-direction:column; gap:16px; min-width:0; }
+  .book-details-title{ font-size:clamp(1.8rem,3.2vw,2.5rem); font-weight:700; line-height:1.2; }
+  .book-details-author{ font-size:1.05rem; color:var(--text-secondary); }
+
+  .book-meta-chips{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+  .details-chip{
+    display:inline-flex; align-items:center; gap:6px;
+    font-size:.82rem; font-weight:600; padding:6px 14px; border-radius:var(--radius-pill);
+    background:var(--glass-fill-soft); border:1px solid var(--glass-border); color:var(--text-secondary);
+  }
+
+  .vocab-meter{ display:flex; gap:4px; width:160px; height:5px; margin-top:2px; }
+  .vocab-meter i{ display:block; flex:1; height:100%; border-radius:99px; background:rgba(255,255,255,.1); }
+  .vocab-meter i.on{ background:var(--neon-violet); }
+
+  /* PROGRESS CARD IN DETAILS */
+  .details-progress-card{
+    background:rgba(255,255,255,.03); border:1px solid var(--glass-border);
+    border-radius:20px; padding:20px 22px; display:flex; flex-direction:column; gap:12px;
+    margin-top:8px;
+  }
+  .details-progress-header{ display:flex; justify-content:space-between; align-items:center; font-size:.88rem; color:var(--text-secondary); }
+  .details-progress-header b{ color:var(--text-primary); }
+  .details-progress-track{ height:8px; border-radius:99px; background:rgba(255,255,255,.08); overflow:hidden; }
+  .details-progress-fill{ height:100%; border-radius:99px; background:linear-gradient(90deg, var(--neon-cyan), var(--neon-violet)); transition:width 300ms var(--ease-out-expo); }
+
+  .details-actions-row{ display:flex; flex-wrap:wrap; gap:14px; align-items:center; margin-top:8px; }
+  .btn-primary-lg{
+    display:inline-flex; align-items:center; gap:10px;
+    padding:14px 28px; border-radius:var(--radius-pill);
+    background:linear-gradient(120deg, var(--neon-cyan), var(--neon-violet));
+    color:#04050A; font-weight:700; font-size:1rem;
+    box-shadow:0 12px 36px -8px rgba(155,123,255,.6);
+    transition:transform 200ms var(--ease-out-expo), box-shadow 200ms var(--ease-out-expo);
+  }
+  .btn-primary-lg:hover{ transform:translateY(-2px); box-shadow:0 16px 42px -8px rgba(155,123,255,.75); }
+  .btn-primary-lg svg{ width:20px; height:20px; }
+
+  .status-select-lg{
+    font-size:.88rem; font-weight:500;
+    padding:12px 20px; border-radius:var(--radius-pill);
+    border:1px solid var(--glass-border-hi);
+    background:var(--glass-fill);
+    color:var(--text-primary); cursor:pointer; outline:none;
+    transition:border-color 150ms;
+  }
+  .status-select-lg:hover, .status-select-lg:focus-visible{ border-color:var(--neon-cyan); }
+
+  /* CONTENT SECTIONS */
+  .details-sections-grid{ display:grid; grid-template-columns:2fr 1fr; gap:28px; }
+  @media (max-width:840px){
+    .details-sections-grid{ grid-template-columns:1fr; }
+  }
+
+  .details-section-box{
+    padding:28px; border-radius:24px; display:flex; flex-direction:column; gap:16px;
+  }
+  .section-box-title{ font-size:1.15rem; font-weight:600; color:var(--text-primary); display:flex; align-items:center; gap:8px; }
+  .section-box-title svg{ width:18px; height:18px; color:var(--neon-cyan); }
+  .section-box-body{ font-size:.95rem; line-height:1.7; color:var(--text-secondary); }
+
+  .info-stat-list{ display:flex; flex-direction:column; gap:14px; list-style:none; padding:0; margin:0; }
+  .info-stat-item{ display:flex; justify-content:space-between; align-items:center; padding-bottom:12px; border-bottom:1px solid var(--glass-border); font-size:.88rem; }
+  .info-stat-item:last-child{ border-bottom:none; padding-bottom:0; }
+  .info-stat-label{ color:var(--text-tertiary); }
+  .info-stat-val{ color:var(--text-primary); font-weight:600; }
+
+  /* ERROR STATE */
+  .error-box{
+    text-align:center; padding:64px 24px; border-radius:28px;
+    display:flex; flex-direction:column; align-items:center; gap:16px; margin:40px auto; max-width:520px;
+  }
+  .error-icon{ width:56px; height:56px; border-radius:50%; background:rgba(251,113,133,.12); color:var(--lvl-C2); display:flex; align-items:center; justify-content:center; }
+  .error-icon svg{ width:28px; height:28px; }
+
+  /* COVER STYLING REUSE */
+  .book-cover{
+    position:relative; width:100%; aspect-ratio:2/3; border-radius:14px; overflow:hidden;
+    background:linear-gradient(160deg, var(--c1), var(--c2));
+    box-shadow:0 14px 34px -14px rgba(0,0,0,.65);
+  }
+  .cover-pattern{ position:absolute; inset:0; opacity:.35; mix-blend-mode:overlay; pointer-events:none; }
+  .pattern-scifi{ background-image:radial-gradient(circle at 22% 22%, rgba(255,255,255,.55) 1px, transparent 1.6px), radial-gradient(circle at 65% 55%, rgba(255,255,255,.4) 1px, transparent 1.6px), radial-gradient(circle at 80% 85%, rgba(255,255,255,.5) 1px, transparent 1.6px); background-size:36px 36px,52px 52px,30px 30px; }
+  .pattern-business{ background-image:repeating-linear-gradient(0deg, rgba(255,255,255,.22) 0 1px, transparent 1px 22px), repeating-linear-gradient(90deg, rgba(255,255,255,.12) 0 1px, transparent 1px 22px); }
+  .pattern-classic{ background-image:repeating-radial-gradient(circle at 50% 0%, rgba(255,255,255,.18) 0 2px, transparent 2px 34px); }
+  .pattern-daily{ background-image:radial-gradient(circle at 30% 72%, rgba(255,255,255,.28) 18%, transparent 58%), radial-gradient(circle at 76% 28%, rgba(255,255,255,.22) 14%, transparent 52%); }
+  .cover-icon{ position:absolute; top:12px; right:12px; width:26px; height:26px; color:rgba(255,255,255,.55); }
+  .cover-icon svg{ width:100%; height:100%; }
+  .cover-text{
+    position:absolute; left:0; right:0; bottom:0; padding:16px 14px 14px;
+    background:linear-gradient(0deg, rgba(0,0,0,.78), transparent 90%);
+  }
+  .cover-title{ font-family:'Space Grotesk'; font-size:1.05rem; font-weight:600; color:#fff; line-height:1.25; margin-bottom:3px; }
+  .cover-author{ font-size:.8rem; color:rgba(255,255,255,.65); }
+
+  /* REUSE READER VIEW & OVERLAYS */
+  .reader{
+    position:fixed; inset:0; z-index:60;
+    background:var(--bg-reader);
+    opacity:0; transform:scale(.97);
+    transition:opacity 340ms var(--ease-out-expo), transform 340ms var(--ease-out-expo);
+    display:flex; flex-direction:column; overflow:hidden;
+  }
+  .reader.entered{ opacity:1; transform:scale(1); }
+  .reader-top{
+    position:relative; z-index:2; display:flex; align-items:center; justify-content:space-between;
+    gap:12px; padding:16px clamp(14px,3vw,32px); padding-top:calc(16px + env(safe-area-inset-top,0px));
+    border-bottom:1px solid var(--glass-border);
+  }
+  .reader-back{
+    display:flex; align-items:center; gap:8px; padding:8px 14px 8px 10px; border-radius:var(--radius-pill);
+    background:var(--glass-fill-soft); border:1px solid var(--glass-border); font-size:.85rem; color:var(--text-secondary);
+    transition:color 150ms, border-color 150ms; flex-shrink:0;
+  }
+  .reader-heading{ min-width:0; text-align:center; flex:1; display:flex; flex-direction:column; align-items:center; }
+  .reader-heading .t{ font-family:'Space Grotesk'; font-size:.95rem; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; }
+  .reader-heading .s{ font-size:.72rem; color:var(--text-tertiary); }
+  .chapter-select{
+    font-family:'Space Grotesk', sans-serif; font-size:.76rem; font-weight:600; color:var(--neon-cyan);
+    background:var(--glass-fill-soft); border:1px solid var(--glass-border); border-radius:var(--radius-pill);
+    padding:2px 10px; margin-top:3px; cursor:pointer; outline:none; max-width:200px; text-overflow:ellipsis;
+  }
+  .chapter-select option{ background:#12141F; color:#F5F7FA; }
+  .reader-tools{ display:flex; align-items:center; gap:8px; flex-shrink:0; }
+  .icon-btn{
+    width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    background:var(--glass-fill-soft); border:1px solid var(--glass-border); color:var(--text-secondary);
+    transition:color 150ms, border-color 150ms, background 150ms; position:relative; flex-shrink:0;
+  }
+  .icon-btn:hover{ color:var(--text-primary); border-color:var(--glass-border-hi); }
+  .icon-btn svg{ width:15px; height:15px; }
+  .icon-btn.is-playing{ color:var(--neon-cyan); border-color:rgba(76,245,224,.45); background:rgba(76,245,224,.1); }
+  .icon-btn .badge{
+    position:absolute; top:-4px; right:-4px; min-width:15px; height:15px; padding:0 3px;
+    border-radius:99px; background:var(--neon-violet); color:#fff; font-size:.6rem; font-family:'JetBrains Mono';
+    display:flex; align-items:center; justify-content:center;
+  }
+  .font-ctrl{ display:flex; align-items:center; gap:2px; }
+  .font-ctrl button{ width:30px; height:30px; border-radius:50%; font-family:'JetBrains Mono'; font-size:.8rem; color:var(--text-secondary); }
+
+  .reader-stage{
+    position:relative; z-index:1; flex:1; display:flex; align-items:center; justify-content:center;
+    padding:20px clamp(10px,3vw,40px); min-height:0; overflow:hidden;
+  }
+  .nav-arrows{ display:flex; gap:10px; align-items:center; flex-shrink:0; z-index:10; }
+  .page-edge{
+    flex-shrink:0; width:46px; height:46px; border-radius:50%; align-self:center;
+    display:flex; align-items:center; justify-content:center; color:#04050A;
+    background:rgba(255,255,255,.92); border:1px solid rgba(255,255,255,.4);
+    box-shadow:0 4px 18px rgba(0,0,0,.35), 0 0 12px rgba(255,255,255,.22);
+    transition:all 200ms var(--ease-out-expo); z-index:10;
+  }
+  .page-edge:hover:not(:disabled){ background:#FFFFFF; color:#04050A; transform:scale(1.08); box-shadow:0 6px 24px rgba(0,0,0,.45), 0 0 20px rgba(255,255,255,.45); }
+  .page-edge:disabled{ opacity:.25; background:rgba(255,255,255,.12); color:var(--text-tertiary); border-color:transparent; box-shadow:none; transform:none; }
+  .page-edge svg{ width:20px; height:20px; stroke-width:2.2px; }
+
+  .book-stage{
+    perspective:2200px; width:min(400px, 30vw); height:clamp(400px, 75vh, 680px); max-height:100%;
+    margin-left:clamp(20px, 15vw, 200px); margin-right:clamp(20px, 8vw, 80px); position:relative;
+  }
+  .book-stage::before{
+    content:''; position:absolute; left:-3px; top:0; bottom:0; width:6px; z-index:5;
+    background:linear-gradient(180deg, var(--neon-violet), var(--neon-cyan)); border-radius:6px; opacity:.85; box-shadow:0 0 20px -2px var(--neon-violet);
+  }
+  #sheetsWrapper{ position:absolute; inset:0; }
+  .paper-sheet{ position:absolute; inset:0; transform-origin:left center; transform-style:preserve-3d; transition:transform 450ms var(--ease-open); }
+  .paper-sheet.flipped{ transform:rotateY(-180deg); }
+  .page-face{ position:absolute; inset:0; box-sizing:border-box; overflow:hidden; backface-visibility:hidden; -webkit-backface-visibility:hidden; background:#0C0E18; border:1px solid var(--glass-border); box-shadow:0 30px 70px -30px rgba(0,0,0,.7); }
+  .page-front{ z-index:2; border-radius:0 var(--radius-panel) var(--radius-panel) 0; }
+  .page-back{ transform:rotateY(180deg); z-index:1; border-radius:var(--radius-panel) 0 0 var(--radius-panel); background:#0C0E18; }
+  .page-content{ box-sizing:border-box; height:100%; max-height:100%; overflow:hidden !important; display:flex; flex-direction:column; justify-content:flex-start; padding:clamp(24px,4vw,52px); padding-bottom:24px !important; font-family:'Literata', serif; font-size:calc(1.15rem * var(--font-scale, 1)); line-height:1.85; color:var(--text-reader); max-width:64ch; margin:0 auto; }
+
+  .w, .page-content span.word, .page-content [data-word], .word{ border-bottom:none !important; text-decoration:none !important; color:inherit; cursor:pointer; border-radius:2px; transition:background 150ms, border-color 300ms; }
+  .w:hover, .page-content span.word:hover, .page-content [data-word]:hover, .word:hover{ border-bottom:1px solid rgba(255, 255, 255, 0.4) !important; background:rgba(124, 172, 248, .14); cursor:pointer; }
+  .w.active-word{ background:rgba(124,172,248,.25); }
+  .w.learning{ border-bottom:1px solid var(--neon-cyan) !important; }
+  .w.known{ border-bottom:none !important; }
+  .w.phrase{ border-bottom:1px solid rgba(255,200,118,.5) !important; background:rgba(255,200,118,.09); border-radius:4px; padding:0 3px; }
+  .w.reading-now{ background-color:#ff7675 !important; color:#ffffff !important; border-radius:4px; padding:2px 4px; border-bottom:none !important; }
+
+  .reader-bottom{ position:relative; z-index:1; display:flex; align-items:center; gap:14px; padding:12px clamp(14px,3vw,32px) calc(16px + env(safe-area-inset-bottom,0px)); }
+  .progress-track{ flex:1; height:4px; border-radius:99px; background:rgba(255,255,255,.08); overflow:hidden; }
+  .progress-fill{ height:100%; background:linear-gradient(90deg, var(--neon-cyan), var(--neon-violet)); border-radius:99px; }
+  .page-indicator{ font-family:'JetBrains Mono'; font-size:.74rem; color:var(--text-tertiary); flex-shrink:0; }
+
+  /* WORD POPOVER */
+  .word-popover{
+    position:fixed; z-index:90; width:min(272px,86vw); padding:16px; border-radius:18px;
+    background:rgba(16,18,30,.85); backdrop-filter:blur(24px) saturate(160%); -webkit-backdrop-filter:blur(24px) saturate(160%);
+    border:1px solid var(--glass-border-hi); box-shadow:0 24px 60px -18px rgba(0,0,0,.75);
+    opacity:0; transform:translateY(6px) scale(.96); transition:opacity 160ms var(--ease-out-expo), transform 160ms var(--ease-out-expo); pointer-events:none;
+  }
+  .word-popover.visible{ opacity:1; transform:translateY(0) scale(1); pointer-events:auto; }
+
+  /* VOCAB DRAWER */
+  .vocab-drawer{
+    position:fixed; top:0; right:0; bottom:0; z-index:95; width:min(320px,86vw);
+    background:rgba(10,11,20,.92); backdrop-filter:blur(26px) saturate(160%); -webkit-backdrop-filter:blur(26px) saturate(160%);
+    border-left:1px solid var(--glass-border); transform:translateX(100%); transition:transform 320ms var(--ease-out-expo);
+    display:flex; flex-direction:column; box-shadow:-10px 0 40px rgba(0,0,0,.5);
+  }
+  .vocab-drawer.open{ transform:translateX(0); }
+  .vocab-drawer-head{ display:flex; align-items:center; justify-content:space-between; padding:18px 20px; border-bottom:1px solid var(--glass-border); }
+  .vocab-list{ flex:1; overflow-y:auto; padding:8px 12px; list-style:none; margin:0; }
+  .vocab-item{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:11px 10px; border-radius:12px; }
+
+  .flying-book{ position:fixed; z-index:80; perspective:1800px; pointer-events:none; }
+  .flying-cover{ position:absolute; inset:0; border-radius:var(--radius-card); overflow:hidden; transform-origin:left center; transform-style:preserve-3d; box-shadow:0 30px 90px -20px rgba(0,0,0,.7); z-index:2; }
+
+  @media (max-width:768px){
+    .topbar{ flex-wrap:wrap; gap:10px 8px; padding:12px 14px; }
+    .search-wrap{ order:10; width:100%; flex-basis:100%; max-width:100%; }
+    .reader-stage{ padding:12px 10px; flex-direction:column; justify-content:center; }
+    .book-stage{ height:calc(100vh - 120px) !important; width:100%; max-width:100%; margin:0 auto; perspective:none !important; }
+    .book-stage::before{ display:none; }
+    .page-content{ padding:16px 14px !important; line-height:1.6; font-size:calc(0.98rem * var(--font-scale, 1)); }
+  }
+</style>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7203744964486071" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<div class="ambient" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-mark">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h9a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3V4z"/><path d="M20 6v14h-4V6a2 2 0 0 1 4 0z" opacity=".55"/></svg>
+    </div>
+    <span class="brand-name">Lumen</span>
+  </div>
+  <nav class="nav-tabs" id="pageNavTabs">
+    <a href="index.html" class="nav-tab-btn" id="tabLibraryBtn">Library / Search</a>
+    <a href="discover.html" class="nav-tab-btn" id="tabDiscoverBtn">Discover</a>
+  </nav>
+  <label class="search-wrap">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+    <input id="searchInput" type="text" placeholder="Search titles or authors…" autocomplete="off">
+  </label>
+  <button class="vocab-toggle-nav" id="navVocabBtn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-6-4-6 4V3z"/></svg>
+    My words <span class="vocab-count" id="navVocabCount">0</span>
+  </button>
+  <div class="lang-picker" id="langPicker">
+    <button class="lang-trigger" id="langTrigger" aria-label="Choose translation language" aria-haspopup="true">
+      <span id="langTriggerFlag">🇸🇰</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+    </button>
+    <div class="lang-menu" id="langMenu" hidden></div>
+  </div>
+</header>
+
+<main id="bookDetailsMain">
+
+  <button class="back-link-btn" id="backToLibraryBtn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+    Back to Library
+  </button>
+
+  <!-- DYNAMIC BOOK CONTENT -->
+  <div id="detailsCardContainer"></div>
+
+</main>
+
+<!-- READER VIEW -->
+<section class="reader" id="readerView" hidden>
+  <div class="reader-top">
+    <button class="reader-back" id="readerBackBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+      Book details
+    </button>
+    <div class="reader-heading">
+      <p class="t" id="readerTitle">—</p>
+      <p class="s" id="readerSub">—</p>
+      <select id="chapterSelect" class="chapter-select" aria-label="Select chapter" style="display:none;"></select>
+    </div>
+    <div class="reader-tools">
+      <button class="icon-btn" id="playBtn" aria-label="Read this page aloud">
+        <svg id="playIcon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        <svg id="pauseIcon" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>
+      </button>
+      <div class="font-ctrl">
+        <button id="fontDownBtn" aria-label="Decrease text size">A−</button>
+        <button id="fontUpBtn" aria-label="Increase text size">A+</button>
+      </div>
+      <button class="icon-btn" id="drawerToggleBtn" aria-label="My vocabulary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-6-4-6 4V3z"/></svg>
+        <span class="badge" id="drawerBadge">0</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="ad-container ad-container--reader">
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-7203744964486071"
+         data-ad-slot="REPLACE_WITH_NEW_READER_SLOT_ID"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+  </div>
+
+  <div class="reader-stage">
+    <div class="book-stage" id="bookStage">
+      <div id="sheetsWrapper"></div>
+    </div>
+    <div class="nav-arrows">
+      <button class="page-edge" id="prevPageBtn" aria-label="Previous page">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>
+      </button>
+      <button class="page-edge" id="nextPageBtn" aria-label="Next page">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="reader-bottom">
+    <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <span class="page-indicator" id="pageIndicator">1 / 2</span>
+  </div>
+</section>
+
+<!-- VOCAB DRAWER -->
+<aside class="vocab-drawer" id="vocabDrawer">
+  <div class="vocab-drawer-head">
+    <h3>My vocabulary</h3>
+    <button class="icon-btn" id="drawerCloseBtn" aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </div>
+  <ul class="vocab-list" id="vocabList"></ul>
+</aside>
+
+<!-- FLYING BOOK -->
+<div class="flying-book" id="flyingBook" hidden aria-hidden="true">
+  <div class="flying-cover" id="flyingCover"></div>
+  <div class="flying-pages"></div>
+</div>
+
+<!-- WORD POPOVER -->
+<div class="word-popover" id="wordPopover" role="dialog" aria-label="Word details"></div>
+
+<script src="js/common.js"></script>
+<script>
+let activeBook = null;
+
+function refreshAllBookDisplays() {
+  if (activeBook) {
+    renderBookDetailsPage(activeBook);
+  }
+}
+
+function countTotalSentencesAndPages(bookContent, level) {
+  if (!bookContent || !bookContent.story) return { pagesCount: 0, sentencesCount: 0 };
+  const lvlKey = (level || 'B1').toUpperCase();
+  const storyData = bookContent.story[lvlKey] || bookContent.story[Object.keys(bookContent.story)[0]];
+
+  let pages = [];
+  if (Array.isArray(storyData)) {
+    pages = storyData;
+  } else if (storyData && Array.isArray(storyData.chapters)) {
+    storyData.chapters.forEach(c => {
+      if (Array.isArray(c.pages)) pages.push(...c.pages);
+    });
+  }
+
+  let totalSentences = 0;
+  pages.forEach(pg => {
+    let pgText = Array.isArray(pg) ? pg.join(' ') : String(pg || '');
+    let matches = pgText.match(/[^.!?]+[.!?]+|\S+/g);
+    if (matches) totalSentences += matches.length;
+  });
+
+  return {
+    pagesCount: pages.length || 1,
+    sentencesCount: totalSentences || 0
+  };
+}
+
+async function renderBookDetailsPage(book) {
+  activeBook = book;
+  const container = document.getElementById('detailsCardContainer');
+  if (!container) return;
+
+  const displayLevel = book.level || 'B1';
+  const progressData = loadReadingProgress();
+  const progressKey = `${book.id}:${displayLevel.toUpperCase()}`;
+  const entry = (progressData.books && (progressData.books[progressKey] || progressData.books[book.id])) || null;
+
+  const pct = entry ? (entry.progress || 0) : 0;
+  const savedPos = entry && typeof entry.lastPosition === 'number' ? entry.lastPosition : 0;
+  const status = getBookStatus(book.id);
+
+  // Fetch story content asynchronously to calculate total pages & sentence counts
+  const content = await fetchBookContent(book.id, displayLevel);
+  const counts = countTotalSentencesAndPages(content, displayLevel);
+  const totalPages = counts.pagesCount || 1;
+  const currentSentenceApprox = Math.round((savedPos / totalPages) * counts.sentencesCount) || (savedPos > 0 ? 1 : 0);
+
+  const LEVEL_SEGMENTS = { A1: 1, A2: 2, B1: 3, B2: 4, C1: 5, C2: 6 };
+  const filledCount = LEVEL_SEGMENTS[displayLevel] || 1;
+  let segs = '';
+  for (let i = 0; i < 6; i++) {
+    segs += `<i class="${i < filledCount ? 'on' : ''}"></i>`;
+  }
+
+  const genreLabels = {
+    scifi: 'Sci-Fi & Future Worlds',
+    business: 'Business & Growth',
+    classic: 'Classic Literature',
+    daily: 'Daily Conversations'
+  };
+
+  const statusLabels = {
+    'unread': 'Unread',
+    'in-progress': 'In Progress',
+    'read': 'Read'
+  };
+
+  container.innerHTML = `
+    <article class="book-hero-card glass">
+      <div class="book-hero-grid">
+        <div class="details-book-cover book-cover" id="detailsHeroCover"></div>
+        <div class="book-details-content">
+          <h1 class="book-details-title">${escapeHtml(book.title)}</h1>
+          <p class="book-details-author">by ${escapeHtml(book.author)}</p>
+
+          <div class="book-meta-chips">
+            <span class="details-chip" style="color:var(--lvl-${displayLevel}); border-color:var(--lvl-${displayLevel});">
+              <span class="level-dot" style="--lvl-color:var(--lvl-${displayLevel})"></span> Level ${displayLevel}
+            </span>
+            <span class="details-chip">${escapeHtml(genreLabels[book.genre] || (book.genre ? book.genre.toUpperCase() : 'GENERAL'))}</span>
+            <span class="details-chip">⏱ ${formatTime(book.minutes)} read</span>
+            <span class="details-chip">📅 Added ${formatDateAdded(book.dateAdded)}</span>
+          </div>
+
+          <div>
+            <p style="font-size: .78rem; color: var(--text-tertiary); margin-bottom: 6px;">DIFFICULTY RATING</p>
+            <div class="vocab-meter" aria-label="Difficulty ${filledCount} of 6">${segs}</div>
+          </div>
+
+          <div class="details-progress-card">
+            <div class="details-progress-header">
+              <span>Reading Progress (${statusLabels[status] || 'Unread'})</span>
+              <b>${pct}% completed</b>
+            </div>
+            <div class="details-progress-track">
+              <div class="details-progress-fill" style="width:${pct}%"></div>
+            </div>
+            <p style="font-size: .82rem; color: var(--text-tertiary);">
+              ${pct > 0 ? `Current position: Page ${savedPos + 1} of ${totalPages}${counts.sentencesCount > 0 ? ` (approx. sentence ${currentSentenceApprox} of ${counts.sentencesCount})` : ''}` : 'No reading progress saved yet.'}
+            </p>
+          </div>
+
+          <div class="details-actions-row">
+            <button class="btn-primary-lg" id="primaryActionBtn">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              <span>${pct > 0 ? 'Continue Reading' : 'Start Reading'}</span>
+            </button>
+
+            <select class="status-select-lg" id="detailsStatusSelect">
+              <option value="unread" ${status === 'unread' ? 'selected' : ''}>Unread</option>
+              <option value="in-progress" ${status === 'in-progress' ? 'selected' : ''}>In Progress</option>
+              <option value="read" ${status === 'read' ? 'selected' : ''}>Read</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <div class="details-sections-grid">
+      <div class="details-section-box glass">
+        <h3 class="section-box-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          About This Book
+        </h3>
+        <p class="section-box-body">
+          ${book.description ? escapeHtml(book.description) : `Explore "${escapeHtml(book.title)}", an engaging ${escapeHtml(genreLabels[book.genre] || 'English')} story specifically simplified and leveled at the CEFR ${displayLevel} proficiency tier. Designed with interactive word lookups, instant translations, and natural text-to-speech audio.`}
+        </p>
+
+        <h3 class="section-box-title" style="margin-top: 12px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          What You'll Learn
+        </h3>
+        <p class="section-box-body">
+          Master ${displayLevel}-level grammar structures and vocabulary in authentic contexts. Tap any word or phrase while reading to view instant dictionary definitions, phonetics, and save custom flashcards directly to your study drawer.
+        </p>
+      </div>
+
+      <div class="details-section-box glass">
+        <h3 class="section-box-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          Reading Stats
+        </h3>
+        <ul class="info-stat-list">
+          <li class="info-stat-item">
+            <span class="info-stat-label">Target Level</span>
+            <span class="info-stat-val" style="color:var(--lvl-${displayLevel})">CEFR ${displayLevel}</span>
+          </li>
+          <li class="info-stat-item">
+            <span class="info-stat-label">Estimated Time</span>
+            <span class="info-stat-val">${formatTime(book.minutes)}</span>
+          </li>
+          <li class="info-stat-item">
+            <span class="info-stat-label">Total Pages</span>
+            <span class="info-stat-val">${totalPages}</span>
+          </li>
+          <li class="info-stat-item">
+            <span class="info-stat-label">Genre</span>
+            <span class="info-stat-val">${escapeHtml(genreLabels[book.genre] || 'General')}</span>
+          </li>
+          <li class="info-stat-item">
+            <span class="info-stat-label">Date Added</span>
+            <span class="info-stat-val">${formatDateAdded(book.dateAdded)}</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  `;
+
+  const coverEl = document.getElementById('detailsHeroCover');
+  if (coverEl) paintCover(coverEl, book);
+
+  const primaryBtn = document.getElementById('primaryActionBtn');
+  if (primaryBtn) {
+    primaryBtn.addEventListener('click', () => {
+      const targetPos = pct > 0 ? savedPos : 0;
+      openBook(book, coverEl, targetPos, displayLevel);
+    });
+  }
+
+  const statusSelect = document.getElementById('detailsStatusSelect');
+  if (statusSelect) {
+    statusSelect.addEventListener('change', (e) => {
+      setBookStatus(book.id, e.target.value);
+      refreshAllBookDisplays();
+    });
+  }
+}
+
+function renderErrorState(bookId) {
+  const container = document.getElementById('detailsCardContainer');
+  if (!container) return;
+
+  container.innerHTML = `
+    <div class="error-box glass">
+      <div class="error-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      </div>
+      <h2>Book Not Found</h2>
+      <p style="color:var(--text-secondary); font-size:.95rem;">
+        The book with identifier "${escapeHtml(bookId || 'unknown')}" could not be found in our catalog.
+      </p>
+      <a href="index.html" class="btn-primary" style="text-decoration:none; margin-top:8px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+        Return to Library
+      </a>
+    </div>
+  `;
+}
+
+// Navigation back button logic
+const backBtn = document.getElementById('backToLibraryBtn');
+if (backBtn) {
+  backBtn.addEventListener('click', () => {
+    if (document.referrer && document.referrer.includes(window.location.host)) {
+      history.back();
+    } else {
+      window.location.href = 'index.html';
+    }
+  });
+}
+
+// Search field redirect logic
+const searchInput = document.getElementById('searchInput');
+if (searchInput) {
+  searchInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      const raw = searchInput.value.trim();
+      if (raw) {
+        window.location.href = 'index.html?search=' + encodeURIComponent(raw);
+      }
+    }
+  });
+}
+
+(async function init(){
+  await loadAllBooks();
+  const params = new URLSearchParams(window.location.search);
+  const bookId = params.get('id');
+
+  if (!bookId) {
+    renderErrorState('Missing ID');
+  } else {
+    const book = BOOKS.find(b => b.id === bookId);
+    if (!book) {
+      renderErrorState(bookId);
+    } else {
+      renderBookDetailsPage(book);
+    }
+  }
+
+  initCommonListeners();
+  updateVocabCount();
+})();
+</script>
+</body>
+</html>

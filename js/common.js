@@ -635,7 +635,7 @@ function createBookCardEl(book, overrideLevel){
 
   const open = (e) => {
     if (e.target.closest('.status-select')) return;
-    showBookDetails(book, cover, displayLevel);
+    window.location.href = 'book.html?id=' + encodeURIComponent(book.id);
   };
   card.addEventListener('click', open);
   card.addEventListener('keydown', (e) => {
