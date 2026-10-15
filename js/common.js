@@ -303,6 +303,13 @@ function tokenize(text){
 const wait = (ms) => new Promise((res) => setTimeout(res, ms));
 
 function coverInnerHTML(book){
+  if (book && book.coverImage) {
+    return '' +
+      '<div class="cover-text">' +
+        '<p class="cover-title">' + escapeHtml(book.title) + '</p>' +
+        '<p class="cover-author">' + escapeHtml(book.author) + '</p>' +
+      '</div>';
+  }
   return '' +
     '<div class="cover-pattern pattern-' + book.genre + '"></div>' +
     '<div class="cover-icon">' + (GENRE_ICONS[book.genre] || '') + '</div>' +
