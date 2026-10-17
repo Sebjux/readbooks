@@ -1,0 +1,23 @@
+{
+  "id": "scifi-11",
+  "title": "The Last City on Earth",
+  "author": "E. J. Caldwell",
+  "level": "B2",
+  "genre": "scifi",
+  "minutes": 150,
+  "vocab": 4,
+  "dateAdded": "2026-09-28",
+  "coverImage": "books/covers/scifi-11.webp",
+  "c1": "#3B82F6",
+  "c2": "#0F172A",
+  "story": {
+    "B2": [
+      [
+        "High above the ruins of the ancient world stood the glittering spires of the last city on Earth."
+      ],
+      [
+        "In this upper-intermediate science fiction novel by E. J. Caldwell, humanity defends its final stronghold against the unknown depths of space."
+      ]
+    ]
+  }
+}
