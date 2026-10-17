@@ -12,6 +12,19 @@
     "c2": "#0F172A"
   },
   {
+    "id": "scifi-11",
+    "title": "The Last City on Earth",
+    "author": "E. J. Caldwell",
+    "level": "B2",
+    "genre": "scifi",
+    "minutes": 150,
+    "vocab": 4,
+    "dateAdded": "2026-09-28",
+    "coverImage": "books/covers/scifi-11.webp",
+    "c1": "#3B82F6",
+    "c2": "#0F172A"
+  },
+  {
     "id": "scifi-9",
     "title": "The Ninth Lantern",
     "author": "Juraj Suda",
