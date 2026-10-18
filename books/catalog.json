@@ -1,5 +1,20 @@
 [
   {
+    "id": "scifi-12",
+    "title": "The Last City on Earth",
+    "level": "B1",
+    "description": "A team of astronauts travels to a distant planet and discovers an abandoned station with a message from Earth that should not exist.",
+    "whatYouWillLearn": "Build practical B1 English vocabulary and grammar through an accessible science-fiction story about space travel, teamwork, mystery, and hope.",
+    "author": "Maya Reed",
+    "genre": "Sci-Fi & Future Worlds",
+    "coverImage": "books/covers/scifi-12.png",
+    "minutes": 51,
+    "vocab": 5,
+    "dateAdded": "2026-10-17",
+    "c1": "#7CACF8",
+    "c2": "#12141F"
+  },
+  {
     "id": "epic-novel-1",
     "title": "The Long Horizon",
     "author": "Eleanor Vance",
