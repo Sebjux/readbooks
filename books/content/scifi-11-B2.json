@@ -1,7 +1,17 @@
 {
-  "id": "scifi-11",
+"id": "scifi-11",
   "title": "The Last City on Earth",
+  "author": "E. J. Caldwell",
   "level": "B2",
+  "genre": "scifi",
+  "description": "High above the ruins of an ancient world, the glittering spires of humanity's final stronghold stand against cosmic threats. Explore themes of survival, futuristic architecture, and resilience in this gripping upper-intermediate sci-fi novel.",
+  "whatYouWillLearn": "Expand your B2-level vocabulary with specialized futuristic and scientific terms, master complex clause connectors, and practice reading natural dialogues in futuristic settings.",
+  "minutes": 150,
+  "vocab": 4,
+  "dateAdded": "2026-09-28",
+  "coverImage": "books/covers/scifi-11.webp",
+  "c1": "#3B82F6",
+  "c2": "#0F172A",
   "story": {
     "B2": {
       "chapters": [
@@ -374,13 +384,5 @@
         }
       ]
     }
-  },
-  "author": "E. J. Caldwell",
-  "genre": "Sci-Fi & Future Worlds",
-  "coverImage": "books/covers/scifi-11.png",
-  "minutes": 72,
-  "vocab": 8,
-  "dateAdded": "2026-10-17",
-  "c1": "#7CACF8",
-  "c2": "#12141F"
+  }
 }
