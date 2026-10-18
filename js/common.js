@@ -727,6 +727,7 @@ async function openBook(book, originCoverEl, startPosition, targetLevel){
   const readerView = document.getElementById('readerView');
   const libraryMain = document.getElementById('libraryMain');
   const discoverMain = document.getElementById('discoverMain');
+  const bookDetailsMain = document.getElementById('bookDetailsMain');
 
   const first = originCoverEl ? originCoverEl.getBoundingClientRect() : { left: window.innerWidth/2, top: window.innerHeight/2, width: 80, height: 120 };
   const final = computeFinalRect();
@@ -749,6 +750,7 @@ async function openBook(book, originCoverEl, startPosition, targetLevel){
   if (originCoverEl) originCoverEl.style.visibility = 'hidden';
   if (libraryMain) libraryMain.classList.add('dimmed');
   if (discoverMain) discoverMain.classList.add('dimmed');
+  if (bookDetailsMain) bookDetailsMain.classList.add('dimmed');
   document.body.style.overflow = 'hidden';
 
   void flyingBookEl.offsetWidth;
@@ -794,6 +796,7 @@ async function closeBook(){
   const flyingCoverEl = document.getElementById('flyingCover');
   const libraryMain = document.getElementById('libraryMain');
   const discoverMain = document.getElementById('discoverMain');
+  const bookDetailsMain = document.getElementById('bookDetailsMain');
 
   readerView.classList.remove('entered');
   await wait(260);
@@ -835,6 +838,7 @@ async function closeBook(){
   if (originEl) originEl.style.visibility = '';
   if (libraryMain) libraryMain.classList.remove('dimmed');
   if (discoverMain) discoverMain.classList.remove('dimmed');
+  if (bookDetailsMain) bookDetailsMain.classList.remove('dimmed');
   document.body.style.overflow = '';
   currentBook = null;
   currentOriginCover = null;
