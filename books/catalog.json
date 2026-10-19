@@ -2,7 +2,7 @@
   {
     "id": "scifi-15",
     "title": "Beneath the Silent Ocean",
-    "level": "B1",
+    "level": "C2",
     "author": "Elian Marrow",
     "genre": "scifi",
     "coverImage": "books/covers/scifi-15.png",
@@ -74,7 +74,7 @@
     "id": "scifi-9",
     "title": "The Ninth Lantern",
     "author": "Juraj Suda",
-    "level": "B1",
+    "level": "C2",
     "genre": "fantasy",
     "minutes": 446,
     "vocab": 2,
