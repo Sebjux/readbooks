@@ -13,6 +13,19 @@
     "c2": "#06151C"
   },
   {
+    "id": "scifi-16",
+    "title": "The Railway Between Stars",
+    "level": "B1",
+    "author": "K. J. Rowe",
+    "genre": "Sci-Fi & Future Worlds",
+    "coverImage": "books/covers/scifi-16.png",
+    "minutes": 49,
+    "vocab": 5,
+    "dateAdded": "2026-10-19",
+    "c1": "#7CACF8",
+    "c2": "#12141F"
+  },
+  {
     "id": "scifi-13",
     "title": "The Day Machines Dreamed",
     "level": "B2",
