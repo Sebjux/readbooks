@@ -1,5 +1,18 @@
 [
   {
+    "id": "scifi-15",
+    "title": "Beneath the Silent Ocean",
+    "level": "B1",
+    "author": "Elian Marrow",
+    "genre": "scifi",
+    "coverImage": "books/covers/scifi-15.png",
+    "minutes": 150,
+    "vocab": 18,
+    "dateAdded": "2026-10-19",
+    "c1": "#197C8F",
+    "c2": "#06151C"
+  },
+  {
     "id": "scifi-13",
     "title": "The Day Machines Dreamed",
     "level": "B2",
