@@ -1213,10 +1213,20 @@ function applyWordStatusClasses(){
 
 function updateReaderChrome(idx){
   const pages = currentFlatPages && currentFlatPages.length ? currentFlatPages : getBookPages(currentBook, currentVariant);
+  const isMobile = isMobileDevice();
+
   document.getElementById('progressFill').style.width = (((idx + 1) / pages.length) * 100) + '%';
   document.getElementById('pageIndicator').textContent = (idx + 1) + ' / ' + pages.length;
-  document.getElementById('prevPageBtn').disabled = idx === 0;
-  document.getElementById('nextPageBtn').disabled = idx === pages.length - 1;
+
+  if (isMobile) {
+    document.getElementById('prevPageBtn').disabled = idx === 0;
+    document.getElementById('nextPageBtn').disabled = idx === pages.length - 1;
+  } else {
+    const currentSpread = Math.floor(idx / 2);
+    const maxSpread = Math.ceil(pages.length / 2) - 1;
+    document.getElementById('prevPageBtn').disabled = currentSpread === 0;
+    document.getElementById('nextPageBtn').disabled = currentSpread >= maxSpread;
+  }
 
   // Sync chapter dropdown value with active page
   const select = document.getElementById('chapterSelect');
@@ -1295,7 +1305,21 @@ function renderPage(idx){
 async function goToPage(delta, opts){
   opts = opts || {};
   const pages = currentFlatPages && currentFlatPages.length ? currentFlatPages : getBookPages(currentBook, currentVariant);
-  const next = currentPageIndex + delta;
+  const isMobile = isMobileDevice();
+  let next = currentPageIndex;
+
+  if (isMobile) {
+    next = currentPageIndex + delta;
+  } else {
+    // On desktop, each sheet contains 2 pages (spread). Advance or go back by full spread (2 pages).
+    const currentSpread = Math.floor(currentPageIndex / 2);
+    const targetSpread = currentSpread + delta;
+    const maxSpread = Math.ceil(pages.length / 2) - 1;
+
+    if (targetSpread < 0 || targetSpread > maxSpread) return;
+    next = targetSpread * 2;
+  }
+
   if (next < 0 || next >= pages.length || isPageAnimating) return;
   isPageAnimating = true;
   hidePopover();
