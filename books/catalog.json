@@ -1,5 +1,18 @@
 [
   {
+    "id": "scifi-17",
+    "title": "A World Without Secrets",
+    "level": "B1",
+    "author": "T. R. Davis",
+    "genre": "Sci-Fi & Future Worlds",
+    "coverImage": "books/covers/scifi-17.png",
+    "minutes": 50,
+    "vocab": 5,
+    "dateAdded": "2026-10-20",
+    "c1": "#7CACF8",
+    "c2": "#12141F"
+  },
+  {
     "id": "scifi-15",
     "title": "Beneath the Silent Ocean",
     "level": "C2",
