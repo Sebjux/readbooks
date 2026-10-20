@@ -13,6 +13,19 @@
     "c2": "#12141F"
   },
   {
+    "id": "scifi-18",
+    "title": "The Children of Tomorrow",
+    "level": "B2",
+    "author": "T. R. Davis",
+    "genre": "scifi",
+    "coverImage": "books/covers/scifi-18.png",
+    "minutes": 72,
+    "vocab": 8,
+    "dateAdded": "2026-10-20",
+    "c1": "#7CACF8",
+    "c2": "#12141F"
+  },
+  {
     "id": "scifi-15",
     "title": "Beneath the Silent Ocean",
     "level": "C2",
