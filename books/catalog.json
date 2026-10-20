@@ -26,6 +26,19 @@
     "c2": "#12141F"
   },
   {
+    "id": "scifi-19",
+    "title": "When the Earth Woke Up",
+    "level": "A2",
+    "author": "Mira Lane",
+    "genre": "scifi",
+    "coverImage": "books/covers/scifi-19.png",
+    "minutes": 51,
+    "vocab": 4,
+    "dateAdded": "2026-10-20",
+    "c1": "#4F9A5A",
+    "c2": "#102516"
+  },
+  {
     "id": "scifi-15",
     "title": "Beneath the Silent Ocean",
     "level": "C2",
