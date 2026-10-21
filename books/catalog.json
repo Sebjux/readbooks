@@ -271,18 +271,6 @@
     "c2": "#2E2008"
   },
   {
-    "id": "scifi-1",
-    "title": "Neon Horizon",
-    "author": "Kaya Ilyanova",
-    "level": "B2",
-    "genre": "scifi",
-    "minutes": 195,
-    "vocab": 4,
-    "dateAdded": "2026-09-18",
-    "c1": "#4C3AFF",
-    "c2": "#150E38"
-  },
-  {
     "id": "daily-4",
     "title": "Everyday English in Action",
     "author": "Nora Fischer",
