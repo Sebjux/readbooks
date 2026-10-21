@@ -6,7 +6,7 @@ const catalogPath = path.join(__dirname, '../books/catalog.json');
 
 const defaultBookLevels = {
   "scifi-8": "B2", "scifi-7": "C2", "scifi-6": "A1", "scifi-5": "C1",
-  "scifi-4": "B1", "scifi-3": "B2", "scifi-2": "C1", "scifi-1": "B2",
+  "scifi-4": "B1", "scifi-3": "B2", "scifi-2": "C1",
   "biz-7": "C2", "biz-6": "A1", "biz-5": "B1", "biz-4": "B2",
   "biz-3": "A2", "biz-2": "B1", "biz-1": "B2",
   "classic-8": "C2", "classic-7": "A1", "classic-6": "C1", "classic-5": "B1",
