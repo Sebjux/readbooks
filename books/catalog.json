@@ -39,6 +39,19 @@
     "c2": "#102516"
   },
   {
+    "id": "scifi-20",
+    "title": "The Signal from Nowhere",
+    "level": "B2",
+    "author": "Elena Cross",
+    "genre": "First Contact",
+    "coverImage": "books/covers/scifi-20.png",
+    "minutes": 93,
+    "vocab": 9,
+    "dateAdded": "2026-10-20",
+    "c1": "#4A80B8",
+    "c2": "#0A1424"
+  },
+  {
     "id": "scifi-15",
     "title": "Beneath the Silent Ocean",
     "level": "C2",
