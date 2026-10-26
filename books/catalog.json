@@ -121,6 +121,19 @@
     "c2": "#F4EBDD"
   },
   {
+    "id": "classic-12",
+    "title": "A Letter Never Sent",
+    "level": "B2",
+    "author": "T. R. Davis",
+    "genre": "classic",
+    "coverImage": "books/covers/scifi-18.png",
+    "minutes": 94,
+    "vocab": 8,
+    "dateAdded": "2026-10-24",
+    "c1": "#B76E79",
+    "c2": "#1F2937"
+  },
+  {
     "id": "classic-13",
     "title": "The Price of Ambition",
     "level": "C1",
@@ -261,19 +274,6 @@
     "c2": "#17151D"
   },
   {
-    "id": "scifi-18",
-    "title": "The Children of Tomorrow",
-    "level": "B2",
-    "author": "T. R. Davis",
-    "genre": "scifi",
-    "coverImage": "books/covers/scifi-18.png",
-    "minutes": 72,
-    "vocab": 8,
-    "dateAdded": "2026-10-20",
-    "c1": "#7CACF8",
-    "c2": "#12141F"
-  },
-  {
     "id": "scifi-17",
     "title": "A World Without Secrets",
     "level": "B1",
@@ -282,6 +282,19 @@
     "coverImage": "books/covers/scifi-17.png",
     "minutes": 50,
     "vocab": 5,
+    "dateAdded": "2026-10-20",
+    "c1": "#7CACF8",
+    "c2": "#12141F"
+  },
+  {
+    "id": "scifi-18",
+    "title": "The Children of Tomorrow",
+    "level": "B2",
+    "author": "T. R. Davis",
+    "genre": "scifi",
+    "coverImage": "books/covers/scifi-18.png",
+    "minutes": 72,
+    "vocab": 8,
     "dateAdded": "2026-10-20",
     "c1": "#7CACF8",
     "c2": "#12141F"
