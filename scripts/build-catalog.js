@@ -6,11 +6,11 @@ const catalogPath = path.join(__dirname, '../books/catalog.json');
 
 const defaultBookLevels = {
   "biz-7": "C2", "biz-6": "A1", "biz-5": "B1", "biz-4": "B2",
-  "biz-3": "A2", "biz-2": "B1", "biz-1": "B2",
+  "biz-3": "A2", "biz-2": "B1", "biz-1": "B2", "biz-11": "A1", "biz-12": "C2", "biz-13": "C1",
   "classic-8": "C2", "classic-7": "A1", "classic-6": "C1", "classic-5": "B1",
-  "classic-4": "B2", "classic-3": "B1", "classic-2": "C1", "classic-1": "C1",
+  "classic-4": "B2", "classic-3": "B1", "classic-2": "C1", "classic-1": "C1", "classic-11": "B2", "classic-12": "B2", "classic-13": "C1", "classic-14": "B1", "classic-15": "C2", "classic-16": "B1", "classic-17": "A2", "classic-18": "B2", "classic-19": "B1", "classic-20": "B1",
   "daily-7": "C2", "daily-6": "A1", "daily-5": "A2", "daily-4": "B1",
-  "daily-3": "B1", "daily-2": "A2", "daily-1": "A2",
+  "daily-3": "B1", "daily-2": "A2", "daily-1": "A2", "daily-11": "B2", "daily-12": "C1", "daily-13": "C2", "daily-14": "B1", "daily-15": "B1", "daily-16": "B2", "daily-17": "A2", "daily-18": "B1", "daily-20": "B2",
   "healthy-1": "B1", "scifi-10": "C2", "scifi-11": "B2", "scifi-12": "B1", "scifi-13": "B2", "scifi-14": "C1", "scifi-15": "C2", "scifi-16": "B1", "scifi-17": "B1", "scifi-18": "B2", "scifi-19": "A2", "scifi-20": "B2"
 };
 
