@@ -434,18 +434,6 @@
     "c2": "#4C0519"
   },
   {
-    "id": "classic-8",
-    "title": "Moby Dick (Unabridged)",
-    "author": "Herman Melville",
-    "level": "C2",
-    "genre": "classic",
-    "minutes": 520,
-    "vocab": 5,
-    "dateAdded": "2026-09-22",
-    "c1": "#9F1239",
-    "c2": "#280511"
-  },
-  {
     "id": "daily-7",
     "title": "Socio-Linguistic Nuances",
     "author": "Dr. Marcus Thorne",
@@ -473,18 +461,6 @@
     "c2": "#12141F"
   },
   {
-    "id": "classic-1",
-    "title": "Pride and Prejudice",
-    "author": "Jane Austen",
-    "level": "C1",
-    "genre": "classic",
-    "minutes": 480,
-    "vocab": 5,
-    "dateAdded": "2026-09-19",
-    "c1": "#B08D5E",
-    "c2": "#2A2013"
-  },
-  {
     "id": "biz-1",
     "title": "The Focused Founder",
     "author": "Mark Ellison",
@@ -509,18 +485,6 @@
     "c2": "#10312B"
   },
   {
-    "id": "classic-6",
-    "title": "The Picture of Dorian Gray",
-    "author": "Oscar Wilde",
-    "level": "C1",
-    "genre": "classic",
-    "minutes": 330,
-    "vocab": 5,
-    "dateAdded": "2026-09-15",
-    "c1": "#A88A5C",
-    "c2": "#2B2214"
-  },
-  {
     "id": "biz-4",
     "title": "The Art of the Pitch",
     "author": "Sophie Lindqvist",
@@ -531,18 +495,6 @@
     "dateAdded": "2026-09-14",
     "c1": "#8C6A2E",
     "c2": "#221806"
-  },
-  {
-    "id": "classic-2",
-    "title": "Frankenstein",
-    "author": "Mary Shelley",
-    "level": "C1",
-    "genre": "classic",
-    "minutes": 360,
-    "vocab": 5,
-    "dateAdded": "2026-09-12",
-    "c1": "#6E5A3E",
-    "c2": "#1C1710"
   },
   {
     "id": "daily-3",
@@ -569,18 +521,6 @@
     "c2": "#2A1C0A"
   },
   {
-    "id": "classic-4",
-    "title": "The Adventures of Sherlock Holmes",
-    "author": "Arthur Conan Doyle",
-    "level": "B2",
-    "genre": "classic",
-    "minutes": 300,
-    "vocab": 4,
-    "dateAdded": "2026-09-09",
-    "c1": "#8C6F4E",
-    "c2": "#241C12"
-  },
-  {
     "id": "biz-5",
     "title": "Leading Remote Teams",
     "author": "Daniel Kwan",
@@ -603,18 +543,6 @@
     "dateAdded": "2026-09-08",
     "c1": "#2DBEA6",
     "c2": "#0C2A26"
-  },
-  {
-    "id": "classic-3",
-    "title": "Alice's Adventures in Wonderland",
-    "author": "Lewis Carroll",
-    "level": "B1",
-    "genre": "classic",
-    "minutes": 150,
-    "vocab": 3,
-    "dateAdded": "2026-09-06",
-    "c1": "#9C7B4A",
-    "c2": "#261E10"
   },
   {
     "id": "daily-2",
@@ -641,18 +569,6 @@
     "c2": "#2F2410"
   },
   {
-    "id": "classic-5",
-    "title": "A Christmas Carol",
-    "author": "Charles Dickens",
-    "level": "B1",
-    "genre": "classic",
-    "minutes": 120,
-    "vocab": 3,
-    "dateAdded": "2026-09-03",
-    "c1": "#7A6244",
-    "c2": "#1F1810"
-  },
-  {
     "id": "daily-5",
     "title": "Ordering Without Fear",
     "author": "Liam Torres",
@@ -675,18 +591,6 @@
     "dateAdded": "2026-09-01",
     "c1": "#10B981",
     "c2": "#064E3B"
-  },
-  {
-    "id": "classic-7",
-    "title": "Simple Tales for Beginners",
-    "author": "Hans Christian Andersen",
-    "level": "A1",
-    "genre": "classic",
-    "minutes": 35,
-    "vocab": 1,
-    "dateAdded": "2026-09-01",
-    "c1": "#047857",
-    "c2": "#022C22"
   },
   {
     "id": "daily-6",
