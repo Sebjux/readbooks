@@ -434,18 +434,6 @@
     "c2": "#4C0519"
   },
   {
-    "id": "daily-7",
-    "title": "Socio-Linguistic Nuances",
-    "author": "Dr. Marcus Thorne",
-    "level": "C2",
-    "genre": "daily",
-    "minutes": 250,
-    "vocab": 5,
-    "dateAdded": "2026-09-22",
-    "c1": "#881337",
-    "c2": "#280511"
-  },
-  {
     "id": "scifi-10",
     "title": "The Ninth Lantern 2",
     "level": "C2",
@@ -473,18 +461,6 @@
     "c2": "#2E2008"
   },
   {
-    "id": "daily-4",
-    "title": "Everyday English in Action",
-    "author": "Nora Fischer",
-    "level": "B1",
-    "genre": "daily",
-    "minutes": 90,
-    "vocab": 2,
-    "dateAdded": "2026-09-17",
-    "c1": "#4BD8BE",
-    "c2": "#10312B"
-  },
-  {
     "id": "biz-4",
     "title": "The Art of the Pitch",
     "author": "Sophie Lindqvist",
@@ -495,18 +471,6 @@
     "dateAdded": "2026-09-14",
     "c1": "#8C6A2E",
     "c2": "#221806"
-  },
-  {
-    "id": "daily-3",
-    "title": "Small Talk, Big Confidence",
-    "author": "Chris Adeyemi",
-    "level": "B1",
-    "genre": "daily",
-    "minutes": 70,
-    "vocab": 2,
-    "dateAdded": "2026-09-12",
-    "c1": "#3FCDB0",
-    "c2": "#0E2D28"
   },
   {
     "id": "biz-2",
@@ -533,30 +497,6 @@
     "c2": "#241A08"
   },
   {
-    "id": "daily-1",
-    "title": "Coffee Shop Chats",
-    "author": "Emma Wallace",
-    "level": "A2",
-    "genre": "daily",
-    "minutes": 45,
-    "vocab": 1,
-    "dateAdded": "2026-09-08",
-    "c1": "#2DBEA6",
-    "c2": "#0C2A26"
-  },
-  {
-    "id": "daily-2",
-    "title": "At the Airport",
-    "author": "Julia Novak",
-    "level": "A2",
-    "genre": "daily",
-    "minutes": 40,
-    "vocab": 1,
-    "dateAdded": "2026-09-05",
-    "c1": "#22A896",
-    "c2": "#0A2622"
-  },
-  {
     "id": "biz-3",
     "title": "Small Habits, Big Wins",
     "author": "Tom Reyes",
@@ -569,18 +509,6 @@
     "c2": "#2F2410"
   },
   {
-    "id": "daily-5",
-    "title": "Ordering Without Fear",
-    "author": "Liam Torres",
-    "level": "A2",
-    "genre": "daily",
-    "minutes": 35,
-    "vocab": 1,
-    "dateAdded": "2026-09-03",
-    "c1": "#1F9C8B",
-    "c2": "#092220"
-  },
-  {
     "id": "biz-6",
     "title": "My First Job",
     "author": "Sarah Jenkins",
@@ -590,18 +518,6 @@
     "vocab": 1,
     "dateAdded": "2026-09-01",
     "c1": "#10B981",
-    "c2": "#064E3B"
-  },
-  {
-    "id": "daily-6",
-    "title": "Hello World",
-    "author": "Anna Miller",
-    "level": "A1",
-    "genre": "daily",
-    "minutes": 20,
-    "vocab": 1,
-    "dateAdded": "2026-09-01",
-    "c1": "#059669",
     "c2": "#064E3B"
   }
 ]
