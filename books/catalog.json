@@ -520,18 +520,6 @@
     "c2": "#022C22"
   },
   {
-    "id": "biz-7",
-    "title": "Macroeconomic Paradigms",
-    "author": "Prof. Victor Sterling",
-    "level": "C2",
-    "genre": "business",
-    "minutes": 310,
-    "vocab": 5,
-    "dateAdded": "2026-09-22",
-    "c1": "#E11D48",
-    "c2": "#4C0519"
-  },
-  {
     "id": "scifi-10",
     "title": "The Ninth Lantern 2",
     "level": "C2",
@@ -545,77 +533,5 @@
     "dateAdded": "2026-09-22",
     "c1": "#7CACF8",
     "c2": "#12141F"
-  },
-  {
-    "id": "biz-1",
-    "title": "The Focused Founder",
-    "author": "Mark Ellison",
-    "level": "B2",
-    "genre": "business",
-    "minutes": 165,
-    "vocab": 3,
-    "dateAdded": "2026-09-18",
-    "c1": "#D6A34A",
-    "c2": "#2E2008"
-  },
-  {
-    "id": "biz-4",
-    "title": "The Art of the Pitch",
-    "author": "Sophie Lindqvist",
-    "level": "B2",
-    "genre": "business",
-    "minutes": 110,
-    "vocab": 3,
-    "dateAdded": "2026-09-14",
-    "c1": "#8C6A2E",
-    "c2": "#221806"
-  },
-  {
-    "id": "biz-2",
-    "title": "Negotiate Like a Pro",
-    "author": "Laura Bennett",
-    "level": "B1",
-    "genre": "business",
-    "minutes": 120,
-    "vocab": 2,
-    "dateAdded": "2026-09-10",
-    "c1": "#B8863B",
-    "c2": "#2A1C0A"
-  },
-  {
-    "id": "biz-5",
-    "title": "Leading Remote Teams",
-    "author": "Daniel Kwan",
-    "level": "B1",
-    "genre": "business",
-    "minutes": 100,
-    "vocab": 2,
-    "dateAdded": "2026-09-08",
-    "c1": "#A67A2E",
-    "c2": "#241A08"
-  },
-  {
-    "id": "biz-3",
-    "title": "Small Habits, Big Wins",
-    "author": "Tom Reyes",
-    "level": "A2",
-    "genre": "business",
-    "minutes": 80,
-    "vocab": 2,
-    "dateAdded": "2026-09-04",
-    "c1": "#E0B563",
-    "c2": "#2F2410"
-  },
-  {
-    "id": "biz-6",
-    "title": "My First Job",
-    "author": "Sarah Jenkins",
-    "level": "A1",
-    "genre": "business",
-    "minutes": 25,
-    "vocab": 1,
-    "dateAdded": "2026-09-01",
-    "c1": "#10B981",
-    "c2": "#064E3B"
   }
 ]
