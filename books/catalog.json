@@ -191,6 +191,19 @@
     "c2": "#F2E9E4"
   },
   {
+    "id": "daily-19",
+    "title": "The Cost of Living",
+    "level": "B2",
+    "author": "T. R. Davis",
+    "genre": "Money & Adult Life",
+    "coverImage": "books/covers/daily-19.png",
+    "minutes": 110,
+    "vocab": 9,
+    "dateAdded": "2026-10-25",
+    "c1": "#6B705C",
+    "c2": "#F2E8CF"
+  },
+  {
     "id": "daily-20",
     "title": "Strangers at the Same Table",
     "level": "B2",
