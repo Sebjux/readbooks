@@ -38,10 +38,13 @@ async function fetchBookContent(bookId, level) {
     return bookContentCache[cacheKey];
   }
 
-  const filename = `${encodeURIComponent(bookId)}-${selectedLevel.toLowerCase()}.json`;
+  const filenameLower = `${encodeURIComponent(bookId)}-${selectedLevel.toLowerCase()}.json`;
+  const filenameUpper = `${encodeURIComponent(bookId)}-${selectedLevel.toUpperCase()}.json`;
   const urlsToTry = [
-    `books/content/${filename}`,
-    `/books/content/${filename}`
+    `books/content/${filenameLower}`,
+    `/books/content/${filenameLower}`,
+    `books/content/${filenameUpper}`,
+    `/books/content/${filenameUpper}`
   ];
 
   for (const url of urlsToTry) {
