@@ -791,15 +791,24 @@
   @media (max-width:768px){
     .topbar{
       flex-wrap:wrap;
-      gap:10px 8px;
-      padding:12px 14px;
-      padding-top:calc(12px + env(safe-area-inset-top,0px));
+      align-items:center;
+      gap:8px;
+      padding:10px 12px;
+      padding-top:calc(10px + env(safe-area-inset-top,0px));
     }
+    .brand{ gap:6px; }
+    .brand-name{ font-size:0.95rem; }
+    .nav-tabs{ gap:2px; padding:2px; }
+    .nav-tab-btn{ padding:5px 8px; font-size:0.75rem; white-space:nowrap; }
+    .vocab-toggle-nav{ padding:5px 8px; font-size:0.75rem; white-space:nowrap; gap:4px; }
+    .vocab-toggle-nav span.vocab-label{ display:none; }
+    .lang-trigger{ padding:5px 7px; font-size:0.9rem; gap:4px; }
     .search-wrap{
       order:10;
       width:100%;
       flex-basis:100%;
       max-width:100%;
+      padding:7px 12px;
     }
     .ad-container{
       width:100%;
@@ -861,15 +870,16 @@
   }
   @media (max-width:480px){
     .topbar{
-      gap:8px 6px;
-      padding:10px 10px;
-      padding-top:calc(10px + env(safe-area-inset-top,0px));
+      gap:6px 4px;
+      padding:8px 8px;
+      padding-top:calc(8px + env(safe-area-inset-top,0px));
     }
-    .brand-name{ font-size:.95rem; }
-    .brand-mark{ width:28px; height:28px; }
-    .nav-tab-btn{ padding:5px 9px; font-size:.75rem; }
-    .vocab-toggle-nav{ padding:6px 8px; font-size:.75rem; }
-    .lang-trigger{ padding:6px 8px; font-size:.92rem; }
+    .brand-mark{ width:26px; height:26px; }
+    .brand-mark svg{ width:14px; height:14px; }
+    .brand-name{ font-size:.88rem; }
+    .nav-tab-btn{ padding:4px 7px; font-size:.72rem; }
+    .vocab-toggle-nav{ padding:4px 6px; font-size:.72rem; }
+    .lang-trigger{ padding:4px 6px; font-size:.85rem; }
   }
   @media (prefers-reduced-motion:reduce){
     *{ animation-duration:.001ms !important; transition-duration:.001ms !important; }
@@ -899,7 +909,7 @@
   </label>
   <button class="vocab-toggle-nav" id="navVocabBtn">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-6-4-6 4V3z"/></svg>
-    My words <span class="vocab-count" id="navVocabCount">0</span>
+    <span class="vocab-label">My words</span> <span class="vocab-count" id="navVocabCount">0</span>
   </button>
   <div class="lang-picker" id="langPicker">
     <button class="lang-trigger" id="langTrigger" aria-label="Choose translation language" aria-haspopup="true">
