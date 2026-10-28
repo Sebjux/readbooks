@@ -766,7 +766,7 @@ async function openBook(book, originCoverEl, startPosition, targetLevel){
   requestAnimationFrame(() => { flyingCoverEl.style.transform = 'rotateY(-108deg)'; });
   await wait(560);
 
-  prepareReader(book, targetPos);
+  prepareReader(book, targetPos, levelToLoad);
   readerView.hidden = false;
   requestAnimationFrame(() => { readerView.classList.add('entered'); });
 
@@ -967,7 +967,8 @@ function buildChaptersForBook(book, variant) {
   let chapters = [];
   let flatPages = [];
 
-  const storyLvl = book && book.story ? (book.story[variant] || book.story[Object.keys(book.story)[0]]) : null;
+  const vKey = (variant && book && book.story) ? Object.keys(book.story).find(k => k.toLowerCase() === variant.toLowerCase()) : null;
+  const storyLvl = book && book.story ? ((vKey && book.story[vKey]) || book.story[variant] || book.story[Object.keys(book.story)[0]]) : null;
 
   // Check if book has explicit chapters in story JSON
   if (storyLvl && Array.isArray(storyLvl.chapters)) {
