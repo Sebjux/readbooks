@@ -452,9 +452,11 @@
   }
   .reader-back:hover{ color:var(--text-primary); border-color:var(--glass-border-hi); }
   .reader-back svg{ width:16px; height:16px; }
-  .reader-heading{ min-width:0; text-align:center; flex:1; display:flex; flex-direction:column; align-items:center; }
-  .reader-heading .t{ font-family:'Space Grotesk'; font-size:.95rem; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; }
-  .reader-heading .s{ font-size:.72rem; color:var(--text-tertiary); }
+  .reader-heading{ min-width:0; text-align:center; flex:1; display:flex; flex-direction:column; align-items:center; gap:2px; }
+  .reader-title-group{ display:flex; flex-direction:column; align-items:center; min-width:0; width:100%; }
+  .reader-heading .t{ font-family:'Space Grotesk'; font-size:.95rem; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; margin:0; }
+  .reader-heading .s{ font-size:.72rem; color:var(--text-tertiary); margin:0; }
+  .chapter-select-wrap{ display:flex; justify-content:center; width:100%; }
   .chapter-select{
     font-family:'Space Grotesk', sans-serif;
     font-size:.76rem;
@@ -463,11 +465,10 @@
     background:var(--glass-fill-soft);
     border:1px solid var(--glass-border);
     border-radius:var(--radius-pill);
-    padding:2px 10px;
-    margin-top:3px;
+    padding:3px 10px;
     cursor:pointer;
     outline:none;
-    max-width:200px;
+    max-width:220px;
     text-overflow:ellipsis;
   }
   .chapter-select:hover, .chapter-select:focus-visible{
@@ -853,9 +854,26 @@
       flex-wrap:wrap;
     }
     .reader-heading{
+      display:contents;
+    }
+    .reader-title-group{
       order:-1;
       width:100%;
+      text-align:center;
       margin-bottom:2px;
+    }
+    .chapter-select-wrap{
+      order:10;
+      width:100%;
+      flex-basis:100%;
+      display:flex;
+      justify-content:center;
+      margin-top:4px;
+    }
+    .chapter-select{
+      max-width:100%;
+      width:auto;
+      text-align:center;
     }
     .reader-tools{
       overflow-x:auto;
@@ -1020,9 +1038,13 @@
       Library
     </button>
     <div class="reader-heading">
-      <p class="t" id="readerTitle">—</p>
-      <p class="s" id="readerSub">—</p>
-      <select id="chapterSelect" class="chapter-select" aria-label="Select chapter" style="display:none;"></select>
+      <div class="reader-title-group">
+        <p class="t" id="readerTitle">—</p>
+        <p class="s" id="readerSub">—</p>
+      </div>
+      <div class="chapter-select-wrap">
+        <select id="chapterSelect" class="chapter-select" aria-label="Select chapter" style="display:none;"></select>
+      </div>
     </div>
     <div class="reader-tools">
       <button class="icon-btn" id="playBtn" aria-label="Read this page aloud">
